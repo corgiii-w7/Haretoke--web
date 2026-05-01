@@ -49,6 +49,27 @@
             padding: 5rem 2rem; 
         }
 
+        /* ⬇︎⬇︎ 画像のサイズを統一する設定 ⬇︎⬇︎ */
+        .media-box img {
+            width: 100%;
+            max-width: 320px;           /* ポスターが大きくなりすぎないよう最大幅を制限 */
+            aspect-ratio: 1 / 1.414;    /* ポスターの黄金比（A4やB5サイズ）に強制統一 */
+            object-fit: cover;          /* 画像が歪まないように、はみ出た部分は綺麗にカット */
+            border-radius: 4px;         /* 角をほんの少し丸くする */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* ポスターに薄い影をつけて立体感を出す */
+            margin: 0 auto;             /* 中央に配置 */
+            display: block;
+        }
+
+        /* 動画用の設定は分けて残しておきます */
+        .media-box iframe, 
+        .media-box video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
+
         /* ⬇︎⬇︎ aboutの背景画像設定 ⬇︎⬇︎ */
         #about::before {
             content: "";
@@ -172,10 +193,12 @@
         <h2>STAGE</h2>
         <h3 style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;">秋公演企画中！</h3>
         
-        <!-- 中央に動画を配置 -->
+        <!-- 中央に動画を配置（MP4ファイルなどを直接使う場合） -->
         <div style="text-align: center; margin-bottom: 3rem;">
-            <!-- "動画のID" の部分を実際のYouTubeのIDに書き換えてください -->
-            <iframe width="100%" height="450" src="harebutai_MV_for-SNS.jpg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></iframe>
+            <!-- アップロードした動画の名前↓ -->
+            <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" controls style="max-width: 100%; width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                お使いのブラウザは動画の再生に対応していません。
+            </video>
         </div>
 
         <!-- 動画の下に説明とポスターを横並びで配置 -->
