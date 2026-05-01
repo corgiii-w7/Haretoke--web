@@ -4,24 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>劇団ハレトケ 公式サイト</title>
-    <style>
-        #about {
-            position: relative;
-            /* 文字が見やすいように上下の余白を少し広めに */
-            padding: 5rem 2rem; 
-        }
-
-        #about::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            /* 背景にしたい画像のファイル名↓ */
-            background-image: url('gekidan haretoke_logo_icon (1).jpg'); 
-            background-size: cover;        /* 枠いっぱいに広げる */
-            background-position: center;   /* 画像の中央を表示 */
-            opacity: 0.15;                 /* 画像の薄さ（0.0で透明、1.0でクッキリ） */
-            z-index: -1;                   /* 文字の後ろに配置する魔法のコード */
-        }
+    <style>      
         /* スクロールを滑らかに */
         html { scroll-behavior: smooth; }
 
@@ -59,6 +42,81 @@
         /* リンクの基本色を黒に */
         a { color: #111; }
         a:hover { color: #888; }
+
+                #about {
+            position: relative;
+            /* 文字が見やすいように上下の余白を少し広めに */
+            padding: 5rem 2rem; 
+        }
+
+        /* ⬇︎⬇︎ aboutの背景画像設定 ⬇︎⬇︎ */
+        #about::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* 背景にしたい画像のファイル名↓ */
+            background-image: url('gekidan haretoke_logo_icon (1).jpg'); 
+            background-size: cover;        /* 枠いっぱいに広げる */
+            background-position: center;   /* 画像の中央を表示 */
+            opacity: 0.15;                 /* 画像の薄さ（0.0で透明、1.0でクッキリ） */
+            z-index: -1;                   /* 文字の後ろに配置する魔法のコード */
+        }
+
+        /* ⬇︎⬇︎ MEMORYのドロップダウンメニュー設定 ⬇︎⬇︎ */
+        nav .dropdown {
+            display: inline-block;
+            position: relative;
+            margin: 0 15px; /* 他のメニューと間隔を合わせる */
+        }
+        
+        nav .dropdown > a {
+            margin: 0; /* 元のマージンをリセット */
+        }
+
+        nav .dropdown-content {
+            display: none; /* 普段は隠しておく */
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%); /* 真下に中央揃えで配置 */
+            background-color: #fff;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            z-index: 10;
+            border-radius: 4px;
+            padding: 0.5rem 0;
+        }
+
+        nav .dropdown-content a {
+            display: block; /* 縦に並べる */
+            margin: 0;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            color: #111;
+            border-bottom: 1px dashed #eee;
+        }
+
+        nav .dropdown-content a:last-child {
+            border-bottom: none; /* 一番下の線は消す */
+        }
+
+        nav .dropdown-content a:hover {
+            background-color: #f9f9f9; /* カーソルを乗せた時少し色を変える */
+            color: #888;
+        }
+
+        /* MEMORYにカーソルを合わせた時にフワッと表示する魔法 */
+        nav .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translate(-50%, 10px); }
+            100% { opacity: 1; transform: translate(-50%, 0); }
+        }
+        /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
     </style>
 </head>
 <body>
@@ -69,11 +127,26 @@
         <p style="letter-spacing: 2px; font-size: 0.9rem;">〜日常と非日常を交差する〜</p>
     </header>
 
-    <nav>
+<nav>
         <a href="#about">ABOUT</a>
         <a href="#members">MEMBERS</a>
         <a href="#performance">STAGE</a>
-        <a href="#history">HISTORY</a>
+        
+        <!-- ▼ MEMORYのドロップダウン▼ -->
+        <div class="dropdown">
+            <a href="#history">MEMORY</a>
+            <div class="dropdown-content">
+                <!--次回 <a href="#perf7">第6回公演「」</a> -->
+                <a href="#perf6">第5回公演「怪盗スターダスト」</a>
+                <a href="#perf5">第4回公演「Terreur」</a>
+                <a href="#perf4">グリーンカレッジ公演「注文の多い音楽会」</a>
+                <a href="#perf3">第3回公演「オールド・サマー・バケーション」</a>
+                <a href="#perf2">第2回公演「ゴースト・アクター」</a>
+                <a href="#perf1">旗揚げ公演「ハレ舞台」</a>
+            </div>
+        </div>
+        <!-- ▲ ここまで ▲ -->
+
         <a href="#links">LINKS</a>
         <a href="#contact">CONTACT</a>
     </nav>
@@ -94,52 +167,126 @@
         </ul>
     </section>
 
+<!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
     <section id="performance">
-        <h2>公演情報</h2>
-        <h3>秋のメイン公演（仮）</h3>
-        <p>次回公演に向けて鋭意稽古中です！</p>
-        <ul>
-            <li><strong>日程:</strong> 2026年10月24日(土) ※予備日: 25日(日)</li>
-            <li><strong>会場:</strong> 〇〇劇場</li>
-            <li><strong>チケット:</strong> 準備中</li>
-        </ul>
+        <h2>STAGE</h2>
+        <h3 style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;">秋公演企画中！</h3>
+        
+        <!-- 中央に動画を配置 -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <!-- "動画のID" の部分を実際のYouTubeのIDに書き換えてください -->
+            <iframe width="100%" height="450" src="https://www.youtube.com/embed/動画のID" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></iframe>
+        </div>
+
+        <!-- 動画の下に説明とポスターを横並びで配置 -->
+        <div class="flex-container">
+            <div class="text-box">
+                <p>次回公演に向けて鋭意稽古中です！<br>
+                ティザー動画もぜひご覧ください。</p>
+                <ul>
+                    <li>日程: 2026年10月24日(土) ※予備日: 25日(日)</li>
+                    <li>会場: 〇〇劇場</li>
+                    <li>チケット: 準備中</li>
+                </ul>
+            </div>
+            <div class="media-box">
+                <!-- 秋公演のポスター画像名に書き換えてください -->
+                <img src="autumn-poster.jpg" alt="秋公演ポスター">
+            </div>
+        </div>
     </section>
 
-<section id="history">
-        <h2>過去公演</h2>
-        <!-- ▼ 直近の公演 ▼ -->
-        <!-- 下にすき間（margin-bottom）を空けて区切ります -->
-        <div class="flex-container" style="margin-bottom: 4rem;">
-            <!-- 左側の説明 -->
+    <!-- ▼ MEMORYセクション ▼ -->
+    <section id="history">
+        <h2>MEMORY</h2>
+
+        <!-- 第5回公演 -->
+        <div id="perf6" class="flex-container" style="margin-bottom: 5rem;">
             <div class="text-box">
-                <h3 style="margin-top: 0;">第2回公演「△△△△」</h3>
-                <p>あらすじや、公演に込めた思い、キャスト情報などをここに記載します。文章が長くなっても右側のポスターとバランスよく配置されます。</p>
+                <h3 style="margin-top: 0;">第5回公演「怪盗スターダスト」</h3>
+                <p>あらすじや、公演に込めた思いなどを記載します。</p>
                 <ul>
                     <li>日程: 202X年 X月</li>
                     <li>会場: 〇〇劇場</li>
                 </ul>
             </div>
-            <!-- 右側のポスター画像 -->
             <div class="media-box">
-                <!-- ↓ポスター画像のファイル名に変えてください↓ -->
-                <img src="gekidan haretoke_logo_icon (1).jpg" alt="第2回公演ポスター">
+                <img src="poster6.jpg" alt="第6回公演ポスター">
             </div>
         </div>
 
-        <!-- ▼ 旗揚げ公演 ▼ -->
-        <div class="flex-container">
+        <!-- 第4回公演 -->
+        <div id="perf5" class="flex-container" style="margin-bottom: 5rem;">
             <div class="text-box">
-                <h3 style="margin-top: 0;">旗揚げ公演「〇〇〇〇」</h3>
-                <p>劇団ハレトケの記念すべき第一回公演。<br>
-                このように、公演ごとにブロックを複製して増やしていくことができます。</p>
+                <h3 style="margin-top: 0;">第4回公演「Terreur」</h3>
+                <p>あらすじや、公演に込めた思いなどを記載します。</p>
                 <ul>
                     <li>日程: 202X年 X月</li>
                     <li>会場: 〇〇劇場</li>
                 </ul>
             </div>
             <div class="media-box">
-                <!-- ↓ポスター画像のファイル名に変えてください↓ -->
-                <img src="gekidan haretoke_logo_icon (1).jpg" alt="旗揚げ公演ポスター">
+                <img src="poster5.jpg" alt="第5回公演ポスター">
+            </div>
+        </div>
+
+        <!-- グリーンカレッジ公演 -->
+        <div id="perf4" class="flex-container" style="margin-bottom: 5rem;">
+            <div class="text-box">
+                <h3 style="margin-top: 0;">グリーンカレッジ公演「注文の多い音楽会」</h3>
+                <p>あらすじや、公演に込めた思いなどを記載します。</p>
+                <ul>
+                    <li>日程: 202X年 X月</li>
+                    <li>会場: 〇〇劇場</li>
+                </ul>
+            </div>
+            <div class="media-box">
+                <img src="poster4.jpg" alt="第4回公演ポスター">
+            </div>
+        </div>
+
+        <!-- 第3回公演 -->
+        <div id="perf3" class="flex-container" style="margin-bottom: 5rem;">
+            <div class="text-box">
+                <h3 style="margin-top: 0;">第3回公演「オールド・サマー・バケーション」</h3>
+                <p>あらすじや、公演に込めた思いなどを記載します。</p>
+                <ul>
+                    <li>日程: 202X年 X月</li>
+                    <li>会場: 〇〇劇場</li>
+                </ul>
+            </div>
+            <div class="media-box">
+                <img src="poster3.jpg" alt="第3回公演ポスター">
+            </div>
+        </div>
+
+        <!-- 第2回公演 -->
+        <div id="perf2" class="flex-container" style="margin-bottom: 5rem;">
+            <div class="text-box">
+                <h3 style="margin-top: 0;">第2回公演「ゴースト・アクター」</h3>
+                <p>あらすじや、公演に込めた思いなどを記載します。</p>
+                <ul>
+                    <li>日程: 202X年 X月</li>
+                    <li>会場: 〇〇劇場</li>
+                </ul>
+            </div>
+            <div class="media-box">
+                <img src="poster2.jpg" alt="第2回公演ポスター">
+            </div>
+        </div>
+
+        <!-- 旗揚げ公演 -->
+        <div id="perf1" class="flex-container">
+            <div class="text-box">
+                <h3 style="margin-top: 0;">旗揚げ公演「ハレ舞台」</h3>
+                <p>劇団ハレトケの記念すべき第一回公演。</p>
+                <ul>
+                    <li>日程: 202X年 X月</li>
+                    <li>会場: 〇〇劇場</li>
+                </ul>
+            </div>
+            <div class="media-box">
+                <img src="poster1.jpg" alt="旗揚げ公演ポスター">
             </div>
         </div>
         
