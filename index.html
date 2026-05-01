@@ -5,37 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>劇団ハレトケ 公式サイト</title>
     <style>
-        /* ここにデザイン（CSS）を書きます */
-        body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 0; color: #333; }
-        header { background: #ffaa00; color: #fff; padding: 2rem 1rem; text-align: center; }
-        nav { background: #f4f4f4; padding: 1rem; text-align: center; position: sticky; top: 0; }
-        nav a { margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; }
-        nav a:hover { color: #ffaa00; }
-        section { padding: 3rem 1rem; max-width: 800px; margin: auto; border-bottom: 1px dashed #ccc; }
-        h2 { border-left: 5px solid #ffaa00; padding-left: 10px; }
-        footer { background: #333; color: #fff; text-align: center; padding: 1rem; margin-top: 2rem; }
+        /* モノクロベースのデザイン（CSS） */
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; color: #222; background-color: #fafafa; }
+        
+        /* ヘッダー部分は黒背景に */
+        header { background: #111; color: #fff; padding: 3rem 1rem; text-align: center; }
+        
+        /* ロゴ画像のサイズ調整 */
+        header img { max-width: 250px; height: auto; margin-bottom: 10px; }
+        
+        /* メニューバーは白背景に黒文字 */
+        nav { background: #fff; padding: 1rem; text-align: center; position: sticky; top: 0; border-bottom: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        nav a { margin: 0 15px; text-decoration: none; color: #111; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
+        nav a:hover { color: #888; }
+        
+        /* 各セクション */
+        section { padding: 4rem 1rem; max-width: 800px; margin: auto; border-bottom: 1px solid #eee; }
+        
+        /* 見出しは黒のシンプルなアクセント */
+        h2 { border-left: 5px solid #111; padding-left: 15px; font-size: 1.5rem; letter-spacing: 2px; }
+        h3 { color: #444; margin-top: 2rem; }
+        
+        /* フッター */
+        footer { background: #111; color: #fff; text-align: center; padding: 2rem; margin-top: 3rem; font-size: 0.8rem; letter-spacing: 1px; }
+        
+        /* リンクの基本色を黒に */
+        a { color: #111; }
+        a:hover { color: #888; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>劇団ハレトケ</h1>
-        <p>〜日常と非日常を交差する〜</p>
+        <!-- ハレトケロゴのアップロード -->
+        <img src="gekidan haretoke_logo_icon (1).jpg" alt="劇団ハレトケ ロゴ">
+        <p style="letter-spacing: 2px; font-size: 0.9rem;">〜日常と非日常を交差する〜</p>
     </header>
 
-    <!-- メニュー（クリックすると各項目にジャンプします） -->
     <nav>
-        <a href="#about">劇団ハレトケとは</a>
-        <a href="#members">団員紹介</a>
-        <a href="#performance">公演情報</a>
-        <a href="#history">過去公演</a>
-        <a href="#links">リンク集</a>
-        <a href="#contact">お問い合わせ / SNS</a>
+        <a href="#about">ABOUT</a>
+        <a href="#members">MEMBERS</a>
+        <a href="#performance">STAGE</a>
+        <a href="#history">HISTORY</a>
+        <a href="#links">LINKS</a>
+        <a href="#contact">CONTACT</a>
     </nav>
 
     <section id="about">
         <h2>劇団ハレトケとは</h2>
-        <p>ここに劇団のコンセプトや、大切にしている思いなどを記載します。</p>
+        <p>ここに劇団のコンセプトや、大切にしている思いなどを記載します。モノクロのデザインは、文章や後から追加する舞台写真などをグッと引き立ててくれます。</p>
     </section>
 
     <section id="members">
@@ -77,11 +95,9 @@
     <section id="contact">
         <h2>お問い合わせ / 各種SNS</h2>
         <p>公演に関するご質問や、チケットのお問い合わせは以下のフォームより承っております。</p>
-        <!-- 普段から使い慣れているGoogleフォームなどがあれば、そのURLを貼ると自動化しやすくて便利です -->
         <p>👉 <a href="ここにGoogleフォームのURLを貼る" target="_blank">お問い合わせフォームはこちら</a></p>
         
         <h3>各種SNS</h3>
-        <p>最新の稽古風景などを発信しています！</p>
         <ul>
             <li>X (Twitter): <a href="#">@haretoke_xxx</a></li>
             <li>Instagram: <a href="#">@haretoke_xxx</a></li>
