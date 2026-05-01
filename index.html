@@ -138,6 +138,17 @@
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
+        
+        /* ⬇︎⬇︎ メニューがすぐ消えないように「透明な橋」を架ける ⬇︎⬇︎ */
+        nav .dropdown-content::before {
+            content: "";
+            position: absolute;
+            top: -20px; /* メニューの少し上まで判定エリアを広げる */
+            left: 0;
+            width: 100%;
+            height: 20px; /* 隙間を埋める透明な橋の高さ */
+        }
+        /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
     </style>
 </head>
 <body>
