@@ -156,10 +156,10 @@
     <header>
         <!-- ハレトケロゴのアップロード -->
         <img src="gekidan haretoke_logo_icon (1).jpg" alt="劇団ハレトケ ロゴ">
-        <p style="letter-spacing: 2px; font-size: 0.9rem;">〜いま、ここ、こそ、パラダイス〜</p>
+        <p id="header-catchphrase" style="letter-spacing: 2px; font-size: 0.9rem;"></p>
     </header>
 
-<nav>
+    <nav>
         <a href="#about">ABOUT</a>
         <a href="#members">MEMBERS</a>
         <a href="#performance">STAGE</a>
@@ -167,14 +167,8 @@
         <!-- ▼ MEMORYのドロップダウン▼ -->
         <div class="dropdown">
             <a href="#history">MEMORY</a>
-            <div class="dropdown-content">
-                <!--次回用 <a href="#perf7">第6回公演「」</a> -->
-                <a href="#perf6">第5回公演「怪盗スターダスト」</a>
-                <a href="#perf5">第4回公演「Terreur」</a>
-                <a href="#perf4">グリーンカレッジ公演「注文の多い音楽会」</a>
-                <a href="#perf3">第3回公演「オールド・サマー・バケーション」</a>
-                <a href="#perf2">第2回公演「ゴースト・アクター」</a>
-                <a href="#perf1">旗揚げ公演「ハレ舞台」</a>
+            <div class="dropdown-content" id="nav-dropdown">
+                <!-- JavaScriptで生成 -->
             </div>
         </div>
         <!-- ▲ ここまで ▲ -->
@@ -184,25 +178,21 @@
     </nav>
 
     <section id="about">
-        <h2>劇団ハレトケとは</h2>
-        <p>私たちは社会人になってもミュージカルに関わりたい！というメンバーが集まり、関東中心に活動をしているミュージカル集団です！</p>
-        <P>普段の日常もミュージカルの力でパラダイスにしていこうという心意気で、楽しく活動しております！</P>
-        <P>作品は全て団員のオリジナルで、脚本、作詞作曲や、音響・照明・小道具・衣装などスタッフ業も自分たちで試行錯誤しながら担当しております。</P>
+        <h2 id="about-title"></h2>
+        <div id="about-content"></div>
     </section>
 
     <section id="members">
-        <h2>団員紹介</h2>
-        <p>キャスト・スタッフの紹介です。</p>
-        <ul>
-            <li><strong>〇〇 〇〇</strong>（団長）</li>
-            <li><strong>△△ △△</strong>（団長）</li>
+        <h2 id="members-title"></h2>
+        <p id="members-desc"></p>
+        <ul id="members-list">
         </ul>
     </section>
 
 <!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
     <section id="performance">
-        <h2>STAGE</h2>
-        <h3 style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;">秋公演企画中！</h3>
+        <h2 id="stage-title"></h2>
+        <h3 id="stage-subtitle" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;"></h3>
         
         <!-- 中央に動画を配置（MP4ファイルなどを直接使う場合） -->
         <div style="text-align: center; margin-bottom: 3rem;">
@@ -215,12 +205,8 @@
         <!-- 動画の下に説明とポスターを横並びで配置 -->
         <div class="flex-container">
             <div class="text-box">
-                <p>次回公演に向けて鋭意稽古中です！<br>
-                ティザー動画もぜひご覧ください。</p>
-                <ul>
-                    <li>日程: 2026年10月24日(土) ※予備日: 25日(日)</li>
-                    <li>会場: 〇〇劇場</li>
-                    <li>チケット: 準備中</li>
+                <p id="stage-desc"></p>
+                <ul id="stage-details">
                 </ul>
             </div>
             <div class="media-box">
@@ -232,134 +218,22 @@
 
     <!-- ▼ MEMORYセクション ▼ -->
     <section id="history">
-        <h2>MEMORY</h2>
-
-        <!-- 第5回公演 -->
-        <div id="perf6" class="flex-container" style="margin-bottom: 5rem;">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">第5回公演「怪盗スターダスト」</h3>
-                <p>あらすじや、公演に込めた思いなどを記載します。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="Stardust_mv.JPG" alt="第5回公演ポスター">
-            </div>
-        </div>
-
-        <!-- 第4回公演 -->
-        <div id="perf5" class="flex-container" style="margin-bottom: 5rem;">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">第4回公演「Terreur」</h3>
-                <p>あらすじや、公演に込めた思いなどを記載します。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="Terreur.JPG" alt="第4回公演ポスター">
-            </div>
-        </div>
-
-        <!-- グリーンカレッジ公演 -->
-        <div id="perf4" class="flex-container" style="margin-bottom: 5rem;">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">グリーンカレッジ公演「注文の多い音楽会」</h3>
-                <p>あらすじや、公演に込めた思いなどを記載します。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="Chumonnoooi.PNG" alt="グリーンカレッジ公演ポスター">
-            </div>
-        </div>
-
-        <!-- 第3回公演 -->
-        <div id="perf3" class="flex-container" style="margin-bottom: 5rem;">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">第3回公演「オールド・サマー・バケーション」</h3>
-                <p>あらすじや、公演に込めた思いなどを記載します。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="OSV_mv_0814.jpg" alt="第3回公演ポスター">
-            </div>
-        </div>
-
-        <!-- 第2回公演 -->
-        <div id="perf2" class="flex-container" style="margin-bottom: 5rem;">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">第2回公演「ゴースト・アクター」</h3>
-                <p>あらすじや、公演に込めた思いなどを記載します。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="GA_mv_A3_0109_big.jpg" alt="第2回公演ポスター">
-            </div>
-        </div>
-
-        <!-- 旗揚げ公演 -->
-        <div id="perf1" class="flex-container">
-            <div class="text-box">
-                <h3 style="margin-top: 0;">旗揚げ公演「ハレ舞台」</h3>
-                <p>劇団ハレトケの記念すべき第一回公演。</p>
-                <ul>
-                    <li>日程: 202X年 X月</li>
-                    <li>会場: 〇〇劇場</li>
-                </ul>
-            </div>
-            <div class="media-box">
-                <img src="harebutai_MV_for-SNS.jpg" alt="旗揚げ公演ポスター">
-            </div>
-        </div>
-        
+        <h2 id="history-title"></h2>
+        <div id="history-list"></div>
     </section>
 
     <section id="links">
-        <h2>団員募集について</h2>
-        <ul>
-            <p>🎭✨新メンバー大募集✨🎭<br>
-                歌って！踊って！演じてみたいそこのあなた！<br>
-                私たちと一緒にミュージカルをはじめてみませんか？</p>
-            <p>＼こんな人、大歓迎！／<br>
-                🎤歌うのが好き！<br>
-                💃ダンスが楽しい！<br>
-                🎭お芝居やってみたい！<br>
-                🎨小道具・衣装づくりが好き！<br>
-                🎼曲を作ってみたい！<br>
-                📝脚本書いてみたい！<br>
-                舞台の上も、裏方も、みんな主役🌟<br>
-                初心者・未経験でもOK！</p>
-            <br>
-            <p>【会費】<br>
-                団体費:上期下期各1,000円<br>
-                別途公演参加費:10,000円程度<br>
-                ※公演参加は必須ではありません<br>
-                公演に役者として関わる場合にのみ発生</p>
-            <li><a href="https://theatrical.net-menber.com/look/data/216338.html?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAdGRleARheVBleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA8xMjQwMjQ1NzQyODc0MTQAAadUoPp6z35Lg9kmNLe7wWCzOyfvG808flBKRdYHTxTvCdojMudfaVHRfsGx2g_aem_yfhOUztngHnuBaVnc2Kjn">「劇団員になろうよ」募集ページ</a></li>
-        </ul>
+        <h2 id="links-title"></h2>
+        <div id="links-content"></div>
     </section>
 
     <section id="contact">
-        <h2>お問い合わせ / 各種SNS</h2>
-        <p>公演に関するご質問や、チケットのお問い合わせは以下のフォームより承っております。</p>
-        <p>👉 <a href="https://docs.google.com/forms/d/e/1FAIpQLSelOIThFwEVI8Yc99L6PChKt-mCClAt8G852VLiGTJseDqEqg/viewform?usp=header" target="_blank">お問い合わせフォームはこちら</a></p>
+        <h2 id="contact-title"></h2>
+        <p id="contact-desc1"></p>
+        <p>👉 <a id="contact-form" href="#" target="_blank"></a></p>
         
-        <h3>各種SNS</h3>
-        <ul>
-            <li>X (Twitter): <a href="https://x.com/haretokemusical?s=21&t=mtbf5MTQ_Et1zKMI2koXbw">@haretokemusical</a></li>
-            <li>Instagram: <a href="https://www.instagram.com/haretoke.musical?igsh=bDhucXAyNXgzcXB3&utm_source=qr">@haretoke.musical</a></li>
+        <h3 id="sns-title"></h3>
+        <ul id="sns-list">
         </ul>
     </section>
 
@@ -367,5 +241,123 @@
         <p>&copy; 2026 劇団ハレトケ. All Rights Reserved.</p>
     </footer>
 
+    <!-- データを読み込む -->
+    <script src="data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header
+            document.getElementById('header-catchphrase').innerText = siteData.header.catchphrase;
+
+            // Nav dropdown
+            const navDropdown = document.getElementById('nav-dropdown');
+            siteData.memory.performances.forEach(perf => {
+                const a = document.createElement('a');
+                a.href = '#' + perf.id;
+                a.innerText = perf.title;
+                navDropdown.appendChild(a);
+            });
+
+            // About
+            document.getElementById('about-title').innerText = siteData.about.title;
+            const aboutContent = document.getElementById('about-content');
+            siteData.about.paragraphs.forEach(p => {
+                const pTag = document.createElement('p');
+                pTag.innerText = p;
+                aboutContent.appendChild(pTag);
+            });
+
+            // Members
+            document.getElementById('members-title').innerText = siteData.members.title;
+            document.getElementById('members-desc').innerText = siteData.members.description;
+            const membersList = document.getElementById('members-list');
+            siteData.members.list.forEach(member => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${member.name}</strong>（${member.role}）`;
+                membersList.appendChild(li);
+            });
+
+            // Stage
+            document.getElementById('stage-title').innerText = siteData.stage.title;
+            document.getElementById('stage-subtitle').innerText = siteData.stage.subtitle;
+            document.getElementById('stage-desc').innerHTML = siteData.stage.description.replace(/\n/g, '<br>');
+            const stageDetails = document.getElementById('stage-details');
+            siteData.stage.details.forEach(detail => {
+                const li = document.createElement('li');
+                li.innerText = detail;
+                stageDetails.appendChild(li);
+            });
+
+            // History
+            document.getElementById('history-title').innerText = siteData.memory.title;
+            const historyList = document.getElementById('history-list');
+            siteData.memory.performances.forEach((perf, index) => {
+                const isLast = index === siteData.memory.performances.length - 1;
+                const div = document.createElement('div');
+                div.id = perf.id;
+                div.className = "flex-container";
+                div.style.marginBottom = isLast ? "0" : "5rem";
+                
+                div.innerHTML = `
+                    <div class="text-box">
+                        <h3 style="margin-top: 0;">${perf.title}</h3>
+                        <p>${perf.description}</p>
+                        <ul>
+                            <li>日程: ${perf.date}</li>
+                            <li>会場: ${perf.venue}</li>
+                        </ul>
+                    </div>
+                    <div class="media-box">
+                        <img src="${perf.image}" alt="${perf.title}ポスター">
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+
+            // Links
+            document.getElementById('links-title').innerText = siteData.links.title;
+            const linksContent = document.getElementById('links-content');
+            
+            const ul = document.createElement('ul');
+            siteData.links.recruitment.forEach(htmlText => {
+                const p = document.createElement('p');
+                p.innerHTML = htmlText;
+                ul.appendChild(p);
+            });
+            
+            ul.appendChild(document.createElement('br'));
+            
+            const feeP = document.createElement('p');
+            feeP.innerHTML = siteData.links.fee;
+            ul.appendChild(feeP);
+
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = siteData.links.linkUrl;
+            a.innerText = siteData.links.linkText;
+            li.appendChild(a);
+            ul.appendChild(li);
+
+            linksContent.appendChild(ul);
+
+            // Contact
+            document.getElementById('contact-title').innerText = siteData.contact.title;
+            document.getElementById('contact-desc1').innerText = siteData.contact.description1;
+            
+            const formLink = document.getElementById('contact-form');
+            formLink.href = siteData.contact.formUrl;
+            formLink.innerText = siteData.contact.formText;
+
+            document.getElementById('sns-title').innerText = siteData.contact.snsTitle;
+            const snsList = document.getElementById('sns-list');
+            
+            const liTw = document.createElement('li');
+            liTw.innerHTML = `X (Twitter): <a href="${siteData.contact.twitterUrl}">${siteData.contact.twitterId}</a>`;
+            snsList.appendChild(liTw);
+
+            const liIg = document.createElement('li');
+            liIg.innerHTML = `Instagram: <a href="${siteData.contact.instagramUrl}">${siteData.contact.instagramId}</a>`;
+            snsList.appendChild(liIg);
+        });
+    </script>
 </body>
 </html>
