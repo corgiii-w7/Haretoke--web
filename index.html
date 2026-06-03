@@ -96,11 +96,15 @@
 
         /* 1. ト (Path 5) */
         .path-to {
-            opacity: 1; /* 最初から不透明度100%で置いておく（背景が黒なので最初は見えず、白丸が明るくなると同時にシルエットとして現れる） */
-            /* 元の座標(513, 934)からXを-163ずらした位置(350)を初期位置にする */
+            opacity: 1;
             transform: translate(350px, 934px); 
-            /* 白丸が完全に明るくなった後(2秒後)、黒背景が迫るのと同時に中央へ移動(2〜5秒) */
-            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
+            animation: 
+                toColorInvert 2s ease forwards,
+                animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) both 2s;
+        }
+        @keyframes toColorInvert {
+            0% { fill: #fff; }
+            100% { fill: #010101; }
         }
         @keyframes animTo {
             0% { transform: translate(350px, 934px); } 
@@ -219,9 +223,54 @@
             60% { transform: translate(-50%, -5px); }
         }
         
-        /* メニューバーは白背景に黒文字 */
-        nav { background: #fff; padding: 1rem; text-align: center; position: sticky; top: 0; border-bottom: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        nav a { margin: 0 15px; text-decoration: none; color: #111; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
+        /* メインレイアウト（2カラム） */
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+            background: #fafafa;
+        }
+
+        /* 左側：サイドバー（黒） */
+        .sidebar {
+            flex: 0 0 30.926%; /* ロゴの黒い部分の比率と完璧に一致させる */
+            width: 30.926%;
+            background: #111;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 60px;
+            box-sizing: border-box;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-bottom: 60px;
+            text-align: center;
+        }
+
+        /* 右側：コンテンツエリア（白） */
+        .content {
+            flex: 1;
+            background: #fafafa;
+            padding: 40px 60px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* メニューバーは縦並びに */
+        nav { 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        nav a { text-decoration: none; color: #fff; font-weight: bold; font-size: 1rem; letter-spacing: 2px; transition: color 0.3s; }
         nav a:hover { color: #888; }
         
         /* 各セクション */
@@ -232,7 +281,7 @@
         h3 { color: #444; margin-top: 2rem; }
         
         /* フッター */
-        footer { background: #111; color: #fff; text-align: center; padding: 2rem; margin-top: 3rem; font-size: 0.8rem; letter-spacing: 1px; }
+        footer { background: #fafafa; color: #111; text-align: center; padding: 2rem; margin-top: 3rem; font-size: 0.8rem; letter-spacing: 1px; border-top: 1px solid #eee; }
         
         /* リンクの基本色を黒に */
         a { color: #111; }
@@ -280,13 +329,13 @@
 
         /* ⬇︎⬇︎ MEMORYのドロップダウンメニュー設定 ⬇︎⬇︎ */
         nav .dropdown {
-            display: inline-block;
+            display: block;
             position: relative;
-            margin: 0 15px; /* 他のメニューと間隔を合わせる */
         }
         
         nav .dropdown > a {
-            margin: 0; /* 元のマージンをリセット */
+            margin: 0;
+            cursor: pointer;
         }
 
         nav .dropdown-content {
@@ -295,13 +344,16 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%); /* 真下に中央揃えで配置 */
-            background-color: #fff;
-            min-width: 220px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #eee;
+            flex-direction: column;
+            align-items: center;
+            background-color: #222;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border: 1px solid #333;
             z-index: 10;
             border-radius: 4px;
-            padding: 0.5rem 0;
+            padding: 10px 0;
+            margin-top: 15px;
         }
 
         nav .dropdown-content a {
@@ -309,8 +361,11 @@
             margin: 0;
             padding: 12px 20px;
             font-size: 0.85rem;
-            color: #111;
-            border-bottom: 1px dashed #eee;
+            color: #ccc;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
         }
 
         nav .dropdown-content a:last-child {
@@ -318,18 +373,18 @@
         }
 
         nav .dropdown-content a:hover {
-            background-color: #f9f9f9; /* カーソルを乗せた時少し色を変える */
-            color: #888;
+            background-color: #333; /* カーソルを乗せた時少し色を変える */
+            color: #fff;
         }
 
         /* MEMORYにカーソルを合わせた時にフワッと表示する魔法 */
         nav .dropdown:hover .dropdown-content {
-            display: block;
+            display: flex;
             animation: fadeInDown 0.3s ease-out;
         }
 
         @keyframes fadeInDown {
-            0% { opacity: 0; transform: translate(-50%, 10px); }
+            0% { opacity: 0; transform: translate(-50%, 0); }
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
@@ -414,7 +469,9 @@
         <a href="#nav-menu" class="scroll-down">SCROLL</a>
     </header>
 
-    <nav id="nav-menu">
+    <div class="main-layout">
+        <aside class="sidebar">
+            <nav id="nav-menu">
         <a href="#about">ABOUT</a>
         <a href="#members">MEMBERS</a>
         <a href="#performance">STAGE</a>
@@ -431,8 +488,17 @@
         <a href="#links">LINKS</a>
         <a href="#contact">CONTACT</a>
     </nav>
+            <div class="sidebar-bottom">
+                <p style="font-weight: bold; letter-spacing: 2px;">TOPICS</p>
+                <p style="font-size: 0.85rem; color: #ccc;">「第六回公演」今秋決定！</p>
+                <br><br>
+                <p style="font-weight: bold; letter-spacing: 2px;">OFFICIAL SNS</p>
+                <p style="font-size: 0.85rem; color: #ccc;"><a href="#" style="color:#ccc; text-decoration:none;">@haretokemusical</a></p>
+            </div>
+        </aside>
 
-    <section id="about">
+        <main class="content">
+            <section id="about">
         <h2 id="about-title"></h2>
         <div id="about-content"></div>
     </section>
@@ -495,6 +561,8 @@
     <footer>
         <p>&copy; 2026 劇団ハレトケ. All Rights Reserved.</p>
     </footer>
+    </main>
+    </div>
 
     <!-- データを読み込む -->
     <script src="data.js"></script>
