@@ -159,31 +159,35 @@
         }
 
         /* 1. ト (Path 5) */
-        .path-to {
+        .animated-logo path.path-to {
             opacity: 0;
             transform: translate(350px, 891px);
-            animation:
-                animFadeIn 2s ease forwards,
-                animToCenter 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s,
-                animToFinal 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both 5.75s;
+            animation: animToSeq 6.5s forwards;
         }
 
-        @keyframes animToCenter {
+        @keyframes animToSeq {
             0% {
+                opacity: 0;
                 transform: translate(350px, 891px);
+                animation-timing-function: ease;
             }
-
-            100% {
+            30.769% {
+                opacity: 1;
+                transform: translate(350px, 891px);
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            76.923% {
+                opacity: 1;
                 transform: translate(484px, 891px);
+                animation-timing-function: linear;
             }
-        }
-
-        @keyframes animToFinal {
-            0% {
+            88.461% {
+                opacity: 1;
                 transform: translate(484px, 891px);
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
             }
-
             100% {
+                opacity: 1;
                 transform: translate(513px, 934px);
             }
         }
