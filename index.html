@@ -96,16 +96,14 @@
 
         /* 1. ト (Path 5) */
         .path-to {
-            opacity: 0; /* 最初は隠す */
-            /* 元の座標(513, 934)からXを-80ずらした位置を初期位置にする */
-            transform: translate(433px, 934px); 
-            /* 白丸と一緒にだんだん見え(0〜2秒)、その後黒背景が迫るのと同時に中央へ移動(2〜5秒) */
-            animation: 
-                animFadeIn 2s ease forwards,
-                animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
+            opacity: 1; /* 最初から不透明度100%で置いておく（背景が黒なので最初は見えず、白丸が明るくなると同時にシルエットとして現れる） */
+            /* 元の座標(513, 934)からXを-163ずらした位置(350)を初期位置にする */
+            transform: translate(350px, 934px); 
+            /* 白丸が完全に明るくなった後(2秒後)、黒背景が迫るのと同時に中央へ移動(2〜5秒) */
+            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
         @keyframes animTo {
-            0% { transform: translate(433px, 934px); } 
+            0% { transform: translate(350px, 934px); } 
             100% { transform: translate(513px, 934px); }
         }
 
