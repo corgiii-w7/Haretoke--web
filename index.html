@@ -18,6 +18,12 @@
         /* モノクロベースのデザイン（CSS） */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; color: #222; background-color: #fafafa; }
         
+        /* スクロール連動エリア */
+        #hero-scroll-container {
+            height: 300vh; /* 3画面分のスクロールエリア */
+            position: relative;
+        }
+
         /* ヘッダー部分は一面黒の背景でスタート */
         header { 
             background: #111; 
@@ -27,17 +33,32 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative; /* スクロールアイコン配置用 */
+            position: sticky; /* スクロールしても画面に張り付く */
+            top: 0;
             text-align: center; 
             z-index: 1;
+            overflow: hidden; /* 拡大した時に画面外にはみ出さないように */
         }
 
-        /* ロゴ画像のコンテナ（擬似要素とサイズ制御用） */
-        header .logo-wrapper { 
+        /* キャッチフレーズも絶対配置にして中心からずれないようにする */
+        #header-catchphrase {
+            position: absolute;
+            top: 70vh; /* ロゴの下あたり */
             width: 100%;
-            max-width: 400px; 
-            margin-bottom: 20px;
-            position: relative; /* 擬似要素の基準 */
+            text-align: center;
+            z-index: 3;
+            transition: opacity 0.5s;
+        }
+
+        /* ロゴ画像のコンテナ（黄金比の配置） */
+        header .logo-wrapper { 
+            position: absolute;
+            left: 30.926vw;
+            top: 45vh;
+            width: 60vw; /* かなり大きく配置 */
+            transform: translate(-30.926%, -50%) scale(1);
+            transform-origin: 30.926% 50%; /* 拡大の中心を30.926%に固定 */
+            z-index: 2;
         }
         
         /* SVG自体の設定 */
@@ -403,7 +424,8 @@
 </head>
 <body>
 
-    <header>
+    <div id="hero-scroll-container">
+    <header id="hero-header">
         <!-- ハレトケロゴのアップロード -->
         <div class="logo-wrapper">
         <svg class="animated-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
@@ -468,8 +490,9 @@
         <!-- スクロールダウンの指示 -->
         <a href="#nav-menu" class="scroll-down">SCROLL</a>
     </header>
+    </div>
 
-    <div class="main-layout">
+    <div class="main-layout" id="main-layout">
         <aside class="sidebar">
             <nav id="nav-menu">
         <a href="#about">ABOUT</a>
@@ -708,6 +731,54 @@
                     }
                 }
             }
+            
+            // ▼ スクロールによるロゴズームの処理 ▼
+            const scrollContainer = document.getElementById('hero-scroll-container');
+            const logoWrapper = document.querySelector('.logo-wrapper');
+            const catchphrase = document.getElementById('header-catchphrase');
+            const scrollDown = document.querySelector('.scroll-down');
+
+            if (scrollContainer && logoWrapper) {
+                window.addEventListener('scroll', () => {
+                    const rect = scrollContainer.getBoundingClientRect();
+                    // rect.top はスクロールするとマイナスになる。
+                    // 0 から 始まり、最大で (300vh - 100vh) = 200vh 分マイナスになる
+                    const scrollRange = rect.height - window.innerHeight;
+                    let progress = -rect.top / scrollRange;
+                    progress = Math.max(0, Math.min(1, progress));
+
+                    let scale = 1;
+                    let opacity = 1;
+
+                    // スクロールの最初の10%はそのまま、その後急激に拡大
+                    if (progress > 0.1) {
+                        const zoomProgress = (progress - 0.1) / 0.9;
+                        // 1倍から最大80倍まで指数関数的に拡大
+                        scale = Math.pow(80, zoomProgress);
+                        
+                        // 文字のフェードアウト（拡大開始後すぐに消す）
+                        opacity = 1 - (zoomProgress * 3);
+                        opacity = Math.max(0, opacity);
+                    }
+
+                    logoWrapper.style.transform = `translate(-30.926%, -50%) scale(${scale})`;
+                    
+                    // キャッチフレーズ等もスクロールで消す
+                    if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
+                    if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
+
+                    // 文字パス（白丸と黒波以外）の透明度を調整
+                    const paths = logoWrapper.querySelectorAll('path, line');
+                    paths.forEach(p => {
+                        // 白丸と黒波の要素はクラス名で除外
+                        if (!p.classList.contains('bg-white-circle') && 
+                            !p.classList.contains('bg-black-sweep')) {
+                            p.style.setProperty('opacity', opacity, 'important');
+                        }
+                    });
+                });
+            }
+            // ▲ ここまで ▲
         });
     </script>
 </body>
