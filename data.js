@@ -19,7 +19,7 @@ const siteData = {
     ]
   },
   "stage": {
-    "title": "パラレルドリーム・ランデブー",
+    "title": "STAGE",
     "subtitle": "秋公演企画中！",
     "description": "次回公演に向けて鋭意稽古中です！\nティザー動画もぜひご覧ください。",
     "details": [
