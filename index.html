@@ -95,17 +95,16 @@
         /* 1. ト (Path 5) */
         .path-to {
             opacity: 0; /* 最初は隠す */
-            transform-box: fill-box;
-            transform-origin: center;
-            transform: translateX(-80px); /* 最初は中央左側に配置 */
+            /* 元の座標(513, 934)からXを-80ずらした位置を初期位置にする */
+            transform: translate(433px, 934px); 
             /* 白丸と一緒にだんだん見え(0〜2秒)、その後黒背景が迫るのと同時に中央へ移動(2〜5秒) */
             animation: 
                 animFadeIn 2s ease forwards,
                 animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
         @keyframes animTo {
-            0% { transform: translateX(-80px); } 
-            100% { transform: translateX(0); }
+            0% { transform: translate(433px, 934px); } 
+            100% { transform: translate(513px, 934px); }
         }
 
         /* 背景の白 (Path 1) は白丸と一緒にだんだん見えてくる */
