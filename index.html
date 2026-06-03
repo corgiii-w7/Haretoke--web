@@ -418,10 +418,10 @@
         <!-- ハレトケロゴのアップロード -->
         <div class="logo-wrapper">
         <svg class="animated-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
-            <!-- 追加: スクロール時に右側を真っ白に埋めるための四角形 -->
-            <rect class="bg-white-fill" x="334" y="0" width="746" height="1920" fill="#FDFDFD" style="opacity: 0; transition: opacity 0.1s;" />
             <!-- 追加: 完璧な真円の白丸背景 -->
             <circle class="bg-white-circle" cx="540.125" cy="960" r="399" fill="#FDFDFD" />
+            <!-- 追加: スクロール時に左側に白丸がはみ出さないようにする黒マスク -->
+            <rect class="bg-black-mask" x="0" y="0" width="334" height="1920" fill="#111" style="opacity: 0; transition: opacity 0.1s;" />
             <!-- 追加: 左から迫る黒い波 -->
             <rect class="bg-black-sweep" x="141" y="561" width="0" height="798" fill="#111" />
             
@@ -745,12 +745,19 @@
 
                     logoWrapper.style.transform = `scale(${scale})`;
                     
-                    // スクロールに合わせて右側の余白を真っ白に塗りつぶす（丸から四角へ）
-                    const whiteFill = document.querySelector('.bg-white-fill');
-                    if (whiteFill) {
-                        // progressが0.1を超えたあたりからフェードインさせる
-                        let fillOpacity = (progress - 0.1) * 2;
-                        whiteFill.style.opacity = Math.max(0, Math.min(1, fillOpacity));
+                    // 白丸の半径を拡大して画面を覆う
+                    const whiteCircle = document.querySelector('.bg-white-circle');
+                    if (whiteCircle) {
+                        const baseR = 399;
+                        const targetR = 2000; // 十分に画面を覆うサイズ
+                        // スクロールに合わせて指数関数的に広げる
+                        whiteCircle.setAttribute('r', baseR + (targetR - baseR) * Math.pow(progress, 2));
+                    }
+
+                    // 白丸が左側（黒メニュー部分）にはみ出さないようにマスクをフェードイン
+                    const blackMask = document.querySelector('.bg-black-mask');
+                    if (blackMask) {
+                        blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10)); // 少しスクロールしたらすぐマスク
                     }
                     
                     // キャッチフレーズ等はスクロールで消す
