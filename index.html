@@ -29,11 +29,28 @@
             align-items: center;
             position: relative; /* スクロールアイコン配置用 */
             text-align: center; 
-            /* 一番最後に周り全体も黒くする */
-            animation: headerToBlack 2s ease forwards 5.5s;
+            z-index: 1;
         }
-        @keyframes headerToBlack {
-            to { background: #000; color: #fff; }
+
+        /* 画面左側から黒が迫ってくるアニメーション */
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 0%;
+            background: #111; /* 黒 */
+            z-index: -1;
+            /* 1段階目: 左半分まで (3秒) */
+            /* 2段階目: 画面全体へ (8.5秒から開始) */
+            animation: bgSlideHalf 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       bgSlideFull 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 8.5s;
+        }
+        @keyframes bgSlideHalf {
+            to { width: 50%; }
+        }
+        @keyframes bgSlideFull {
+            from { width: 50%; }
+            to { width: 100%; }
         }
         
         /* ロゴ画像のサイズ調整 */
@@ -42,7 +59,7 @@
             max-width: 400px; 
             height: auto; 
             margin-bottom: 20px;
-            overflow: hidden; /* スライドイン時に外側が見えないようにする */
+            overflow: visible; /* 外側にはみ出た部分が見えるように */
         }
 
         /* --- SVG なだれアニメーション --- */
@@ -50,29 +67,25 @@
             opacity: 0;
         }
 
+        /* 0. Path 0 (元の黒背景) は画面背景を使うため非表示 */
+        .path-bg-black {
+            display: none !important;
+        }
+
         /* 1. ト (Path 5) */
         .path-to {
-            opacity: 1 !important; /* 最初から表示 */
-            animation: animTo 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 1 !important; 
+        }
+        /* JSで追加したグループ要素を動かす（確実に移動させるため） */
+        .group-to {
+            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0% { transform: translateX(-30px); } /* 中央左寄りからスタート */
+            0% { transform: translateX(-50px); } /* 中央左寄りからスタート */
             100% { transform: translateX(0); } /* 右へ移動して定位置へ */
         }
 
-        /* 2. 左の黒い塗りつぶし (Path 0) */
-        .path-bg-black {
-            opacity: 1 !important;
-            /* 左から黒が押されてくるようにワイプ */
-            clip-path: inset(0 100% 0 0); /* 初期状態 */
-            animation: animBgBlack 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-        @keyframes animBgBlack {
-            0% { clip-path: inset(0 100% 0 0); }
-            100% { clip-path: inset(0 0 0 0); }
-        }
-
-        /* 背景の白 (Path 1) は最初から表示（周りが白なので最初は見えない） */
+        /* 背景の白 (Path 1) は最初から表示 */
         .path-bg-white {
             opacity: 1 !important;
         }
@@ -81,8 +94,8 @@
         .path-ha-main {
             opacity: 1 !important;
             clip-path: inset(0 0 100% 0); /* 初期状態 */
-            animation: animStretchY 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 1.5s;
+            animation: animStretchY 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 3.0s;
         }
         @keyframes animStretchY {
             0% { clip-path: inset(0 0 100% 0); }
@@ -93,9 +106,9 @@
         .path-re-main {
             opacity: 1 !important;
             clip-path: inset(100% 60% 0 40%); /* 初期状態 */
-            animation: animReMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animReReveal 0.5s ease forwards 3.5s;
-            animation-delay: 1.8s, 3.5s;
+            animation: animReMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       animReReveal 1s ease forwards 5.5s;
+            animation-delay: 3.5s, 5.5s;
         }
         @keyframes animReMain {
             0% { clip-path: inset(100% 60% 0 40%); }
@@ -109,9 +122,9 @@
         .path-ke-main {
             opacity: 1 !important;
             clip-path: inset(0 100% 75% 0); /* 初期状態 */
-            animation: animKeMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animKeReveal 0.5s ease forwards 3.2s;
-            animation-delay: 2.1s, 3.2s;
+            animation: animKeMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       animKeReveal 1s ease forwards 5.5s;
+            animation-delay: 4.0s, 5.5s;
         }
         @keyframes animKeMain {
             0% { clip-path: inset(0 100% 75% 0); }
@@ -122,15 +135,15 @@
         }
 
         /* 6. ハの長めの2本線 (Path 7, 10) */
-        .path-ha-long-1 { animation: animFadeIn 0.4s ease forwards; animation-delay: 2.6s; }
-        .path-ha-long-2 { animation: animFadeIn 0.4s ease forwards; animation-delay: 2.8s; }
+        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 4.5s; }
+        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.0s; }
 
         /* 7. ケの短めの2本線 (Path 11) */
-        .path-ke-short { animation: animFadeIn 0.4s ease forwards; animation-delay: 3.8s; }
+        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.0s; }
 
         /* 8. 残りの文字 */
         .path-others {
-            animation: animFadeIn 0.6s ease forwards;
+            animation: animFadeIn 1s ease forwards;
         }
 
         @keyframes animFadeIn {
@@ -149,10 +162,11 @@
             letter-spacing: 2px;
             text-decoration: none;
             opacity: 0; /* 最初は隠しておく */
-            /* アニメーションが終わる頃(5秒後)にフェードインしてフワフワし始める */
-            animation: fadeInScroll 1s ease forwards 5.5s, 
-                       colorToWhite 2s ease forwards 5.5s, 
-                       bounce 2s infinite 6.5s;
+            z-index: 10;
+            /* 画面が黒くなる頃(8.5秒後)にフェードインして白文字になる */
+            animation: fadeInScroll 1s ease forwards 8.5s, 
+                       colorToWhite 1s ease forwards 8.5s, 
+                       bounce 2s infinite 9.5s;
         }
         .scroll-down::after {
             content: "";
@@ -161,7 +175,7 @@
             height: 40px;
             background: #111;
             margin: 10px auto 0;
-            animation: bgToWhite 2s ease forwards 5.5s;
+            animation: bgToWhite 1s ease forwards 8.5s;
         }
 
         @keyframes fadeInScroll {
