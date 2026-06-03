@@ -161,10 +161,10 @@
         /* 1. ト (Path 5) */
         .path-to {
             opacity: 1 !important;
-            transform: translate(350px, 934px);
+            transform: translate(350px, 891px);
             animation:
                 toColorInvert 2s ease forwards,
-                animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) both 2s;
+                animTo 1s cubic-bezier(0.2, 0.8, 0.2, 1) both 5.75s;
         }
 
         @keyframes toColorInvert {
@@ -179,7 +179,7 @@
 
         @keyframes animTo {
             0% {
-                transform: translate(350px, 934px);
+                transform: translate(350px, 891px);
             }
 
             100% {
@@ -187,10 +187,9 @@
             }
         }
 
-        /* 背景の白 (Path 1) は白丸と一緒にだんだん見えてくる */
+        /* 背景の白 (Path 1) は歪みがあるので非表示にする */
         .path-bg-white {
-            opacity: 0;
-            animation: animFadeIn 2s ease forwards;
+            display: none !important;
         }
 
         /* 3. ハの太線 (Path 9) - 右下から（丸の外から伸びるフェイク線から引き継ぐ） */
