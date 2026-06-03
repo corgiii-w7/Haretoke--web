@@ -20,7 +20,7 @@
         
         /* スクロール連動エリア */
         #hero-scroll-container {
-            height: 300vh; /* 3画面分のスクロールエリア */
+            height: 200vh; /* 2画面分のスクロールエリア（少し短めに） */
             position: relative;
         }
 
@@ -40,24 +40,13 @@
             overflow: hidden; /* 拡大した時に画面外にはみ出さないように */
         }
 
-        /* キャッチフレーズも絶対配置にして中心からずれないようにする */
-        #header-catchphrase {
-            position: absolute;
-            top: 70vh; /* ロゴの下あたり */
-            width: 100%;
-            text-align: center;
-            z-index: 3;
-            transition: opacity 0.5s;
-        }
-
-        /* ロゴ画像のコンテナ（黄金比の配置） */
+        /* ロゴ画像のコンテナ（中央配置） */
         header .logo-wrapper { 
-            position: absolute;
-            left: 30.926vw;
-            top: 45vh;
-            width: 60vw; /* かなり大きく配置 */
-            transform: translate(-30.926%, -50%) scale(1);
-            transform-origin: 30.926% 50%; /* 拡大の中心を30.926%に固定 */
+            width: 100%;
+            max-width: 400px; 
+            margin-bottom: 20px;
+            position: relative;
+            transform-origin: 50% 50%;
             z-index: 2;
         }
         
@@ -741,41 +730,22 @@
             if (scrollContainer && logoWrapper) {
                 window.addEventListener('scroll', () => {
                     const rect = scrollContainer.getBoundingClientRect();
-                    // rect.top はスクロールするとマイナスになる。
-                    // 0 から 始まり、最大で (300vh - 100vh) = 200vh 分マイナスになる
                     const scrollRange = rect.height - window.innerHeight;
                     let progress = -rect.top / scrollRange;
                     progress = Math.max(0, Math.min(1, progress));
 
-                    let scale = 1;
-                    let opacity = 1;
+                    // ロゴが画面幅ぴったりになるまでのスケールを計算
+                    const baseWidth = Math.min(window.innerWidth, 400);
+                    const targetScale = window.innerWidth / baseWidth;
 
-                    // スクロールの最初の10%はそのまま、その後急激に拡大
-                    if (progress > 0.1) {
-                        const zoomProgress = (progress - 0.1) / 0.9;
-                        // 1倍から最大80倍まで指数関数的に拡大
-                        scale = Math.pow(80, zoomProgress);
-                        
-                        // 文字のフェードアウト（拡大開始後すぐに消す）
-                        opacity = 1 - (zoomProgress * 3);
-                        opacity = Math.max(0, opacity);
-                    }
+                    // 1倍からターゲットスケールまで拡大
+                    let scale = 1 + (targetScale - 1) * progress;
 
-                    logoWrapper.style.transform = `translate(-30.926%, -50%) scale(${scale})`;
+                    logoWrapper.style.transform = `scale(${scale})`;
                     
-                    // キャッチフレーズ等もスクロールで消す
+                    // キャッチフレーズ等はスクロールで消す
                     if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
                     if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
-
-                    // 文字パス（白丸と黒波以外）の透明度を調整
-                    const paths = logoWrapper.querySelectorAll('path, line');
-                    paths.forEach(p => {
-                        // 白丸と黒波の要素はクラス名で除外
-                        if (!p.classList.contains('bg-white-circle') && 
-                            !p.classList.contains('bg-black-sweep')) {
-                            p.style.setProperty('opacity', opacity, 'important');
-                        }
-                    });
                 });
             }
             // ▲ ここまで ▲
