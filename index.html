@@ -34,13 +34,97 @@
         /* ロゴ画像のサイズ調整 */
         header .animated-logo { 
             width: 100%;
-            max-width: 400px; /* SVGの比率に合わせて少し大きめに */
+            max-width: 400px; 
             height: auto; 
             margin-bottom: 20px;
+            overflow: visible;
         }
 
-        /* SVGのパスフェードイン用アニメーション */
-        @keyframes pathFadeIn {
+        /* --- SVG なだれアニメーション --- */
+        .animated-logo path {
+            opacity: 0;
+        }
+
+        /* 1. ト (Path 5) */
+        .path-to {
+            animation: animTo 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes animTo {
+            0% { opacity: 0; transform: translateX(-30px); }
+            30% { opacity: 1; transform: translateX(-15px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        /* 2. 左の黒い塗りつぶし (Path 0) */
+        .path-bg-black {
+            animation: animBgBlack 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.8s;
+        }
+        @keyframes animBgBlack {
+            0% { opacity: 1; clip-path: inset(0 100% 0 0); }
+            100% { opacity: 1; clip-path: inset(0 0 0 0); }
+        }
+
+        /* 背景の白など (Path 1) は最初から出すか、Path0に合わせて出す */
+        .path-bg-white {
+            animation: animFadeIn 0.5s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        /* 3. ハの太線 (Path 9) - 上から */
+        .path-ha-main {
+            transform-origin: top;
+            animation: animStretchY 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 1.5s;
+        }
+        @keyframes animStretchY {
+            0% { opacity: 0; transform: scaleY(0); }
+            100% { opacity: 1; transform: scaleY(1); }
+        }
+
+        /* 4. レの太線 (Path 3) - 右下から（右側カーブを隠す） */
+        .path-re-main {
+            transform-origin: bottom right;
+            animation: animReMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       animReReveal 0.5s ease forwards 3.5s;
+            animation-delay: 1.8s, 3.5s;
+        }
+        @keyframes animReMain {
+            0% { opacity: 0; transform: translate(30px, 30px) scale(0); clip-path: inset(0 60% 0 0); }
+            100% { opacity: 1; transform: translate(0, 0) scale(1); clip-path: inset(0 60% 0 0); }
+        }
+        @keyframes animReReveal {
+            to { clip-path: inset(0 0 0 0); }
+        }
+
+        /* 5. ケの太線 (Path 2) - 左から（下側カーブを隠す） */
+        .path-ke-main {
+            transform-origin: left;
+            animation: animKeMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       animKeReveal 0.5s ease forwards 3.2s;
+            animation-delay: 2.1s, 3.2s;
+        }
+        @keyframes animKeMain {
+            0% { opacity: 0; transform: scaleX(0); clip-path: inset(0 0 75% 0); }
+            100% { opacity: 1; transform: scaleX(1); clip-path: inset(0 0 75% 0); }
+        }
+        @keyframes animKeReveal {
+            to { clip-path: inset(0 0 0 0); }
+        }
+
+        /* 6. ハの長めの2本線 (Path 7, 10) */
+        .path-ha-long-1 { animation: animFadeIn 0.4s ease forwards; animation-delay: 2.6s; }
+        .path-ha-long-2 { animation: animFadeIn 0.4s ease forwards; animation-delay: 2.8s; }
+
+        /* 7. ケの短めの2本線 (Path 11) */
+        .path-ke-short { animation: animFadeIn 0.4s ease forwards; animation-delay: 3.8s; }
+
+        /* 8. 残りの文字 */
+        .path-others {
+            animation: animFadeIn 0.6s ease forwards;
+        }
+
+        @keyframes animFadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
@@ -452,17 +536,31 @@
             liIg.innerHTML = `Instagram: <a href="${siteData.contact.instagramUrl}">${siteData.contact.instagramId}</a>`;
             snsList.appendChild(liIg);
 
-            // SVGアニメーション（順番に完成させる）
+            // SVGアニメーションの詳細な順序付け
             const logoPaths = document.querySelectorAll('.animated-logo path');
             if (logoPaths.length > 0) {
-                // 背景パス（通常1番目）は最初から表示
-                logoPaths[0].style.opacity = 1;
-                
-                // その他のパスを順番にフェードイン
-                for(let i = 1; i < logoPaths.length; i++) {
-                    logoPaths[i].style.opacity = 0;
-                    // パスの順番に応じて遅延させる（0.5秒後からスタートし、0.08秒ずつずらす）
-                    logoPaths[i].style.animation = `pathFadeIn 0.3s ease-out forwards ${0.5 + (i * 0.08)}s`;
+                // 特殊なパスのインデックス
+                const specialPaths = new Set([0, 1, 5, 9, 3, 2, 7, 10, 11]);
+
+                if(logoPaths[5]) logoPaths[5].classList.add('path-to');
+                if(logoPaths[0]) logoPaths[0].classList.add('path-bg-black');
+                if(logoPaths[1]) logoPaths[1].classList.add('path-bg-white');
+                if(logoPaths[9]) logoPaths[9].classList.add('path-ha-main');
+                if(logoPaths[3]) logoPaths[3].classList.add('path-re-main');
+                if(logoPaths[2]) logoPaths[2].classList.add('path-ke-main');
+                if(logoPaths[7]) logoPaths[7].classList.add('path-ha-long-1');
+                if(logoPaths[10]) logoPaths[10].classList.add('path-ha-long-2');
+                if(logoPaths[11]) logoPaths[11].classList.add('path-ke-short');
+
+                // 残りの文字を順番にフェードイン
+                let otherIndex = 0;
+                for(let i = 0; i < logoPaths.length; i++) {
+                    if (!specialPaths.has(i)) {
+                        logoPaths[i].classList.add('path-others');
+                        // 4.2秒後から少しずつずらして出現
+                        logoPaths[i].style.animationDelay = `${4.2 + (otherIndex * 0.05)}s`;
+                        otherIndex++;
+                    }
                 }
             }
         });
