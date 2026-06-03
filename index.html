@@ -18,10 +18,10 @@
         /* モノクロベースのデザイン（CSS） */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; color: #222; background-color: #fafafa; }
         
-        /* ヘッダー部分は黒背景で画面いっぱいに表示 */
+        /* ヘッダー部分は一面白の背景でスタート */
         header { 
-            background: #000; 
-            color: #fff; 
+            background: #fff; 
+            color: #111; 
             height: 100vh; /* 画面全体の高さ */
             display: flex;
             flex-direction: column;
@@ -37,7 +37,7 @@
             max-width: 400px; 
             height: auto; 
             margin-bottom: 20px;
-            overflow: visible;
+            overflow: hidden; /* スライドイン時に外側が見えないようにする */
         }
 
         /* --- SVG なだれアニメーション --- */
@@ -47,28 +47,28 @@
 
         /* 1. ト (Path 5) */
         .path-to {
+            opacity: 1 !important; /* 最初から表示 */
             animation: animTo 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0% { opacity: 0; transform: translateX(-30px); }
-            30% { opacity: 1; transform: translateX(-15px); }
-            100% { opacity: 1; transform: translateX(0); }
+            0% { transform: translateX(-200px); } /* 中央左寄りからスタート */
+            100% { transform: translateX(0); } /* 右へ移動して定位置へ */
         }
 
         /* 2. 左の黒い塗りつぶし (Path 0) */
         .path-bg-black {
-            animation: animBgBlack 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.8s;
+            opacity: 1 !important;
+            /* 左から黒が押されてくるように */
+            animation: animBgBlack 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animBgBlack {
-            0% { opacity: 1; clip-path: inset(0 100% 0 0); }
-            100% { opacity: 1; clip-path: inset(0 0 0 0); }
+            0% { transform: translateX(-1100px); } /* 完全に左の外側に隠す */
+            100% { transform: translateX(0); }
         }
 
-        /* 背景の白など (Path 1) は最初から出すか、Path0に合わせて出す */
+        /* 背景の白 (Path 1) は最初から表示（周りが白なので最初は見えない） */
         .path-bg-white {
-            animation: animFadeIn 0.5s ease forwards;
-            animation-delay: 0.8s;
+            opacity: 1 !important;
         }
 
         /* 3. ハの太線 (Path 9) - 上から */
@@ -135,20 +135,25 @@
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            color: #fff;
+            color: #111;
             font-size: 0.8rem;
             letter-spacing: 2px;
             text-decoration: none;
-            opacity: 0.8;
-            animation: bounce 2s infinite;
+            opacity: 0; /* 最初は隠しておく */
+            /* アニメーションが終わる頃(5秒後)にフェードインしてフワフワし始める */
+            animation: fadeInScroll 1s ease forwards 5s, bounce 2s infinite 6s;
         }
         .scroll-down::after {
             content: "";
             display: block;
             width: 1px;
             height: 40px;
-            background: #fff;
+            background: #111;
             margin: 10px auto 0;
+        }
+
+        @keyframes fadeInScroll {
+            to { opacity: 0.8; }
         }
 
         @keyframes bounce {
