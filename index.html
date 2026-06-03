@@ -97,15 +97,11 @@
             opacity: 0; /* 最初は隠す */
             transform-box: fill-box;
             transform-origin: center;
-            /* 白丸と一緒にだんだん見えてくる */
-            animation: animFadeIn 2s ease forwards;
-        }
-
-        /* JSで追加したグループ要素を動かす（確実に移動させるため） */
-        .group-to {
             transform: translateX(-80px); /* 最初は中央左側に配置 */
-            /* 白丸が見えた後(2秒後)に、黒背景が迫るのと同時に3秒かけて中央(定位置)へ移動 */
-            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
+            /* 白丸と一緒にだんだん見え(0〜2秒)、その後黒背景が迫るのと同時に中央へ移動(2〜5秒) */
+            animation: 
+                animFadeIn 2s ease forwards,
+                animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
         @keyframes animTo {
             0% { transform: translateX(-80px); } 
