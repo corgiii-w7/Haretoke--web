@@ -50,13 +50,14 @@
             width: 0%;
             background: #111; /* 黒 */
             z-index: -1;
-            /* 1段階目: 丸の中の黒の位置と同じ位置まで (3秒) */
-            /* 2段階目: 画面全体へ (8.5秒から開始) */
-            animation: bgSlideHalf 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       bgSlideFull 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 8.5s;
+            /* 1段階目: トが出るのを0.5秒待ってから、丸の中の黒の位置と同じ位置まで (3.5秒) */
+            /* 2段階目: 画面全体へ (9.0秒から開始) */
+            animation: bgSlideHalf 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+                       bgSlideFull 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 9s;
         }
         @keyframes bgSlideHalf {
-            to { width: var(--bg-boundary); }
+            0%, 14.28% { width: 0%; } /* 最初の0.5秒間は停止 */
+            100% { width: var(--bg-boundary); }
         }
         @keyframes bgSlideFull {
             from { width: var(--bg-boundary); }
@@ -85,15 +86,24 @@
         /* 1. ト (Path 5) */
         .path-to {
             opacity: 1 !important; 
+            transform-box: fill-box;
+            transform-origin: center;
+            /* 0.5秒でぽんっと出る */
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            40% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         /* JSで追加したグループ要素を動かす（確実に移動させるため） */
         .group-to {
-            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation: animTo 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0% { transform: translateX(-150px); opacity: 0; } /* さらに左からスタート */
-            10% { opacity: 1; }
-            100% { transform: translateX(0); opacity: 1; } /* 右へ移動して定位置へ */
+            0%, 14.28% { transform: translateX(-150px); } /* 最初の0.5秒間は左で停止 */
+            100% { transform: translateX(0); } /* 右へ移動して定位置へ */
         }
 
         /* 背景の白 (Path 1) は最初から表示 */
@@ -106,7 +116,7 @@
             opacity: 1 !important;
             clip-path: inset(0 0 100% 0); /* 初期状態 */
             animation: animStretchY 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 3.0s;
+            animation-delay: 3.5s;
         }
         @keyframes animStretchY {
             0% { clip-path: inset(0 0 100% 0); }
@@ -118,8 +128,8 @@
             opacity: 1 !important;
             clip-path: inset(100% 60% 0 40%); /* 初期状態 */
             animation: animReMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animReReveal 1s ease forwards 5.5s;
-            animation-delay: 3.5s, 5.5s;
+                       animReReveal 1s ease forwards 6.0s;
+            animation-delay: 4.0s, 6.0s;
         }
         @keyframes animReMain {
             0% { clip-path: inset(100% 60% 0 40%); }
@@ -134,8 +144,8 @@
             opacity: 1 !important;
             clip-path: inset(0 100% 75% 0); /* 初期状態 */
             animation: animKeMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animKeReveal 1s ease forwards 5.5s;
-            animation-delay: 4.0s, 5.5s;
+                       animKeReveal 1s ease forwards 6.0s;
+            animation-delay: 4.5s, 6.0s;
         }
         @keyframes animKeMain {
             0% { clip-path: inset(0 100% 75% 0); }
@@ -146,11 +156,11 @@
         }
 
         /* 6. ハの長めの2本線 (Path 7, 10) */
-        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 4.5s; }
-        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.0s; }
+        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.0s; }
+        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.5s; }
 
         /* 7. ケの短めの2本線 (Path 11) */
-        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.0s; }
+        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.5s; }
 
         /* 8. 残りの文字 */
         .path-others {
@@ -174,10 +184,10 @@
             text-decoration: none;
             opacity: 0; /* 最初は隠しておく */
             z-index: 10;
-            /* 画面が黒くなる頃(8.5秒後)にフェードインして白文字になる */
-            animation: fadeInScroll 1s ease forwards 8.5s, 
-                       colorToWhite 1s ease forwards 8.5s, 
-                       bounce 2s infinite 9.5s;
+            /* 画面が黒くなる頃(9.0秒後)にフェードインして白文字になる */
+            animation: fadeInScroll 1s ease forwards 9.0s, 
+                       colorToWhite 1s ease forwards 9.0s, 
+                       bounce 2s infinite 10.0s;
         }
         .scroll-down::after {
             content: "";
@@ -186,7 +196,7 @@
             height: 40px;
             background: #111;
             margin: 10px auto 0;
-            animation: bgToWhite 1s ease forwards 8.5s;
+            animation: bgToWhite 1s ease forwards 9.0s;
         }
 
         @keyframes fadeInScroll {
