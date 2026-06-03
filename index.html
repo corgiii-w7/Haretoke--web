@@ -160,26 +160,27 @@
 
         /* 1. ト (Path 5) */
         .path-to {
-            opacity: 1 !important;
+            opacity: 0 !important;
             transform: translate(350px, 891px);
             animation:
-                toColorInvert 2s ease forwards,
-                animTo 1s cubic-bezier(0.2, 0.8, 0.2, 1) both 5.75s;
+                animFadeIn 2s ease forwards,
+                animToCenter 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s,
+                animToFinal 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both 5.75s;
         }
 
-        @keyframes toColorInvert {
+        @keyframes animToCenter {
             0% {
-                fill: #fff;
+                transform: translate(350px, 891px);
             }
 
             100% {
-                fill: #010101;
+                transform: translate(484px, 891px);
             }
         }
 
-        @keyframes animTo {
+        @keyframes animToFinal {
             0% {
-                transform: translate(350px, 891px);
+                transform: translate(484px, 891px);
             }
 
             100% {
