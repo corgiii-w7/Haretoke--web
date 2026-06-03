@@ -624,8 +624,8 @@
                 for(let i = 0; i < logoPaths.length; i++) {
                     if (!specialPaths.has(i)) {
                         logoPaths[i].classList.add('path-others');
-                        // 4.2秒後から少しずつずらして出現
-                        logoPaths[i].style.animationDelay = `${4.2 + (otherIndex * 0.05)}s`;
+                        // 8.5秒後から少しずつずらして出現
+                        logoPaths[i].style.animationDelay = `${8.5 + (otherIndex * 0.1)}s`;
                         otherIndex++;
                     }
                 }
