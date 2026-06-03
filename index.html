@@ -111,45 +111,47 @@
             opacity: 1 !important;
         }
 
-        /* 3. ハの太線 (Path 9) - 上から */
+        /* 3. ハの太線 (Path 9) - 右下から */
         .path-ha-main {
             opacity: 1 !important;
-            clip-path: inset(0 0 100% 0); /* 初期状態 */
-            animation: animStretchY 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            clip-path: inset(100% 0 0 100%); /* 初期状態 (右下) */
+            animation: animHaMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             animation-delay: 3.5s;
         }
-        @keyframes animStretchY {
-            0% { clip-path: inset(0 0 100% 0); }
+        @keyframes animHaMain {
+            0% { clip-path: inset(100% 0 0 100%); }
             100% { clip-path: inset(0 0 0 0); }
         }
 
-        /* 4. レの太線 (Path 3) - 右下から（右側カーブを隠す） */
+        /* 4. レの太線 (Path 3) - 上から（下側のカーブ線を隠す） */
         .path-re-main {
             opacity: 1 !important;
-            clip-path: inset(100% 60% 0 40%); /* 初期状態 */
+            clip-path: inset(0 0 100% 0); /* 初期状態 (上端のみ) */
             animation: animReMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animReReveal 1s ease forwards 6.0s;
-            animation-delay: 4.0s, 6.0s;
+                       animReReveal 1s ease forwards 5.5s;
+            animation-delay: 3.5s, 5.5s;
         }
         @keyframes animReMain {
-            0% { clip-path: inset(100% 60% 0 40%); }
-            100% { clip-path: inset(0 60% 0 0); }
+            0% { clip-path: inset(0 0 100% 0); }
+            /* 下35%のカーブを隠した状態まで伸びる */
+            100% { clip-path: inset(0 0 35% 0); }
         }
         @keyframes animReReveal {
             to { clip-path: inset(0 0 0 0); }
         }
 
-        /* 5. ケの太線 (Path 2) - 左から（下側カーブを隠す） */
+        /* 5. ケの太線 (Path 2) - 左から（下側のカーブ線を隠す） */
         .path-ke-main {
             opacity: 1 !important;
-            clip-path: inset(0 100% 75% 0); /* 初期状態 */
+            clip-path: inset(0 100% 80% 0); /* 初期状態 (左上端のみ) */
             animation: animKeMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animKeReveal 1s ease forwards 6.0s;
-            animation-delay: 4.5s, 6.0s;
+                       animKeReveal 1s ease forwards 5.5s;
+            animation-delay: 3.5s, 5.5s;
         }
         @keyframes animKeMain {
-            0% { clip-path: inset(0 100% 75% 0); }
-            100% { clip-path: inset(0 0 75% 0); }
+            0% { clip-path: inset(0 100% 80% 0); }
+            /* 下80%のカーブを隠した状態(横太棒のみ)で左から右へ伸びる */
+            100% { clip-path: inset(0 0 80% 0); }
         }
         @keyframes animKeReveal {
             to { clip-path: inset(0 0 0 0); }
