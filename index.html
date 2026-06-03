@@ -18,10 +18,10 @@
         /* モノクロベースのデザイン（CSS） */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; color: #222; background-color: #fafafa; }
         
-        /* ヘッダー部分は一面白の背景でスタート */
+        /* ヘッダー部分は一面黒の背景でスタート */
         header { 
-            background: #fff; 
-            color: #111; 
+            background: #111; 
+            color: #fff; 
             height: 100vh; /* 画面全体の高さ */
             display: flex;
             flex-direction: column;
@@ -32,36 +32,45 @@
             z-index: 1;
         }
 
-        :root {
-            /* SVGの表示幅 (最大400px) */
-            --svg-width: min(100vw, 400px);
-            /* 白黒境界線の位置 (中心からのズレ)
-               白の形(Path 1)の左端はSVG幅の 30.925% の位置にあります。
-               中央(50%)からの距離は 50% - 30.925% = 19.075%
-               よって、中心より --svg-width * 0.19075 だけ左になります。*/
-            --bg-boundary: calc(50% - (var(--svg-width) * 0.19075));
+        /* ロゴ画像のサイズ調整 */
+        header .animated-logo { 
+            width: 100%;
+            max-width: 400px; 
+            height: auto; 
+            margin-bottom: 20px;
+            overflow: visible; /* 外側にはみ出た部分が見えるように */
+            position: relative; /* 擬似要素の基準 */
         }
 
-        /* 画面左側から黒が迫ってくるアニメーション */
-        header::before {
+        /* 丸の中で左端から黒が迫るアニメーション */
+        header .animated-logo::before {
             content: "";
             position: absolute;
             top: 0; left: 0; bottom: 0;
             width: 0%;
             background: #111; /* 黒 */
-            z-index: -1;
-            /* 1段階目: トが出るのを0.5秒待ってから、丸の中の黒の位置と同じ位置まで (3.5秒) */
-            /* 2段階目: 画面全体へ (9.0秒から開始) */
-            animation: bgSlideHalf 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       bgSlideFull 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 9s;
+            z-index: -1; /* 白丸の上に黒を被せるが、文字よりは下 */
+            /* 白丸が見えた後(2秒後)から、トの移動と同時に3秒かけて境界線まで迫る */
+            animation: bgSlideHalf 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
         @keyframes bgSlideHalf {
-            0%, 14.28% { width: 0%; } /* 最初の0.5秒間は停止 */
-            100% { width: var(--bg-boundary); }
+            0% { width: 0%; }
+            100% { width: 30.926%; } /* SVG内部の白黒境界線の位置 */
         }
-        @keyframes bgSlideFull {
-            from { width: var(--bg-boundary); }
-            to { width: 100%; }
+
+        /* 真っ黒から浮かび上がる白丸の背景 */
+        header .animated-logo::after {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            /* SVGの1080x1920比率の中で真円になるサイズ (幅約600px分) */
+            width: 73.88%; height: 41.56%; 
+            background: #fff;
+            border-radius: 50%;
+            z-index: -2; /* 一番下 */
+            opacity: 0;
+            animation: animFadeIn 2s ease forwards; /* 最初だんだん見えてくる */
         }
         
         /* ロゴ画像のサイズ調整 */
@@ -85,51 +94,49 @@
 
         /* 1. ト (Path 5) */
         .path-to {
-            opacity: 1 !important; 
+            opacity: 0; /* 最初は隠す */
             transform-box: fill-box;
             transform-origin: center;
-            /* 0.5秒でぽんっと出る */
-            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            40% { opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+            /* 白丸と一緒にだんだん見えてくる */
+            animation: animFadeIn 2s ease forwards;
         }
 
         /* JSで追加したグループ要素を動かす（確実に移動させるため） */
         .group-to {
-            animation: animTo 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            transform: translateX(-80px); /* 最初は中央左側に配置 */
+            /* 白丸が見えた後(2秒後)に、黒背景が迫るのと同時に3秒かけて中央(定位置)へ移動 */
+            animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
         @keyframes animTo {
-            0%, 14.28% { transform: translateX(-80px); } /* 最初の0.5秒間は中央左寄りで待機(ぽんっと出る) */
-            100% { transform: translateX(0); } /* 黒背景が迫るのと同時に定位置へ移動 */
+            0% { transform: translateX(-80px); } 
+            100% { transform: translateX(0); }
         }
 
-        /* 背景の白 (Path 1) は最初から表示 */
+        /* 背景の白 (Path 1) は白丸と一緒にだんだん見えてくる */
         .path-bg-white {
-            opacity: 1 !important;
+            opacity: 0;
+            animation: animFadeIn 2s ease forwards;
         }
 
-        /* 3. ハの太線 (Path 9) - 右下から */
+        /* 3. ハの太線 (Path 9) - 右下から（丸の外から） */
         .path-ha-main {
             opacity: 1 !important;
             clip-path: inset(100% 0 0 100%); /* 初期状態 (右下) */
             animation: animHaMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 3.5s;
+            animation-delay: 5.0s;
         }
         @keyframes animHaMain {
             0% { clip-path: inset(100% 0 0 100%); }
             100% { clip-path: inset(0 0 0 0); }
         }
 
-        /* 4. レの太線 (Path 3) - 上から（下側のカーブ線を隠す） */
+        /* 4. レの太線 (Path 3) - 上から（丸の外から） */
         .path-re-main {
             opacity: 1 !important;
             clip-path: inset(0 0 100% 0); /* 初期状態 (上端のみ) */
             animation: animReMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animReReveal 1s ease forwards 5.5s;
-            animation-delay: 3.5s, 5.5s;
+                       animReReveal 1s ease forwards 7.0s;
+            animation-delay: 5.0s, 7.0s;
         }
         @keyframes animReMain {
             0% { clip-path: inset(0 0 100% 0); }
@@ -140,13 +147,13 @@
             to { clip-path: inset(0 0 0 0); }
         }
 
-        /* 5. ケの太線 (Path 2) - 左から（下側のカーブ線を隠す） */
+        /* 5. ケの太線 (Path 2) - 左から（丸の外から） */
         .path-ke-main {
             opacity: 1 !important;
             clip-path: inset(0 100% 80% 0); /* 初期状態 (左上端のみ) */
             animation: animKeMain 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animKeReveal 1s ease forwards 5.5s;
-            animation-delay: 3.5s, 5.5s;
+                       animKeReveal 1s ease forwards 7.0s;
+            animation-delay: 5.0s, 7.0s;
         }
         @keyframes animKeMain {
             0% { clip-path: inset(0 100% 80% 0); }
@@ -158,11 +165,11 @@
         }
 
         /* 6. ハの長めの2本線 (Path 7, 10) */
-        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.0s; }
-        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 5.5s; }
+        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.5s; }
+        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 7.0s; }
 
         /* 7. ケの短めの2本線 (Path 11) */
-        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.5s; }
+        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 8.0s; }
 
         /* 8. 残りの文字 */
         .path-others {
@@ -186,10 +193,10 @@
             text-decoration: none;
             opacity: 0; /* 最初は隠しておく */
             z-index: 10;
-            /* 画面が黒くなる頃(9.0秒後)にフェードインして白文字になる */
-            animation: fadeInScroll 1s ease forwards 9.0s, 
-                       colorToWhite 1s ease forwards 9.0s, 
-                       bounce 2s infinite 10.0s;
+            /* 10.0秒後にフェードインして白文字になる */
+            animation: fadeInScroll 1s ease forwards 10.0s, 
+                       colorToWhite 1s ease forwards 10.0s, 
+                       bounce 2s infinite 11.0s;
         }
         .scroll-down::after {
             content: "";
@@ -198,7 +205,7 @@
             height: 40px;
             background: #111;
             margin: 10px auto 0;
-            animation: bgToWhite 1s ease forwards 9.0s;
+            animation: bgToWhite 1s ease forwards 10.0s;
         }
 
         @keyframes fadeInScroll {
