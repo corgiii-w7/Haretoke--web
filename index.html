@@ -1,61 +1,86 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>劇団ハレトケ 公式サイト</title>
-    <style>      
+    <style>
         /* スクロールを滑らかに */
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         /* ページをフワッと表示させるアニメーション */
-        body { animation: fadeIn 1.2s ease-out; }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
+        body {
+            animation: fadeIn 1.2s ease-out;
         }
-        
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* モノクロベースのデザイン（CSS） */
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; color: #222; background-color: #fafafa; }
-        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            color: #222;
+            background-color: #fafafa;
+        }
+
         /* スクロール連動エリア */
         #hero-scroll-container {
-            height: 200vh; /* 2画面分のスクロールエリア（少し短めに） */
+            height: 200vh;
+            /* 2画面分のスクロールエリア（少し短めに） */
             position: relative;
         }
 
         /* ヘッダー部分は一面黒の背景でスタート */
-        header { 
-            background: #111; 
-            color: #fff; 
-            height: 100vh; /* 画面全体の高さ */
+        header {
+            background: #111;
+            color: #fff;
+            height: 100vh;
+            /* 画面全体の高さ */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: sticky; /* スクロールしても画面に張り付く */
+            position: sticky;
+            /* スクロールしても画面に張り付く */
             top: 0;
-            text-align: center; 
+            text-align: center;
             z-index: 1;
-            overflow: hidden; /* 拡大した時に画面外にはみ出さないように */
+            overflow: hidden;
+            /* 拡大した時に画面外にはみ出さないように */
         }
 
         /* ロゴ画像のコンテナ（中央配置） */
-        header .logo-wrapper { 
+        header .logo-wrapper {
             width: 100%;
-            max-width: 400px; 
+            max-width: 400px;
             margin-bottom: 20px;
             position: relative;
             transform-origin: 50% 50%;
             z-index: 2;
         }
-        
+
         /* SVG自体の設定 */
         header .animated-logo {
             width: 100%;
             height: auto;
             display: block;
-            overflow: visible; /* 外側にはみ出た部分が見えるように */
+            overflow: visible;
+            /* 外側にはみ出た部分が見えるように */
         }
 
         /* SVG内部の完璧な白丸背景 */
@@ -68,30 +93,59 @@
         .bg-black-sweep {
             animation: animSvgSweep 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2s;
         }
+
         @keyframes animSvgSweep {
-            0% { width: 0; }
-            100% { width: 193px; } /* X=141 から X=334 までを埋める */
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 193px;
+            }
+
+            /* X=141 から X=334 までを埋める */
         }
 
         /* 丸の外から伸びてくるフェイク線 */
         .fake-line {
-            opacity: 0; 
+            opacity: 0;
             animation: animFakeLine 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 5.0s;
         }
+
         @keyframes animFakeLine {
-            0% { stroke-dashoffset: var(--len); opacity: 1; }
-            50% { stroke-dashoffset: 0; opacity: 1; } /* パスに到達 */
-            99% { stroke-dashoffset: calc(var(--len) * -1); opacity: 1; } /* 尻尾が追いつく */
-            100% { stroke-dashoffset: calc(var(--len) * -1); opacity: 0; } /* 消える */
+            0% {
+                stroke-dashoffset: var(--len);
+                opacity: 1;
+            }
+
+            50% {
+                stroke-dashoffset: 0;
+                opacity: 1;
+            }
+
+            /* パスに到達 */
+            99% {
+                stroke-dashoffset: calc(var(--len) * -1);
+                opacity: 1;
+            }
+
+            /* 尻尾が追いつく */
+            100% {
+                stroke-dashoffset: calc(var(--len) * -1);
+                opacity: 0;
+            }
+
+            /* 消える */
         }
-        
+
         /* ロゴ画像のサイズ調整 */
-        header .animated-logo { 
+        header .animated-logo {
             width: 100%;
-            max-width: 400px; 
-            height: auto; 
+            max-width: 400px;
+            height: auto;
             margin-bottom: 20px;
-            overflow: visible; /* 外側にはみ出た部分が見えるように */
+            overflow: visible;
+            /* 外側にはみ出た部分が見えるように */
         }
 
         /* --- SVG なだれアニメーション --- */
@@ -107,18 +161,30 @@
         /* 1. ト (Path 5) */
         .path-to {
             opacity: 1 !important;
-            transform: translate(350px, 934px); 
-            animation: 
+            transform: translate(350px, 934px);
+            animation:
                 toColorInvert 2s ease forwards,
                 animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) both 2s;
         }
+
         @keyframes toColorInvert {
-            0% { fill: #fff; }
-            100% { fill: #010101; }
+            0% {
+                fill: #fff;
+            }
+
+            100% {
+                fill: #010101;
+            }
         }
+
         @keyframes animTo {
-            0% { transform: translate(350px, 934px); } 
-            100% { transform: translate(513px, 934px); }
+            0% {
+                transform: translate(350px, 934px);
+            }
+
+            100% {
+                transform: translate(513px, 934px);
+            }
         }
 
         /* 背景の白 (Path 1) は白丸と一緒にだんだん見えてくる */
@@ -130,55 +196,93 @@
         /* 3. ハの太線 (Path 9) - 右下から（丸の外から伸びるフェイク線から引き継ぐ） */
         .path-ha-main {
             opacity: 1 !important;
-            clip-path: inset(100% 0 0 100%); /* 初期状態 (右下) */
+            clip-path: inset(100% 0 0 100%);
+            /* 初期状態 (右下) */
             animation: animHaMain 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 5.75s; /* フェイク線が到達した瞬間に開始 */
+            animation-delay: 5.75s;
+            /* フェイク線が到達した瞬間に開始 */
         }
+
         @keyframes animHaMain {
-            0% { clip-path: inset(100% 0 0 100%); }
-            100% { clip-path: inset(0 0 0 0); }
+            0% {
+                clip-path: inset(100% 0 0 100%);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
         }
 
         /* 4. レの太線 (Path 3) - 上から（丸の外から伸びるフェイク線から引き継ぐ） */
         .path-re-main {
             opacity: 1 !important;
-            clip-path: inset(0 0 100% 0); /* 初期状態 (上端のみ) */
+            clip-path: inset(0 0 100% 0);
+            /* 初期状態 (上端のみ) */
             animation: animReMain 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animReReveal 1s ease forwards 7.0s;
+                animReReveal 1s ease forwards 7.0s;
             animation-delay: 5.75s, 7.0s;
         }
+
         @keyframes animReMain {
-            0% { clip-path: inset(0 0 100% 0); }
+            0% {
+                clip-path: inset(0 0 100% 0);
+            }
+
             /* 下35%のカーブを隠した状態まで伸びる */
-            100% { clip-path: inset(0 0 35% 0); }
+            100% {
+                clip-path: inset(0 0 35% 0);
+            }
         }
+
         @keyframes animReReveal {
-            to { clip-path: inset(0 0 0 0); }
+            to {
+                clip-path: inset(0 0 0 0);
+            }
         }
 
         /* 5. ケの太線 (Path 2) - 左から（丸の外から伸びるフェイク線から引き継ぐ） */
         .path-ke-main {
             opacity: 1 !important;
-            clip-path: inset(0 100% 80% 0); /* 初期状態 (左上端のみ) */
+            clip-path: inset(0 100% 80% 0);
+            /* 初期状態 (左上端のみ) */
             animation: animKeMain 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-                       animKeReveal 1s ease forwards 7.0s;
+                animKeReveal 1s ease forwards 7.0s;
             animation-delay: 5.75s, 7.0s;
         }
+
         @keyframes animKeMain {
-            0% { clip-path: inset(0 100% 80% 0); }
+            0% {
+                clip-path: inset(0 100% 80% 0);
+            }
+
             /* 下80%のカーブを隠した状態(横太棒のみ)で左から右へ伸びる */
-            100% { clip-path: inset(0 0 80% 0); }
+            100% {
+                clip-path: inset(0 0 80% 0);
+            }
         }
+
         @keyframes animKeReveal {
-            to { clip-path: inset(0 0 0 0); }
+            to {
+                clip-path: inset(0 0 0 0);
+            }
         }
 
         /* 6. ハの長めの2本線 (Path 7, 10) */
-        .path-ha-long-1 { animation: animFadeIn 0.8s ease forwards; animation-delay: 6.5s; }
-        .path-ha-long-2 { animation: animFadeIn 0.8s ease forwards; animation-delay: 7.0s; }
+        .path-ha-long-1 {
+            animation: animFadeIn 0.8s ease forwards;
+            animation-delay: 6.5s;
+        }
+
+        .path-ha-long-2 {
+            animation: animFadeIn 0.8s ease forwards;
+            animation-delay: 7.0s;
+        }
 
         /* 7. ケの短めの2本線 (Path 11) */
-        .path-ke-short { animation: animFadeIn 0.8s ease forwards; animation-delay: 8.0s; }
+        .path-ke-short {
+            animation: animFadeIn 0.8s ease forwards;
+            animation-delay: 8.0s;
+        }
 
         /* 8. 残りの文字 */
         .path-others {
@@ -186,8 +290,13 @@
         }
 
         @keyframes animFadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         /* 下へスクロールを促すアイコン */
@@ -200,13 +309,15 @@
             font-size: 0.8rem;
             letter-spacing: 2px;
             text-decoration: none;
-            opacity: 0; /* 最初は隠しておく */
+            opacity: 0;
+            /* 最初は隠しておく */
             z-index: 10;
             /* 10.0秒後にフェードインして白文字になる */
-            animation: fadeInScroll 1s ease forwards 10.0s, 
-                       colorToWhite 1s ease forwards 10.0s, 
-                       bounce 2s infinite 11.0s;
+            animation: fadeInScroll 1s ease forwards 10.0s,
+                colorToWhite 1s ease forwards 10.0s,
+                bounce 2s infinite 11.0s;
         }
+
         .scroll-down::after {
             content: "";
             display: block;
@@ -218,21 +329,42 @@
         }
 
         @keyframes fadeInScroll {
-            to { opacity: 0.8; }
+            to {
+                opacity: 0.8;
+            }
         }
-        @keyframes colorToWhite { 
-            to { color: #fff; } 
+
+        @keyframes colorToWhite {
+            to {
+                color: #fff;
+            }
         }
-        @keyframes bgToWhite { 
-            to { background: #fff; } 
+
+        @keyframes bgToWhite {
+            to {
+                background: #fff;
+            }
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-            40% { transform: translate(-50%, -10px); }
-            60% { transform: translate(-50%, -5px); }
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translate(-50%, 0);
+            }
+
+            40% {
+                transform: translate(-50%, -10px);
+            }
+
+            60% {
+                transform: translate(-50%, -5px);
+            }
         }
-        
+
         /* メインレイアウト（2カラム） */
         .main-layout {
             display: flex;
@@ -242,7 +374,8 @@
 
         /* 左側：サイドバー（黒） */
         .sidebar {
-            flex: 0 0 30.926%; /* ロゴの黒い部分の比率と完璧に一致させる */
+            flex: 0 0 30.926%;
+            /* ロゴの黒い部分の比率と完璧に一致させる */
             width: 30.926%;
             background: #111;
             color: #fff;
@@ -273,68 +406,121 @@
         }
 
         /* メニューバーは縦並びに */
-        nav { 
+        nav {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 25px;
         }
-        nav a { text-decoration: none; color: #fff; font-weight: bold; font-size: 1rem; letter-spacing: 2px; transition: color 0.3s; }
-        nav a:hover { color: #888; }
-        
-        /* 各セクション */
-        section { padding: 4rem 1rem; max-width: 800px; margin: auto; border-bottom: 1px solid #eee; }
-        
-        /* 見出しは黒のシンプルなアクセント */
-        h2 { border-left: 5px solid #111; padding-left: 15px; font-size: 1.5rem; letter-spacing: 2px; }
-        h3 { color: #444; margin-top: 2rem; }
-        
-        /* フッター */
-        footer { background: #fafafa; color: #111; text-align: center; padding: 2rem; margin-top: 3rem; font-size: 0.8rem; letter-spacing: 1px; border-top: 1px solid #eee; }
-        
-        /* リンクの基本色を黒に */
-        a { color: #111; }
-        a:hover { color: #888; }
 
-                #about {
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #888;
+        }
+
+        /* 各セクション */
+        section {
+            padding: 4rem 1rem;
+            max-width: 800px;
+            margin: auto;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 見出しは黒のシンプルなアクセント */
+        h2 {
+            border-left: 5px solid #111;
+            padding-left: 15px;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        h3 {
+            color: #444;
+            margin-top: 2rem;
+        }
+
+        /* フッター */
+        footer {
+            background: #fafafa;
+            color: #111;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border-top: 1px solid #eee;
+        }
+
+        /* リンクの基本色を黒に */
+        a {
+            color: #111;
+        }
+
+        a:hover {
+            color: #888;
+        }
+
+        #about {
             position: relative;
             /* 文字が見やすいように上下の余白を少し広めに */
-            padding: 5rem 2rem; 
+            padding: 5rem 2rem;
         }
 
         /* ⬇︎⬇︎ 画像のサイズを統一する設定 ⬇︎⬇︎ */
         .media-box img {
             width: 100%;
-            max-width: 320px;           /* ポスターが大きくなりすぎないよう最大幅を制限 */
-            aspect-ratio: 1 / 1.414;    /* ポスターの黄金比（A4やB5サイズ）に強制統一 */
-            object-fit: cover;          /* 画像が歪まないように、はみ出た部分は綺麗にカット */
-            border-radius: 4px;         /* 角をほんの少し丸くする */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* ポスターに薄い影をつけて立体感を出す */
-            margin: 0 auto;             /* 中央に配置 */
+            max-width: 320px;
+            /* ポスターが大きくなりすぎないよう最大幅を制限 */
+            aspect-ratio: 1 / 1.414;
+            /* ポスターの黄金比（A4やB5サイズ）に強制統一 */
+            object-fit: cover;
+            /* 画像が歪まないように、はみ出た部分は綺麗にカット */
+            border-radius: 4px;
+            /* 角をほんの少し丸くする */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* ポスターに薄い影をつけて立体感を出す */
+            margin: 0 auto;
+            /* 中央に配置 */
             display: block;
         }
 
         /* 動画用の設定は分けて残しておきます */
-        .media-box iframe, 
+        .media-box iframe,
         .media-box video {
             max-width: 100%;
             height: auto;
             border-radius: 4px;
         }
+
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
 
         /* ⬇︎⬇︎ aboutの背景画像設定 ⬇︎⬇︎ */
         #about::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             /* 背景にしたい画像のファイル名↓ */
-            background-image: url('gekidan haretoke_logo_yoko_BK_English.jpg'); 
-            background-size: cover;        /* 枠いっぱいに広げる */
-            background-position: center;   /* 画像の中央を表示 */
-            opacity: 0.15;                 /* 画像の薄さ（0.0で透明、1.0でクッキリ） */
-            z-index: -1;                   /* 文字の後ろに配置する魔法のコード */
+            background-image: url('gekidan haretoke_logo_yoko_BK_English.jpg');
+            background-size: cover;
+            /* 枠いっぱいに広げる */
+            background-position: center;
+            /* 画像の中央を表示 */
+            opacity: 0.15;
+            /* 画像の薄さ（0.0で透明、1.0でクッキリ） */
+            z-index: -1;
+            /* 文字の後ろに配置する魔法のコード */
         }
 
         /* ⬇︎⬇︎ MEMORYのドロップダウンメニュー設定 ⬇︎⬇︎ */
@@ -342,23 +528,25 @@
             display: block;
             position: relative;
         }
-        
-        nav .dropdown > a {
+
+        nav .dropdown>a {
             margin: 0;
             cursor: pointer;
         }
 
         nav .dropdown-content {
-            display: none; /* 普段は隠しておく */
+            display: none;
+            /* 普段は隠しておく */
             position: absolute;
             top: 100%;
             left: 50%;
-            transform: translateX(-50%); /* 真下に中央揃えで配置 */
+            transform: translateX(-50%);
+            /* 真下に中央揃えで配置 */
             flex-direction: column;
             align-items: center;
             background-color: #222;
             min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             border: 1px solid #333;
             z-index: 10;
             border-radius: 4px;
@@ -367,7 +555,8 @@
         }
 
         nav .dropdown-content a {
-            display: block; /* 縦に並べる */
+            display: block;
+            /* 縦に並べる */
             margin: 0;
             padding: 12px 20px;
             font-size: 0.85rem;
@@ -379,11 +568,13 @@
         }
 
         nav .dropdown-content a:last-child {
-            border-bottom: none; /* 一番下の線は消す */
+            border-bottom: none;
+            /* 一番下の線は消す */
         }
 
         nav .dropdown-content a:hover {
-            background-color: #333; /* カーソルを乗せた時少し色を変える */
+            background-color: #333;
+            /* カーソルを乗せた時少し色を変える */
             color: #fff;
         }
 
@@ -394,188 +585,603 @@
         }
 
         @keyframes fadeInDown {
-            0% { opacity: 0; transform: translate(-50%, 0); }
-            100% { opacity: 1; transform: translate(-50%, 0); }
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
         }
+
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
-        
+
         /* ⬇︎⬇︎ メニューがすぐ消えないように「透明な橋」を架ける ⬇︎⬇︎ */
         nav .dropdown-content::before {
             content: "";
             position: absolute;
-            top: -20px; /* メニューの少し上まで判定エリアを広げる */
+            top: -20px;
+            /* メニューの少し上まで判定エリアを広げる */
             left: 0;
             width: 100%;
-            height: 20px; /* 隙間を埋める透明な橋の高さ */
+            height: 20px;
+            /* 隙間を埋める透明な橋の高さ */
+        }
+
+        /* ⬇︎⬇︎ ハンバーガーメニューとオーバーレイ ⬇︎⬇︎ */
+        #hamburger-btn {
+            display: none; /* 初期は非表示、スマホで表示 */
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 30px;
+            height: 20px;
+            z-index: 10000;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            mix-blend-mode: difference; /* 背景色に応じて白黒自動反転！ */
+        }
+
+        #hamburger-btn span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+            transition: 0.3s;
+        }
+
+        #fullscreen-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: linear-gradient(to right, #111 0%, #111 30.926%, rgba(34,34,34,0.95) 30.926%, rgba(34,34,34,0.95) 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 0 0 60px 0;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        #fullscreen-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #menu-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+        #menu-close-btn::before, #menu-close-btn::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 35px;
+            height: 1px;
+            background-color: #fff;
+        }
+        #menu-close-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
+        #menu-close-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+        .menu-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .menu-nav-area {
+            flex: 1; /* 余った高さを全てナビに */
+            position: relative;
+        }
+
+        .menu-left-col {
+            flex: 0 0 30.926%;
+            width: 30.926%;
+            padding-right: 15px;
+            box-sizing: border-box;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .menu-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            max-width: 300px;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .menu-watermark svg { width: 100%; height: auto; }
+
+        .menu-label {
+            color: #555;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 35px;
+            z-index: 1;
+        }
+
+        .menu-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            font-family: serif;
+            font-weight: bold;
+        }
+
+        .menu-bottom-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .menu-topics-area {
+            margin-bottom: 50px;
+        }
+
+        .menu-topics-area .menu-left-col {
+            justify-content: flex-start;
+            padding-top: 25px; /* テキストと高さを合わせる */
+        }
+
+        .menu-divider {
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .menu-topics-text {
+            color: #ccc;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin: 0 0 20px 0;
+        }
+
+        .menu-contact-box {
+            background: rgba(0, 0, 0, 0.4); /* 透明度のある黒い台紙 */
+            padding: 20px 30px;
+            width: 100%;
+            max-width: 250px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .menu-contact-box a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            font-weight: bold;
+            font-family: serif;
+        }
+
+        .menu-sns-icons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .sns-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .sns-icon span {
+            font-size: 0.55rem;
+            color: #888;
+        }
+
+        .icon-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            position: relative;
+        }
+        .icon-x::before {
+            content: "X";
+            font-family: Arial, sans-serif;
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .icon-insta::before {
+            content: "";
+            display: block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #555;
+            border-radius: 5px;
+        }
+        .icon-insta::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            border: 2px solid #555;
+            border-radius: 50%;
+        }
+
+        /* スマホ向けメディアクエリ */
+        @media (max-width: 768px) {
+            #hamburger-btn {
+                display: flex; /* スマホのみハンバーガー表示 */
+            }
+            .sidebar nav {
+                display: none; /* スマホではサイドバーのナビを隠す */
+            }
+            /* スマホの狭い画面での文字サイズ微調整 */
+            .menu-links a { font-size: 1.3rem; }
+            .menu-contact-box { max-width: 200px; padding: 15px 20px; }
+            .menu-contact-box a { font-size: 1rem; }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
     </style>
 </head>
+
 <body>
 
-    <div id="hero-scroll-container">
-    <header id="hero-header">
-        <!-- ハレトケロゴのアップロード -->
-        <div class="logo-wrapper">
-        <svg class="animated-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
-            <!-- 追加: 完璧な真円の白丸背景 -->
-            <circle class="bg-white-circle" cx="540.125" cy="960" r="399" fill="#FDFDFD" />
-            <!-- 追加: スクロール時に左側に白丸がはみ出さないようにする巨大な黒マスク -->
-            <rect class="bg-black-mask" x="-5000" y="-5000" width="5334" height="11920" fill="#111" style="opacity: 0; transition: opacity 0.1s;" />
-            <!-- 追加: 左から迫る黒い波 -->
-            <rect class="bg-black-sweep" x="141" y="561" width="0" height="798" fill="#111" />
-            
-            <!-- 追加: 外から伸びてくるフェイクの黒線 -->
-            <!-- レ (Path 3) 用: 上から伸びる -->
-            <line class="fake-line" style="--len: 221; stroke-dasharray: 221;" x1="513.5" y1="561" x2="513.5" y2="782" stroke="#010101" stroke-width="53" stroke-linecap="butt" />
-            <!-- ケ (Path 2) 用: 左から伸びる -->
-            <line class="fake-line" style="--len: 343; stroke-dasharray: 343;" x1="141" y1="1114" x2="484" y2="1114" stroke="#010101" stroke-width="70" stroke-linecap="butt" />
-            <!-- ハ (Path 9) 用: 右下から斜めに伸びる -->
-            <line class="fake-line" style="--len: 350; stroke-dasharray: 350;" x1="939" y1="1030" x2="691" y2="782" stroke="#010101" stroke-width="50" stroke-linecap="butt" />
+    <!-- ▼ ハンバーガーメニューボタン（スマホ用） ▼ -->
+    <div id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
-<path d="M0 0 C356.4 0 712.8 0 1080 0 C1080 633.6 1080 1267.2 1080 1920 C723.6 1920 367.2 1920 0 1920 C0 1286.4 0 652.8 0 0 Z " fill="#000000" transform="translate(0,0)"/>
-<path d="M0 0 C3.78401709 0.01072788 7.56755962 0.00003555 11.3515625 -0.01269531 C30.74911165 -0.02512106 49.61074658 1.26129144 68.7265625 4.57324219 C70.00305664 4.79197998 71.27955078 5.01071777 72.59472656 5.23608398 C113.78834773 12.44006 152.61338306 26.26826537 189.7890625 45.26074219 C191.16215576 45.95586914 191.16215576 45.95586914 192.56298828 46.66503906 C203.42212439 52.21243719 213.64838225 58.63410798 223.7890625 65.38574219 C224.35079163 65.7596106 224.91252075 66.133479 225.49127197 66.51867676 C237.41561639 74.48634472 248.79512386 83.05144307 259.7890625 92.26074219 C260.54396469 92.88858612 260.54396469 92.88858612 261.31411743 93.52911377 C270.04945921 100.81050117 278.30187806 108.45569013 286.3137207 116.5246582 C288.11122055 118.33295826 289.91928566 120.13020196 291.72851562 121.92675781 C298.54182917 128.73234388 304.81931229 135.69531664 310.7890625 143.26074219 C311.6519926 144.28867701 312.52039794 145.31208939 313.3984375 146.32714844 C333.70730473 170.00847355 350.40294848 197.26547704 363.86669922 225.35107422 C364.78198271 227.24608413 365.72273089 229.1266186 366.66796875 231.00683594 C377.75201485 253.38071028 385.52813146 277.14593955 391.7890625 301.26074219 C392.03350098 302.18274414 392.27793945 303.10474609 392.52978516 304.0546875 C395.7259178 316.27881279 397.7293673 328.64536482 399.5390625 341.13574219 C399.64624603 341.86810089 399.75342957 342.60045959 399.86386108 343.35501099 C402.51065306 361.64121378 403.02884708 379.80614629 403.0390625 398.26074219 C403.04007462 399.91314911 403.04007462 399.91314911 403.04110718 401.59893799 C403.01391289 429.67513628 400.41397149 456.70614124 394.7890625 484.26074219 C394.61713379 485.14068848 394.44520508 486.02063477 394.26806641 486.92724609 C385.47496921 531.33019958 365.88550516 575.23540255 341.7890625 613.26074219 C341.11746094 614.32679688 340.44585938 615.39285156 339.75390625 616.49121094 C330.98033948 629.99617041 321.17736218 642.9607068 310.7890625 655.26074219 C309.52292114 656.77837158 309.52292114 656.77837158 308.23120117 658.32666016 C301.34925226 666.51809176 294.11584628 674.24844006 286.52514648 681.78540039 C284.71684642 683.58290023 282.91960273 685.39096535 281.12304688 687.20019531 C274.31534442 694.01556999 267.3397861 700.27000046 259.7890625 706.26074219 C258.69791516 707.19439501 257.61314829 708.13563593 256.5390625 709.08886719 C248.21969727 716.41558088 239.28545891 722.60749555 230.0625 728.74121094 C228.02127327 730.10553602 225.99593303 731.48936895 223.9765625 732.88574219 C207.31374474 744.343984 189.57468213 753.63879664 171.24462891 762.12109375 C169.18308078 763.07787508 167.13021198 764.04924316 165.08203125 765.03417969 C148.79122696 772.77999607 131.89967579 778.29129982 114.63037109 783.41650391 C112.31138557 784.10554428 109.9966104 784.80594637 107.68359375 785.51464844 C94.16580851 789.5557214 80.31984581 792.09484594 66.4140625 794.38574219 C65.00096802 794.62357422 65.00096802 794.62357422 63.55932617 794.86621094 C44.91834154 797.83504697 26.43443391 798.58492434 7.578125 798.52148438 C3.79410791 798.51075649 0.01056538 798.52144883 -3.7734375 798.53417969 C-23.99548127 798.54787819 -43.5236263 797.06708549 -63.3984375 793.38574219 C-64.88652393 793.11530207 -66.37464288 792.84504081 -67.86279297 792.57495117 C-114.18944087 784.10867905 -157.37553888 768.00976687 -198.14233398 744.44067383 C-199.47880543 743.67835039 -200.83477096 742.94882546 -202.2109375 742.26074219 C-202.2109375 515.88074219 -202.2109375 289.50074219 -202.2109375 56.26074219 C-178.6718626 43.42124679 -155.4941395 31.13915715 -130.2109375 22.26074219 C-129.40785156 21.9784375 -128.60476563 21.69613281 -127.77734375 21.40527344 C-107.5228658 14.34549345 -87.39191822 9.51364324 -66.26757812 5.80419922 C-63.03865404 5.23011096 -59.81820802 4.62113139 -56.60058594 3.98706055 C-37.80791518 0.55308287 -19.07129837 -0.06416327 0 0 Z " fill="#FDFDFD" transform="translate(536.2109375,560.7392578125)"/>
-<path d="M0 0 C4.47915328 -0.02886338 8.95828291 -0.04675187 13.4375 -0.0625 C14.71689453 -0.07087891 15.99628906 -0.07925781 17.31445312 -0.08789062 C19.13686523 -0.09272461 19.13686523 -0.09272461 20.99609375 -0.09765625 C22.12200928 -0.10289307 23.2479248 -0.10812988 24.40795898 -0.11352539 C27 0 27 0 28 1 C27.67 6.28 27.34 11.56 27 17 C82.77 17 138.54 17 196 17 C196 34.16 196 51.32 196 69 C194.41523948 70.58476052 192.77107999 70.16427317 190.57202148 70.20532227 C189.63112167 70.22526749 188.69022186 70.24521271 187.72080994 70.26576233 C186.18645042 70.29083107 186.18645042 70.29083107 184.62109375 70.31640625 C183.57929459 70.33718735 182.53749542 70.35796844 181.46412659 70.37937927 C178.12198753 70.44499057 174.77976715 70.50381331 171.4375 70.5625 C169.17772582 70.60567422 166.91795999 70.64928814 164.65820312 70.69335938 C159.10555579 70.80068367 153.55282679 70.90242812 148 71 C147.94593994 72.0324585 147.89187988 73.06491699 147.83618164 74.12866211 C145.62035141 114.18001251 130.89553446 150.0786043 103 179 C101.74123047 180.37091797 101.74123047 180.37091797 100.45703125 181.76953125 C76.08897478 207.53847447 39.15240742 223.58687367 4 226 C-0.33402287 226.05277639 -4.66591728 226.04032652 -9 226 C-9.0246501 220.89136104 -9.04283607 215.78275641 -9.05493164 210.67407227 C-9.05997204 208.93480832 -9.0668043 207.19554864 -9.07543945 205.45629883 C-9.08751792 202.96174063 -9.09323108 200.46723827 -9.09765625 197.97265625 C-9.10539818 196.7992141 -9.10539818 196.7992141 -9.11329651 195.60206604 C-9.11349226 193.73432886 -9.06199694 191.86670796 -9 190 C-7.12291087 188.12291087 -3.6891718 188.8198373 -1.1875 188.75 C24.01886579 187.56300461 48.63254191 176.86599674 68 161 C68.85078125 160.31421875 69.7015625 159.6284375 70.578125 158.921875 C77.30111438 153.21367647 82.60750714 146.63200344 87.83251953 139.57617188 C88.78915066 138.28465984 89.76498988 137.00739568 90.74609375 135.734375 C104.61955847 116.63486259 108.68239545 92.85567927 111 70 C108.36 70 105.72 70 103 70 C102.92652344 71.32451172 102.92652344 71.32451172 102.8515625 72.67578125 C102.37912673 80.2591899 101.60361155 87.5738794 100 95 C99.72736328 96.39605469 99.72736328 96.39605469 99.44921875 97.8203125 C97.56687155 106.48141923 94.03173628 114.17142733 90 122 C89.46375 123.04414062 88.9275 124.08828125 88.375 125.1640625 C83.89109933 133.33424689 78.21126584 140.11675511 72 147 C71.04867187 148.09441406 71.04867187 148.09441406 70.078125 149.2109375 C53.89519577 166.75437848 28.3843086 178.00898378 5 181 C0.38 181 -4.24 181 -9 181 C-9 168.46 -9 155.92 -9 143 C-6.174375 142.62875 -3.34875 142.2575 -0.4375 141.875 C19.03453859 138.9705256 36.32737105 129.97249272 48.625 114.375 C53.04760825 108.28247588 56.19492733 101.96743858 59 95 C59.31710937 94.25492188 59.63421875 93.50984375 59.9609375 92.7421875 C61.83838962 87.85337654 62.47089591 82.88316952 63.078125 77.70703125 C63.16787598 76.96505493 63.25762695 76.22307861 63.35009766 75.45861816 C63.56971715 73.6394367 63.78526749 71.81976479 64 70 C56.48859847 69.7103682 48.98012475 69.52346252 41.4635334 69.45853233 C37.96986206 69.42531721 34.48362399 69.36017045 30.99267578 69.21484375 C13.64384018 68.13440833 13.64384018 68.13440833 -1.69165039 74.91821289 C-5.59410412 78.60442825 -8.91695201 82.63708899 -12.1940155 86.87823486 C-23.7095959 100.40734159 -44.45746573 106.72233457 -61 111 C-61.92554688 111.2475 -62.85109375 111.495 -63.8046875 111.75 C-71.11948124 113.47677098 -77.07431499 113 -85 113 C-85 103.76 -85 94.52 -85 85 C-81.90625 84.649375 -78.8125 84.29875 -75.625 83.9375 C-51.16975777 80.69785015 -31.23329675 68.43052495 -16 49 C-13.69450319 45.45884248 -11.82098501 41.80935861 -10 38 C-9.48566406 37.02160156 -8.97132813 36.04320312 -8.44140625 35.03515625 C-3.05001297 23.94313765 -1.66303521 12.11298715 0 0 Z " fill="#010101" transform="translate(484,1079)"/>
-<path d="M0 0 C17.49 0 34.98 0 53 0 C53 23.76 53 47.52 53 72 C68.22141763 68.95571647 81.39033057 65.85747023 91 53 C96.95772047 43.56791417 99.25719165 34.86692267 101 24 C110.9 24 120.8 24 131 24 C131 44.02756124 125.11041675 60.7749999 112 76 C111.31292969 76.79921875 110.62585938 77.5984375 109.91796875 78.421875 C100.5691254 88.48185485 88.93002065 94.71865008 76 99 C75.05898438 99.35964844 74.11796875 99.71929688 73.1484375 100.08984375 C69.27679058 101.20906674 65.63413847 101.45100484 61.625 101.625 C60.88894531 101.66367187 60.15289063 101.70234375 59.39453125 101.7421875 C57.59672594 101.83557998 55.79839892 101.9188371 54 102 C54 104.31 54 106.62 54 109 C80.66328125 105.88564133 103.33958657 96.92899039 120.64453125 75.3046875 C132.16061699 59.6821272 135.57402668 42.92259188 138 24 C147.24 24 156.48 24 166 24 C166 50.60316664 158.19118573 76.94305163 140 97 C139.31550781 97.81339844 138.63101563 98.62679687 137.92578125 99.46484375 C124.82483257 114.72968342 109.38876737 123.61663128 91 131 C89.96359375 131.46019531 89.96359375 131.46019531 88.90625 131.9296875 C63.45671872 142.75690037 20.32283126 137 0 137 C0 91.79 0 46.58 0 0 Z " fill="#010101" transform="translate(487,782)"/>
-<path d="M0 0 C18.954375 -0.020625 37.90875 -0.04125 57.4375 -0.0625 C66.42955688 -0.07615601 66.42955688 -0.07615601 75.60327148 -0.09008789 C82.89855957 -0.09460449 82.89855957 -0.09460449 86.30897522 -0.09544373 C88.70143316 -0.09698379 91.09389031 -0.10050997 93.48634338 -0.10557556 C97.10085406 -0.11284898 100.71531713 -0.11390755 104.32983398 -0.11352539 C105.94047934 -0.11892255 105.94047934 -0.11892255 107.58366299 -0.12442875 C108.55064145 -0.12305125 109.51761992 -0.12167376 110.51390076 -0.12025452 C111.36102851 -0.12117631 112.20815626 -0.1220981 113.08095455 -0.12304783 C115 0 115 0 116 1 C116.09581822 2.53085839 116.12188108 4.06613756 116.12025452 5.59999084 C116.12231651 7.09135811 116.12231651 7.09135811 116.12442017 8.612854 C116.11902725 10.26254181 116.11902725 10.26254181 116.11352539 11.94555664 C116.11367142 13.09662399 116.11381744 14.24769135 116.1139679 15.43363953 C116.11326818 19.25916391 116.10547302 23.08464031 116.09765625 26.91015625 C116.09579228 29.55431593 116.09436828 32.19847596 116.09336853 34.84263611 C116.09025549 41.10415417 116.08204248 47.36565486 116.07201904 53.62716526 C116.06085705 60.75401537 116.05534724 67.8808663 116.05032361 75.00772297 C116.03985984 89.6718243 116.02226093 104.33591191 116 119 C113.18743719 119.02684312 110.37512759 119.04676188 107.5625 119.0625 C106.76005859 119.07087891 105.95761719 119.07925781 105.13085938 119.08789062 C103.08704779 119.0965143 101.04316098 119.0522815 99 119 C98.67 118.67 98.34 118.34 98 118 C98 116.02 98 114.04 98 112 C71.6 112 45.2 112 18 112 C18 114.31 18 116.62 18 119 C12.06 119 6.12 119 0 119 C0 79.73 0 40.46 0 0 Z " fill="#050505" transform="translate(679,960)"/>
-<path d="M0 0 C17.82 0 35.64 0 54 0 C54.33 13.86 54.66 27.72 55 42 C74.14 42.33 93.28 42.66 113 43 C113 60.49 113 77.98 113 96 C93.53 96 74.06 96 54 96 C54 109.86 54 123.72 54 138 C36.18 138 18.36 138 0 138 C0 92.46 0 46.92 0 0 Z " fill="#010101" transform="translate(513,934)"/>
-<path d="M0 0 C3.9290625 -0.0309375 3.9290625 -0.0309375 7.9375 -0.0625 C8.7637085 -0.071604 9.58991699 -0.08070801 10.44116211 -0.09008789 C12.29433759 -0.09723945 14.14749308 -0.0502852 16 0 C17 1 17 1 17 6 C25.58 6 34.16 6 43 6 C43 9.96 43 13.92 43 18 C34.42 18 25.84 18 17 18 C17 18.99 17 19.98 17 21 C17.78648926 20.9685791 18.57297852 20.9371582 19.38330078 20.90478516 C22.96357195 20.77968944 26.54338302 20.70190589 30.125 20.625 C31.98125 20.54958984 31.98125 20.54958984 33.875 20.47265625 C42.91005999 20.32692948 42.91005999 20.32692948 46.20605469 22.36230469 C47.8671875 24.0234375 47.8671875 24.0234375 50 27 C50.33 21.72 50.66 16.44 51 11 C56.28 11 61.56 11 67 11 C67 38.06 67 65.12 67 93 C61.72 93 56.44 93 51 93 C50.67 73.2 50.34 53.4 50 33 C48.35 36.3 46.7 39.6 45 43 C43.5975 42.855625 42.195 42.71125 40.75 42.5625 C39.96109375 42.48128906 39.1721875 42.40007813 38.359375 42.31640625 C36.17635361 42.02365007 34.1226818 41.57935581 32 41 C32.52268466 38.23723823 33.10869587 35.6739124 34 33 C27.73 33 21.46 33 15 33 C15 34.32 15 35.64 15 37 C16.07121094 36.91621094 17.14242187 36.83242188 18.24609375 36.74609375 C19.64320866 36.64295104 21.04034524 36.54010157 22.4375 36.4375 C23.49807617 36.35338867 23.49807617 36.35338867 24.58007812 36.26757812 C26.38427837 36.13809007 28.19231952 36.06478392 30 36 C31 37 31 37 31.09765625 39.06640625 C31.06510417 41.37760417 31.03255208 43.68880208 31 46 C25.72 46 20.44 46 15 46 C15.33 46.99 15.66 47.98 16 49 C20.95 49 25.9 49 31 49 C31.66 47.35 32.32 45.7 33 44 C37.02992782 44.55312735 41.02022924 45.1558062 45 46 C45.35288435 49.7935068 45.28393415 51.55941253 43.1875 54.8125 C38.3386668 59.6613332 30.4125998 58.2993453 23.94921875 58.35009766 C22.40316724 58.36666249 20.85719249 58.39396021 19.31152344 58.43212891 C17.07446879 58.48702888 14.83920088 58.50878617 12.6015625 58.5234375 C11.57163681 58.55744156 11.57163681 58.55744156 10.52090454 58.59213257 C6.6639073 58.57523712 5.09865951 58.0786766 2.04443359 55.64306641 C0 53 0 53 -0.3125 50.1875 C-0.1578125 49.1046875 -0.1578125 49.1046875 0 48 C-2.64 48.33 -5.28 48.66 -8 49 C-8.33 52.96 -8.66 56.92 -9 61 C9.48 61 27.96 61 47 61 C47 64.3 47 67.6 47 71 C43.535 71.99 43.535 71.99 40 73 C42.64 74.98 45.28 76.96 48 79 C46.65515286 83.04161955 44.9494838 85.38678154 41.875 88.3125 C41.15054688 89.00988281 40.42609375 89.70726562 39.6796875 90.42578125 C39.12539063 90.94527344 38.57109375 91.46476563 38 92 C39.49180382 95.83969961 41.62013522 97.42279409 45 99.6875 C45.886875 100.28949219 46.77375 100.89148438 47.6875 101.51171875 C49.90343595 102.9967142 49.90343595 102.9967142 52 104 C51.43174347 109.54050113 49.37113483 114.03715966 47 119 C42.95838045 117.65515286 40.61321846 115.9494838 37.6875 112.875 C36.99011719 112.15054688 36.29273438 111.42609375 35.57421875 110.6796875 C35.05472656 110.12539063 34.53523437 109.57109375 34 109 C33.82984375 109.67546875 33.6596875 110.3509375 33.484375 111.046875 C31.05418029 119.99205979 31.05418029 119.99205979 27 123 C24.65147472 124.17426264 23.26225935 124.11508173 20.6484375 124.09765625 C19.37226562 124.09282227 19.37226562 124.09282227 18.0703125 124.08789062 C17.18085937 124.07951172 16.29140625 124.07113281 15.375 124.0625 C14.4778125 124.05798828 13.580625 124.05347656 12.65625 124.04882812 C10.43743352 124.03702591 8.21874982 124.02056155 6 124 C5.01 121.69 4.02 119.38 3 117 C0.24639085 117.55072183 -1.96037662 118.42121782 -4.5625 119.5625 C-8 121 -8 121 -11 121 C-14 116.77777778 -14 116.77777778 -14 114 C-14.99 114 -15.98 114 -17 114 C-17.18175781 114.63808594 -17.36351562 115.27617188 -17.55078125 115.93359375 C-17.80214844 116.75988281 -18.05351563 117.58617187 -18.3125 118.4375 C-18.55613281 119.26121094 -18.79976562 120.08492187 -19.05078125 120.93359375 C-19.52064453 121.95646484 -19.52064453 121.95646484 -20 123 C-21.485 123.495 -21.485 123.495 -23 124 C-24.12935196 122.58680023 -25.25330626 121.16928595 -26.375 119.75 C-27.00148438 118.96109375 -27.62796875 118.1721875 -28.2734375 117.359375 C-29.78910737 115.28818811 -30.94219634 113.32930503 -32 111 C-32.66 111 -33.32 111 -34 111 C-33.37883706 107.4156053 -32.39033387 104.25386371 -31.04443359 100.87915039 C-28.96548246 95.25766701 -27.9562031 89.87336909 -27.2890625 83.93359375 C-27.16753815 82.90608505 -27.04601379 81.87857635 -26.92080688 80.81993103 C-25.61922839 68.92247408 -25.47209979 57.01926005 -25.375 45.0625 C-25.33840451 41.73881122 -25.29799079 38.41523646 -25.25234985 35.09165955 C-25.22525093 33.05068342 -25.20384482 31.00962179 -25.18881226 28.96852112 C-25.17855011 28.0650444 -25.16828796 27.16156769 -25.15771484 26.23071289 C-25.15121918 25.43484268 -25.14472351 24.63897247 -25.13803101 23.81898499 C-25 22 -25 22 -24 21 C-22.21928754 20.91273777 -20.4351686 20.89300959 -18.65234375 20.90234375 C-17.57275391 20.90556641 -16.49316406 20.90878906 -15.38085938 20.91210938 C-13.67639648 20.92467773 -13.67639648 20.92467773 -11.9375 20.9375 C-10.22723633 20.94426758 -10.22723633 20.94426758 -8.48242188 20.95117188 C-5.65492582 20.9630024 -2.82745655 20.9809385 0 21 C0 14.07 0 7.14 0 0 Z " fill="#060606" transform="translate(706,826)"/>
-<path d="M0 0 C11.88 0 23.76 0 36 0 C36 7.84226919 35.88698658 15.06871255 34.8125 22.75 C34.68012939 23.69955566 34.54775879 24.64911133 34.41137695 25.62744141 C33.24211152 33.41510375 31.36548849 40.71130704 28.68261719 48.10546875 C27.98927996 50.02975233 27.3406543 51.96540141 26.6953125 53.90625 C13.79456589 91.61755618 -15.6834221 122.32966857 -51 140 C-73.00276356 150.67759692 -95.56496823 156 -120 156 C-120 143.79 -120 131.58 -120 119 C-115.2665625 118.62875 -115.2665625 118.62875 -110.4375 118.25 C-78.27951228 115.3654626 -48.9714694 100.06229897 -27.99609375 75.5546875 C-12.19396083 55.33043128 -2.69591303 32.11499048 -1.28125 6.3984375 C-1 3 -1 3 0 0 Z " fill="#010101" transform="translate(519,638)"/>
-<path d="M0 0 C26.4 0 52.8 0 80 0 C80.020625 13.179375 80.04125 26.35875 80.0625 39.9375 C80.071604 44.1049585 80.08070801 48.27241699 80.09008789 52.56616211 C80.09460449 57.63977051 80.09460449 57.63977051 80.09544373 60.01197815 C80.09698327 61.67527025 80.10050841 63.33856122 80.10557556 65.00184631 C80.11285309 67.51549226 80.11390742 70.02906977 80.11352539 72.54272461 C80.1171235 73.2885955 80.12072161 74.03446638 80.12442875 74.80293941 C80.11402634 79.88597366 80.11402634 79.88597366 79 81 C76.57142965 81.10029857 74.17128387 81.13618425 71.7421875 81.12939453 C70.98286926 81.13114685 70.22355103 81.13289917 69.44122314 81.13470459 C66.91912584 81.1391233 64.39709807 81.13618506 61.875 81.1328125 C60.13004544 81.13348553 58.38509096 81.13445555 56.64013672 81.13571167 C52.97818105 81.13718867 49.31624972 81.13503403 45.65429688 81.13037109 C40.94955508 81.1246738 36.24487032 81.1279528 31.54013062 81.13394356 C27.93546109 81.13754912 24.33080518 81.13641061 20.72613525 81.13381577 C18.99090569 81.13314648 17.25567491 81.13397496 15.52044678 81.13629532 C13.09953513 81.13882177 10.67871714 81.13498138 8.2578125 81.12939453 C7.53362122 81.13141876 6.80942993 81.13344299 6.06329346 81.13552856 C1.11426266 81.11426266 1.11426266 81.11426266 0 80 C-0.0950257 77.5050359 -0.12556258 75.03797738 -0.11352539 72.54272461 C-0.11364593 71.74962922 -0.11376646 70.95653383 -0.11389065 70.13940525 C-0.1131415 67.56035667 -0.10551321 64.98137948 -0.09765625 62.40234375 C-0.09618684 60.81481969 -0.09516612 59.22729515 -0.09460449 57.63977051 C-0.08935154 51.73900631 -0.07539046 45.83825246 -0.0625 39.9375 C-0.041875 26.758125 -0.02125 13.57875 0 0 Z " fill="#F6F6F6" transform="translate(697,976)"/>
-<path d="M0 0 C3.04530742 1.36348855 5.16099379 2.90554901 7.52485657 5.2507019 C8.20493271 5.92080292 8.88500885 6.59090393 9.58569336 7.28131104 C10.32094238 8.01589539 11.05619141 8.75047974 11.8137207 9.50732422 C12.59619675 10.28147675 13.37867279 11.05562927 14.18486023 11.85324097 C16.77065349 14.41492892 19.34871367 16.9842234 21.92578125 19.5546875 C23.7160014 21.335945 25.50630092 23.11712274 27.29667664 24.89822388 C31.04698107 28.63203657 34.79288206 32.3702051 38.53637695 36.11083984 C42.86675147 40.43757191 47.21010441 44.75097259 51.55950862 49.05856693 C55.74254954 53.2027974 59.91181989 57.36069164 64.07607079 61.52380753 C65.8506864 63.29420327 67.62944408 65.06045678 69.41231728 66.82253647 C71.8978761 69.28139088 74.36731132 71.75538007 76.83325195 74.23388672 C77.57862213 74.96442261 78.32399231 75.6949585 79.09194946 76.44763184 C79.75792648 77.1233725 80.4239035 77.79911316 81.11006165 78.49533081 C81.69573567 79.07899351 82.2814097 79.66265621 82.88483143 80.26400566 C84 82 84 82 83.7699213 84.10593224 C82.80046444 86.49087337 81.5379124 87.84316866 79.72119141 89.66699219 C79.03022369 90.36741638 78.33925598 91.06784058 77.62734985 91.78948975 C76.87634003 92.53442688 76.1253302 93.27936401 75.3515625 94.046875 C74.5832309 94.81807678 73.81489929 95.58927856 73.02328491 96.3838501 C71.39779295 98.01138312 69.76850797 99.63513539 68.13574219 101.25537109 C65.63122899 103.74381098 63.14312267 106.24785082 60.65625 108.75390625 C59.07648207 110.33169219 57.495784 111.9085475 55.9140625 113.484375 C55.16710114 114.23740906 54.42013977 114.99044312 53.65054321 115.76629639 C52.95327118 116.45411194 52.25599915 117.14192749 51.53759766 117.85058594 C50.92550446 118.46029236 50.31341125 119.06999878 49.68276978 119.69818115 C48 121 48 121 45 121 C43.44576168 119.52397156 43.44576168 119.52397156 41.79246521 117.48706055 C38.16931078 113.16715121 34.31612317 109.18135189 30.32055664 105.20703125 C29.58801666 104.47434525 28.85547668 103.74165924 28.10073853 102.98677063 C25.70624337 100.59296582 23.30823802 98.20271131 20.91015625 95.8125 C19.23842345 94.14263451 17.56691295 92.47254643 15.89561462 90.80224609 C11.51668864 86.42712068 7.13476684 82.05500793 2.75219727 77.68353271 C-1.72757509 73.2140276 -6.20448407 68.74165637 -10.68164062 64.26953125 C-19.45163968 55.51022607 -28.22480887 46.75410347 -37 38 C-30.7623583 30.63524112 -30.7623583 30.63524112 -27.47314453 27.35961914 C-26.85295441 26.73950455 -26.23276428 26.11938995 -25.59378052 25.48048401 C-24.94666107 24.83852585 -24.29954163 24.19656769 -23.6328125 23.53515625 C-22.95322479 22.85698349 -22.27363708 22.17881073 -21.57345581 21.48008728 C-19.42632998 19.33850859 -17.27573373 17.20045471 -15.125 15.0625 C-13.65862227 13.60114411 -12.1924742 12.13955774 -10.7265625 10.67773438 C-7.15369 7.11582065 -3.57770316 3.55706135 0 0 Z " fill="#010101" transform="translate(607,658)"/>
-<path d="M0 0 C12.54 0 25.08 0 38 0 C38 16.32755518 38 16.32755518 36.375 22.9375 C36.19678711 23.69200439 36.01857422 24.44650879 35.83496094 25.22387695 C31.479247 42.7554413 23.27255621 59.69240893 11 73 C10.24589844 73.82564453 10.24589844 73.82564453 9.4765625 74.66796875 C-9.04854682 94.74422359 -34.37087236 108.84499237 -62 111 C-65.63 111 -69.26 111 -73 111 C-73 98.46 -73 85.92 -73 73 C-67.555 72.01 -67.555 72.01 -62 71 C-47.49063779 68.1199491 -35.10287935 63.04106552 -24 53 C-23.39027344 52.47019531 -22.78054688 51.94039062 -22.15234375 51.39453125 C-7.60432231 37.93361471 -2.69342249 18.8539574 0 0 Z " fill="#010101" transform="translate(472,638)"/>
-<path d="M0 0 C1.30066406 -0.00128906 2.60132813 -0.00257812 3.94140625 -0.00390625 C4.96258545 -0.00076416 4.96258545 -0.00076416 6.00439453 0.00244141 C8.08503515 0.0077901 10.16545989 0.0024957 12.24609375 -0.00390625 C14.19708984 -0.00197266 14.19708984 -0.00197266 16.1875 0 C17.39083984 0.00112793 18.59417969 0.00225586 19.83398438 0.00341797 C22.59375 0.1328125 22.59375 0.1328125 23.59375 1.1328125 C23.47418236 22.35606781 14.7254255 41.49282655 0.21875 56.8828125 C-14.78595763 71.07462401 -33.97605844 78.1328125 -54.40625 78.1328125 C-54.40625 68.2328125 -54.40625 58.3328125 -54.40625 48.1328125 C-50.44625 47.4728125 -46.48625 46.8128125 -42.40625 46.1328125 C-28.9404179 42.09759682 -18.88521365 33.79594766 -12.15625 21.5703125 C-9.34441454 15.77044302 -8.37880644 10.24990005 -7.73046875 3.87109375 C-7.13148424 -1.18779949 -4.58842539 0.00430088 0 0 Z " fill="#020202" transform="translate(453.40625,1078.8671875)"/>
-<path d="M0 0 C5.61 0 11.22 0 17 0 C17 3.96 17 7.92 17 12 C20.96 12 24.92 12 29 12 C29 16.95 29 21.9 29 27 C25.04 27 21.08 27 17 27 C17.01571045 28.15000488 17.0314209 29.30000977 17.04760742 30.48486328 C17.10206868 34.76750637 17.13640886 39.05011906 17.16479492 43.33300781 C17.17984471 45.18364619 17.20028933 47.03424911 17.22631836 48.88476562 C17.2628698 51.55087045 17.27976454 54.21650208 17.29296875 56.8828125 C17.30845261 57.70492218 17.32393646 58.52703186 17.33988953 59.37405396 C17.341329 64.33142186 16.75305126 67.70553646 14 72 C8.58032022 76.1831509 2.14157851 75.33717406 -4.375 75.1875 C-6.05142578 75.16719727 -6.05142578 75.16719727 -7.76171875 75.14648438 C-10.50831211 75.11127164 -13.25390289 75.06202096 -16 75 C-16.50806447 73.27318563 -17.00610467 71.54342021 -17.5 69.8125 C-17.7784375 68.84957031 -18.056875 67.88664062 -18.34375 66.89453125 C-19 64 -19 64 -19 59 C-13.06 59 -7.12 59 -1 59 C-1 48.77 -1 38.54 -1 28 C-21.295 27.505 -21.295 27.505 -42 27 C-42 22.05 -42 17.1 -42 12 C-28.14 12 -14.28 12 0 12 C0 8.04 0 4.08 0 0 Z " fill="#020202" transform="translate(744,979)"/>
-<path d="M0 0 C5.61 0 11.22 0 17 0 C17.04639799 13.79561657 17.08190718 27.59121448 17.10362434 41.38689327 C17.11404895 47.79319457 17.12818411 54.19944237 17.15087891 60.60571289 C17.17265428 66.79135728 17.18457858 72.97695031 17.18975449 79.16263008 C17.1934418 81.51925019 17.20064217 83.87586758 17.21146011 86.23246574 C17.22603726 89.54037364 17.22797532 92.84807087 17.22705078 96.15600586 C17.23424133 97.1241774 17.24143188 98.09234894 17.24884033 99.08985901 C17.20716186 112.92573884 17.20716186 112.92573884 13.25 118.4375 C7.28276021 122.58141652 1.09424883 122.24776455 -5.875 122.125 C-7.33679688 122.11146484 -7.33679688 122.11146484 -8.828125 122.09765625 C-11.21900728 122.07421623 -13.60937261 122.04140442 -16 122 C-17.5849657 116.67904372 -18.78890831 111.44991262 -20 106 C-13.73 105.67 -7.46 105.34 -1 105 C-0.67 70.35 -0.34 35.7 0 0 Z " fill="#060606" transform="translate(780,828)"/>
-<path d="M0 0 C5.28 0 10.56 0 16 0 C16 27.06 16 54.12 16 82 C10.72 82 5.44 82 0 82 C0 54.94 0 27.88 0 0 Z " fill="#000000" transform="translate(757,837)"/>
-<path d="M0 0 C14.63636364 0 14.63636364 0 19 4 C20.57960269 5.57960269 20.16986544 7.19536816 20.1875 9.375 C20.20167969 10.16648437 20.21585937 10.95796875 20.23046875 11.7734375 C20 14 20 14 18 17 C18.21053391 19.31492671 18.21053391 19.31492671 19 22 C19.35529807 23.43722078 19.70940938 24.87473531 20.0625 26.3125 C20.371875 27.529375 20.68125 28.74625 21 30 C18.36 30 15.72 30 13 30 C12.01 26.37 11.02 22.74 10 19 C9.34 19 8.68 19 8 19 C8 22.63 8 26.26 8 30 C5.36 30 2.72 30 0 30 C0 20.1 0 10.2 0 0 Z " fill="#0D0D0D" transform="translate(420,902)"/>
-<path d="M0 0 C3.97915159 -0.02886984 7.95827653 -0.04675406 11.9375 -0.0625 C13.07380859 -0.07087891 14.21011719 -0.07925781 15.38085938 -0.08789062 C16.46044922 -0.09111328 17.54003906 -0.09433594 18.65234375 -0.09765625 C20.15269165 -0.10551147 20.15269165 -0.10551147 21.68334961 -0.11352539 C24 0 24 0 25 1 C25.1002093 3.27947792 25.13081303 5.56207135 25.1328125 7.84375 C25.13424759 8.87018616 25.13424759 8.87018616 25.13571167 9.9173584 C25.1363933 11.36661877 25.13454023 12.81588218 25.13037109 14.26513672 C25.12502252 16.49062928 25.1303166 18.71592001 25.13671875 20.94140625 C25.13605797 22.34635461 25.1347768 23.75130285 25.1328125 25.15625 C25.13168457 26.44337891 25.13055664 27.73050781 25.12939453 29.05664062 C25 32 25 32 24 33 C21.73097824 33.09980173 19.45871075 33.12967809 17.1875 33.125 C15.32158203 33.12886719 15.32158203 33.12886719 13.41796875 33.1328125 C10.71213998 33.02767173 8.55665645 32.81143252 6 32 C5.67 32.66 5.34 33.32 5 34 C5 33.01 5 32.02 5 31 C7.1171875 29.39453125 7.1171875 29.39453125 9.875 27.8125 C10.77992188 27.28269531 11.68484375 26.75289062 12.6171875 26.20703125 C15 25 15 25 17 25 C10.32648872 10.97818678 10.32648872 10.97818678 0 0 Z " fill="#FBFBFB" transform="translate(719,1006)"/>
-<path d="M0 0 C3.82297538 1.8051251 5.41036892 4.88369541 7.58203125 8.41015625 C8.01128906 9.07917969 8.44054687 9.74820313 8.8828125 10.4375 C10.09354999 12.33370117 11.27615493 14.24527812 12.45703125 16.16015625 C13.05257812 17.083125 13.648125 18.00609375 14.26171875 18.95703125 C15.45703125 21.16015625 15.45703125 21.16015625 15.45703125 24.16015625 C12.97265625 26.01953125 12.97265625 26.01953125 9.70703125 27.91015625 C8.6396875 28.544375 7.57234375 29.17859375 6.47265625 29.83203125 C3.45703125 31.16015625 3.45703125 31.16015625 1.3125 31.3125 C-1.78346011 29.38974582 -2.95479244 26.15996023 -4.48046875 22.97265625 C-6.45251827 18.92185312 -8.33972442 15.22483645 -11.296875 11.796875 C-13.54296875 9.16015625 -13.54296875 9.16015625 -13.54296875 7.16015625 C-11.3125 5.3984375 -11.3125 5.3984375 -8.35546875 3.47265625 C-7.39253906 2.82941406 -6.42960938 2.18617188 -5.4375 1.5234375 C-2.54296875 0.16015625 -2.54296875 0.16015625 0 0 Z " fill="#060606" transform="translate(720.54296875,1006.83984375)"/>
-<path d="M0 0 C2.31 0 4.62 0 7 0 C7.33 2.64 7.66 5.28 8 8 C9.32 5.36 10.64 2.72 12 0 C14.64 0 17.28 0 20 0 C19.04372949 3.16304862 18.13779207 5.79076018 16.3125 8.5625 C14.63709762 11.67396157 15.08669208 12.63518134 16 16 C16.81387915 18.07872741 17.67025562 20.14118455 18.5625 22.1875 C21 27.78753541 21 27.78753541 21 30 C18.36 30 15.72 30 13 30 C12.01 27.03 11.02 24.06 10 21 C9.34 21.33 8.68 21.66 8 22 C7.53476937 23.89533342 7.53476937 23.89533342 7.375 26.0625 C7.189375 28.0115625 7.189375 28.0115625 7 30 C4.69 30 2.38 30 0 30 C0 20.1 0 10.2 0 0 Z " fill="#080808" transform="translate(420,1000)"/>
-<path d="M0 0 C2.31 0 4.62 0 7 0 C7 3.63 7 7.26 7 11 C8.98 11 10.96 11 13 11 C13 7.37 13 3.74 13 0 C15.31 0 17.62 0 20 0 C20 9.57 20 19.14 20 29 C17.69 29 15.38 29 13 29 C13 25.04 13 21.08 13 17 C11.02 17 9.04 17 7 17 C7 20.96 7 24.92 7 29 C4.69 29 2.38 29 0 29 C0 19.43 0 9.86 0 0 Z " fill="#030303" transform="translate(420,837)"/>
-<path d="M0 0 C2.64 0 5.28 0 8 0 C9.1521362 3.70640467 10.29558007 7.41543624 11.4375 11.125 C11.92573242 12.69507813 11.92573242 12.69507813 12.42382812 14.296875 C12.73642578 15.31523438 13.04902344 16.33359375 13.37109375 17.3828125 C13.65911865 18.31496582 13.94714355 19.24711914 14.24389648 20.20751953 C15.03338638 23.1233043 15.55119844 26.0144102 16 29 C13.36 29 10.72 29 8 29 C7.67 27.68 7.34 26.36 7 25 C4.69 24.67 2.38 24.34 0 24 C0 25.65 0 27.3 0 29 C-2.64 29 -5.28 29 -8 29 C-6.36559954 19.0301572 -3.13564949 9.57803752 0 0 Z " fill="#0E0E0E" transform="translate(426,870)"/>
-<path d="M0 0 C5.61 0 11.22 0 17 0 C17 2.31 17 4.62 17 7 C14.03 7 11.06 7 8 7 C8 8.65 8 10.3 8 12 C10.31 12 12.62 12 15 12 C15 13.98 15 15.96 15 18 C12.69 18 10.38 18 8 18 C8 19.98 8 21.96 8 24 C10.97 24 13.94 24 17 24 C17 25.98 17 27.96 17 30 C11.39 30 5.78 30 0 30 C0 20.1 0 10.2 0 0 Z " fill="#0F0F0F" transform="translate(422,1033)"/>
-<path d="M0 0 C5.61 0 11.22 0 17 0 C17 1.98 17 3.96 17 6 C14.03 6 11.06 6 8 6 C8 7.98 8 9.96 8 12 C10.64 12 13.28 12 16 12 C16 13.98 16 15.96 16 18 C13.36 18 10.72 18 8 18 C8 19.98 8 21.96 8 24 C10.97 24 13.94 24 17 24 C17 25.98 17 27.96 17 30 C11.39 30 5.78 30 0 30 C0 20.1 0 10.2 0 0 Z " fill="#111111" transform="translate(422,935)"/>
-<path d="M0 0 C9 0 9 0 11.53515625 1.0625 C13.75150341 3.99398851 13.4941218 6.37620512 13.4375 10 C13.43621094 11.2375 13.43492187 12.475 13.43359375 13.75 C13 17 13 17 10 20 C6.7 20 3.4 20 0 20 C0 13.4 0 6.8 0 0 Z " fill="#171717" transform="translate(449,922)"/>
-<path d="M0 0 C1.32 0 2.64 0 4 0 C5.32 2.31 6.64 4.62 8 7 C8.33 4.69 8.66 2.38 9 0 C10.32 0 11.64 0 13 0 C13 6.6 13 13.2 13 20 C11.68 20 10.36 20 9 20 C7.68 17.03 6.36 14.06 5 11 C4.67 13.97 4.34 16.94 4 20 C2.68 20 1.36 20 0 20 C0 13.4 0 6.8 0 0 Z " fill="#060606" transform="translate(449,967)"/>
-<path d="M0 0 C1.65 0 3.3 0 5 0 C5.33 1.32 5.66 2.64 6 4 C6.66 2.68 7.32 1.36 8 0 C9.65 0 11.3 0 13 0 C12 3 11 6 10 9 C10.75410413 11.25794574 10.75410413 11.25794574 11.9375 13.5625 C14 17.82033898 14 17.82033898 14 20 C12.35 20 10.7 20 9 20 C8.01 18.02 7.02 16.04 6 14 C5.67 15.98 5.34 17.96 5 20 C3.35 20 1.7 20 0 20 C0 13.4 0 6.8 0 0 Z " fill="#1C1C1C" transform="translate(449,881)"/>
-<path d="M0 0 C2.5 0.25 2.5 0.25 4.5 2.25 C4.88286803 5.98296326 4.64915785 7.02626323 2.5 10.25 C4.15 10.58 5.8 10.91 7.5 11.25 C7.83 14.22 8.16 17.19 8.5 20.25 C6.54196493 20.30389087 4.58351091 20.34274217 2.625 20.375 C0.98917969 20.40980469 0.98917969 20.40980469 -0.6796875 20.4453125 C-3.5 20.25 -3.5 20.25 -5.5 18.25 C-5.70146402 14.556493 -5.67353189 11.77059568 -4.5 8.25 C-4.520625 7.239375 -4.54125 6.22875 -4.5625 5.1875 C-4.48214422 1.41077826 -3.81040089 0.38104009 0 0 Z " fill="#1A1A1A" transform="translate(428.5,971.75)"/>
-<path d="M0 0 C1.32 0 2.64 0 4 0 C4.84226 2.55986879 5.67398551 5.12239015 6.5 7.6875 C6.73847656 8.40873047 6.97695313 9.12996094 7.22265625 9.87304688 C8.44398994 13.69407657 9.32075577 16.93442056 9 21 C7.68 21 6.36 21 5 21 C4.67 20.01 4.34 19.02 4 18 C2.35 17.67 0.7 17.34 -1 17 C-1.33 18.32 -1.66 19.64 -2 21 C-3.32 21 -4.64 21 -6 21 C-2.68831169 2.68831169 -2.68831169 2.68831169 0 0 Z " fill="#232323" transform="translate(454,944)"/>
-<path d="M0 0 C6.27 0 12.54 0 19 0 C18 5 18 5 17 8 C18.85625 8.185625 18.85625 8.185625 20.75 8.375 C23.8762197 8.75746305 26.28879237 9.30549523 29 11 C28.34 11 27.68 11 27 11 C27 11.66 27 12.32 27 13 C24.03 12.34 21.06 11.68 18 11 C17.855625 11.804375 17.71125 12.60875 17.5625 13.4375 C17 16 17 16 16 17 C13.46950598 17.07313567 10.96695163 17.09247527 8.4375 17.0625 C7.72658203 17.05798828 7.01566406 17.05347656 6.28320312 17.04882812 C4.52209987 17.03700864 2.76103964 17.01907263 1 17 C0.67 15.68 0.34 14.36 0 13 C5.28 13 10.56 13 16 13 C15.67 10.03 15.34 7.06 15 4 C10.05 4 5.1 4 0 4 C0 2.68 0 1.36 0 0 Z " fill="#E2E2E2" transform="translate(721,859)"/>
-<path d="M0 0 C3.5 0.4375 3.5 0.4375 5.4375 1.75 C6.5 3.4375 6.5 3.4375 6.5 6.4375 C5.18 6.4375 3.86 6.4375 2.5 6.4375 C2.17 5.7775 1.84 5.1175 1.5 4.4375 C0.84 4.4375 0.18 4.4375 -0.5 4.4375 C-0.83 8.3975 -1.16 12.3575 -1.5 16.4375 C-0.51 16.1075 0.48 15.7775 1.5 15.4375 C1.83 14.7775 2.16 14.1175 2.5 13.4375 C1.84 13.4375 1.18 13.4375 0.5 13.4375 C0.5 12.1175 0.5 10.7975 0.5 9.4375 C2.48 9.4375 4.46 9.4375 6.5 9.4375 C6.41291331 10.89695288 6.30473093 12.35515868 6.1875 13.8125 C6.12949219 14.62460937 6.07148438 15.43671875 6.01171875 16.2734375 C5.5 18.4375 5.5 18.4375 2.5 20.4375 C0.0625 20.875 0.0625 20.875 -2.5 20.4375 C-5.37262668 18.18598179 -6.36972008 16.41604693 -6.8515625 12.796875 C-7.06790916 5.44108872 -7.06790916 5.44108872 -5.19140625 2.125 C-3.5 0.4375 -3.5 0.4375 0 0 Z " fill="#161616" transform="translate(455.5,836.5625)"/>
-<path d="M0 0 C0.66 0 1.32 0 2 0 C1.66059185 2.73908335 1.23489047 3.79404175 -0.87109375 5.640625 C-22.17475728 19 -22.17475728 19 -30 19 C-29.48594831 14.03083364 -28.76615118 9.70973649 -27 5 C-25.29159719 6.63412443 -24.06546953 7.86906094 -23 10 C-17.55845604 9.45156092 -13.45965741 7.48377984 -8.6875 5 C-7.95982422 4.63132812 -7.23214844 4.26265625 -6.48242188 3.8828125 C-3.01701862 2.27092485 -3.01701862 2.27092485 0 0 Z " fill="#EFEFEF" transform="translate(721,918)"/>
-<path d="M0 0 C3.63 0 7.26 0 11 0 C10.67 1.32 10.34 2.64 10 4 C8.02 4 6.04 4 4 4 C4 5.32 4 6.64 4 8 C5.98 8 7.96 8 10 8 C10 8.99 10 9.98 10 11 C8.02 11 6.04 11 4 11 C4 12.65 4 14.3 4 16 C6.31 16 8.62 16 11 16 C11 17.32 11 18.64 11 20 C7.37 20 3.74 20 0 20 C0 13.4 0 6.8 0 0 Z " fill="#131313" transform="translate(451,859)"/>
-<path d="M0 0 C1.70840281 1.63412443 2.93453047 2.86906094 4 5 C8.86433164 4.50109419 12.68915064 2.92236169 17.046875 0.83984375 C19 0 19 0 21 0 C21 0.99 21 1.98 21 3 C18.77208002 4.12752649 16.54274113 5.25208139 14.3125 6.375 C13.68666016 6.69210937 13.06082031 7.00921875 12.41601562 7.3359375 C3.13647461 12 3.13647461 12 -2 12 C-1.85962479 10.18706911 -1.71255111 8.3746557 -1.5625 6.5625 C-1.48128906 5.55316406 -1.40007813 4.54382813 -1.31640625 3.50390625 C-1 1 -1 1 0 0 Z " fill="#E9E9E9" transform="translate(696,908)"/>
-<path d="M0 0 C1.33804688 0.04060547 1.33804688 0.04060547 2.703125 0.08203125 C3.37859375 0.11683594 4.0540625 0.15164063 4.75 0.1875 C3.2640084 4.78056496 0.89985318 7.62319245 -2.25 11.1875 C-5.54148243 10.05250606 -6.2459869 9.19466624 -8 6.0625 C-8.4125 5.11375 -8.825 4.165 -9.25 3.1875 C-6.10408067 0.38704377 -4.182936 -0.16511589 0 0 Z " fill="#F2F2F2" transform="translate(737.25,897.8125)"/>
-<path d="M0 0 C1.65 0 3.3 0 5 0 C5 5.94 5 11.88 5 18 C3.35 18 1.7 18 0 18 C0 12.06 0 6.12 0 0 Z " fill="#2C2C2C" transform="translate(453,902)"/>
-<path d="M0 0 C5.61 0 11.22 0 17 0 C13.83317502 3.16682498 12.11199887 3.86363098 7.9375 5.1875 C6.34228516 5.70376953 6.34228516 5.70376953 4.71484375 6.23046875 C2 7 2 7 0 7 C0 4.69 0 2.38 0 0 Z " fill="#F3F3F3" transform="translate(696,898)"/>
-<path d="M0 0 C1.65 0 3.3 0 5 0 C5.28875 0.61875 5.5775 1.2375 5.875 1.875 C6.93720042 4.13325765 6.93720042 4.13325765 9 6 C7.68 6 6.36 6 5 6 C5 8.97 5 11.94 5 15 C3.19590418 12.7858824 2.01039234 11.02979136 1.0625 8.3125 C0.23787497 5.80693523 0.23787497 5.80693523 -2.125 5.1875 C-2.74375 5.125625 -3.3625 5.06375 -4 5 C-3.01 5 -2.02 5 -1 5 C-0.67 3.35 -0.34 1.7 0 0 Z " fill="#EFEFEF" transform="translate(453,961)"/>
-<path d="M0 0 C1.32 0.33 2.64 0.66 4 1 C4 4.63 4 8.26 4 12 C2.68 12.33 1.36 12.66 0 13 C0 8.71 0 4.42 0 0 Z " fill="#F3F3F3" transform="translate(454,926)"/>
-<path d="M0 0 C2.97 0 5.94 0 9 0 C9 1.65 9 3.3 9 5 C6.03 5 3.06 5 0 5 C0 3.35 0 1.7 0 0 Z " fill="#EDEDED" transform="translate(697,859)"/>
-<path d="M0 0 C0.125 2.875 0.125 2.875 0 6 C-2 8 -2 8 -4.1640625 8.1953125 C-5.38222656 8.16050781 -5.38222656 8.16050781 -6.625 8.125 C-7.44226563 8.10695313 -8.25953125 8.08890625 -9.1015625 8.0703125 C-9.72804688 8.04710937 -10.35453125 8.02390625 -11 8 C-8.93513431 5.84012516 -6.81221537 4.03929301 -4.375 2.3125 C-3.45847656 1.65701172 -3.45847656 1.65701172 -2.5234375 0.98828125 C-1 0 -1 0 0 0 Z " fill="#EEEEEE" transform="translate(725,931)"/>
-<path d="M0 0 C2.475 0.495 2.475 0.495 5 1 C4.67 2.65 4.34 4.3 4 6 C2.68 6 1.36 6 0 6 C0 4.02 0 2.04 0 0 Z " fill="#E9E9E9" transform="translate(428,909)"/>
-</svg>
+    <!-- ▼ 全画面オーバーレイメニュー ▼ -->
+    <div id="fullscreen-menu">
+        <div id="menu-close-btn"></div>
+        
+        <div class="menu-row menu-nav-area">
+            <div class="menu-left-col"></div>
+            <div class="menu-right-col">
+                <div class="menu-watermark">
+                    <svg viewBox="0 0 1080 1920">
+                        <!-- 透かし用 ハレトケ文字のみ -->
+                        <path d="M0 0 C4.47915328 -0.02886338 8.95828291 -0.04675187 13.4375 -0.0625 C14.71689453 -0.07087891 15.99628906 -0.07925781 17.31445312 -0.08789062 C19.13686523 -0.09272461 19.13686523 -0.09272461 20.99609375 -0.09765625 C22.12200928 -0.10289307 23.2479248 -0.10812988 24.40795898 -0.11352539 C27 0 27 0 28 1 C27.67 6.28 27.34 11.56 27 17 C82.77 17 138.54 17 196 17 C196 34.16 196 51.32 196 69 C194.41523948 70.58476052 192.77107999 70.16427317 190.57202148 70.20532227 C189.63112167 70.22526749 188.69022186 70.24521271 187.72080994 70.26576233 C186.18645042 70.29083107 186.18645042 70.29083107 184.62109375 70.31640625 C183.57929459 70.33718735 182.53749542 70.35796844 181.46412659 70.37937927 C178.12198753 70.44499057 174.77976715 70.50381331 171.4375 70.5625 C169.17772582 70.60567422 166.91795999 70.64928814 164.65820312 70.69335938 C159.10555579 70.80068367 153.55282679 70.90242812 148 71 C147.94593994 72.0324585 147.89187988 73.06491699 147.83618164 74.12866211 C145.62035141 114.18001251 130.89553446 150.0786043 103 179 C101.74123047 180.37091797 101.74123047 180.37091797 100.45703125 181.76953125 C76.08897478 207.53847447 39.15240742 223.58687367 4 226 C-0.33402287 226.05277639 -4.66591728 226.04032652 -9 226 C-9.0246501 220.89136104 -9.04283607 215.78275641 -9.05493164 210.67407227 C-9.05997204 208.93480832 -9.0668043 207.19554864 -9.07543945 205.45629883 C-9.08751792 202.96174063 -9.09323108 200.46723827 -9.09765625 197.97265625 C-9.10539818 196.7992141 -9.10539818 196.7992141 -9.11329651 195.60206604 C-9.11349226 193.73432886 -9.06199694 191.86670796 -9 190 C-7.12291087 188.12291087 -3.6891718 188.8198373 -1.1875 188.75 C24.01886579 187.56300461 48.63254191 176.86599674 68 161 C68.85078125 160.31421875 69.7015625 159.6284375 70.578125 158.921875 C77.30111438 153.21367647 82.60750714 146.63200344 87.83251953 139.57617188 C88.78915066 138.28465984 89.76498988 137.00739568 90.74609375 135.734375 C104.61955847 116.63486259 108.68239545 92.85567927 111 70 C108.36 70 105.72 70 103 70 C102.92652344 71.32451172 102.92652344 71.32451172 102.8515625 72.67578125 C102.37912673 80.2591899 101.60361155 87.5738794 100 95 C99.72736328 96.39605469 99.72736328 96.39605469 99.44921875 97.8203125 C97.56687155 106.48141923 94.03173628 114.17142733 90 122 C89.46375 123.04414062 88.9275 124.08828125 88.375 125.1640625 C83.89109933 133.33424689 78.21126584 140.11675511 72 147 C71.04867187 148.09441406 71.04867187 148.09441406 70.078125 149.2109375 C53.89519577 166.75437848 28.3843086 178.00898378 5 181 C0.38 181 -4.24 181 -9 181 C-9 168.46 -9 155.92 -9 143 C-6.174375 142.62875 -3.34875 142.2575 -0.4375 141.875 C19.03453859 138.9705256 36.32737105 129.97249272 48.625 114.375 C53.04760825 108.28247588 56.19492733 101.96743858 59 95 C59.31710937 94.25492188 59.63421875 93.50984375 59.9609375 92.7421875 C61.83838962 87.85337654 62.47089591 82.88316952 63.078125 77.70703125 C63.16787598 76.96505493 63.25762695 76.22307861 63.35009766 75.45861816 C63.56971715 73.6394367 63.78526749 71.81976479 64 70 C56.48859847 69.7103682 48.98012475 69.52346252 41.4635334 69.45853233 C37.96986206 69.42531721 34.48362399 69.36017045 30.99267578 69.21484375 C13.64384018 68.13440833 13.64384018 68.13440833 -1.69165039 74.91821289 C-5.59410412 78.60442825 -8.91695201 82.63708899 -12.1940155 86.87823486 C-23.7095959 100.40734159 -44.45746573 106.72233457 -61 111 C-61.92554688 111.2475 -62.85109375 111.495 -63.8046875 111.75 C-71.11948124 113.47677098 -77.07431499 113 -85 113 C-85 103.76 -85 94.52 -85 85 C-81.90625 84.649375 -78.8125 84.29875 -75.625 83.9375 C-51.16975777 80.69785015 -31.23329675 68.43052495 -16 49 C-13.69450319 45.45884248 -11.82098501 41.80935861 -10 38 C-9.48566406 37.02160156 -8.97132813 36.04320312 -8.44140625 35.03515625 C-3.05001297 23.94313765 -1.66303521 12.11298715 0 0 Z " fill="#fff" transform="translate(679,960)"/>
+                        <path d="M0 0 C17.82 0 35.64 0 54 0 C54.33 13.86 54.66 27.72 55 42 C74.14 42.33 93.28 42.66 113 43 C113 60.49 113 77.98 113 96 C93.53 96 74.06 96 54 96 C54 109.86 54 123.72 54 138 C36.18 138 18.36 138 0 138 C0 92.46 0 46.92 0 0 Z " fill="#fff" transform="translate(513,934)"/>
+                        <path d="M0 0 C11.88 0 23.76 0 36 0 C36 7.84226919 35.88698658 15.06871255 34.8125 22.75 C34.68012939 23.69955566 34.54775879 24.64911133 34.41137695 25.62744141 C33.24211152 33.41510375 31.36548849 40.71130704 28.68261719 48.10546875 C27.98927996 50.02975233 27.3406543 51.96540141 26.6953125 53.90625 C13.79456589 91.61755618 -15.6834221 122.32966857 -51 140 C-73.00276356 150.67759692 -95.56496823 156 -120 156 C-120 143.79 -120 131.58 -120 119 C-115.2665625 118.62875 -115.2665625 118.62875 -110.4375 118.25 C-78.27951228 115.3654626 -48.9714694 100.06229897 -27.99609375 75.5546875 C-12.19396083 55.33043128 -2.69591303 32.11499048 -1.28125 6.3984375 C-1 3 -1 3 0 0 Z " fill="#fff" transform="translate(519,638)"/>
+                        <path d="M0 0 C26.4 0 52.8 0 80 0 C80.020625 13.179375 80.04125 26.35875 80.0625 39.9375 C80.071604 44.1049585 80.08070801 48.27241699 80.09008789 52.56616211 C80.09460449 57.63977051 80.09460449 57.63977051 80.09544373 60.01197815 C80.09698327 61.67527025 80.10050841 63.33856122 80.10557556 65.00184631 C80.11285309 67.51549226 80.11390742 70.02906977 80.11352539 72.54272461 C80.1171235 73.2885955 80.12072161 74.03446638 80.12442875 74.80293941 C80.11402634 79.88597366 80.11402634 79.88597366 79 81 C76.57142965 81.10029857 74.17128387 81.13618425 71.7421875 81.12939453 C70.98286926 81.13114685 70.22355103 81.13289917 69.44122314 81.13470459 C66.91912584 81.1391233 64.39709807 81.13618506 61.875 81.1328125 C60.13004544 81.13348553 58.38509096 81.13445555 56.64013672 81.13571167 C52.97818105 81.13718867 49.31624972 81.13503403 45.65429688 81.13037109 C40.94955508 81.1246738 36.24487032 81.1279528 31.54013062 81.13394356 C27.93546109 81.13754912 24.33080518 81.13641061 20.72613525 81.13381577 C18.99090569 81.13314648 17.25567491 81.13397496 15.52044678 81.13629532 C13.09953513 81.13882177 10.67871714 81.13498138 8.2578125 81.12939453 C7.53362122 81.13141876 6.80942993 81.13344299 6.06329346 81.13552856 C1.11426266 81.11426266 1.11426266 81.11426266 0 80 C-0.0950257 77.5050359 -0.12556258 75.03797738 -0.11352539 72.54272461 C-0.11364593 71.74962922 -0.11376646 70.95653383 -0.11389065 70.13940525 C-0.1131415 67.56035667 -0.10551321 64.98137948 -0.09765625 62.40234375 C-0.09618684 60.81481969 -0.09516612 59.22729515 -0.09460449 57.63977051 C-0.08935154 51.73900631 -0.07539046 45.83825246 -0.0625 39.9375 C-0.041875 26.758125 -0.02125 13.57875 0 0 Z " fill="#fff" transform="translate(697,976)"/>
+                        <path d="M0 0 C12.54 0 25.08 0 38 0 C38 16.32755518 38 16.32755518 36.375 22.9375 C36.19678711 23.69200439 36.01857422 24.44650879 35.83496094 25.22387695 C31.479247 42.7554413 23.27255621 59.69240893 11 73 C10.24589844 73.82564453 10.24589844 73.82564453 9.4765625 74.66796875 C-9.04854682 94.74422359 -34.37087236 108.84499237 -62 111 C-65.63 111 -69.26 111 -73 111 C-73 98.46 -73 85.92 -73 73 C-67.555 72.01 -67.555 72.01 -62 71 C-47.49063779 68.1199491 -35.10287935 63.04106552 -24 53 C-23.39027344 52.47019531 -22.78054688 51.94039062 -22.15234375 51.39453125 C-7.60432231 37.93361471 -2.69342249 18.8539574 0 0 Z " fill="#fff" transform="translate(472,638)"/>
+                    </svg>
+                </div>
+                
+                <div class="menu-links">
+                    <a href="#about">ABOUT</a>
+                    <a href="#members">MEMBER</a>
+                    <a href="#performance">STAGE</a>
+                    <a href="#history">MEMORY</a>
+                </div>
+            </div>
         </div>
 
-        <p id="header-catchphrase" style="letter-spacing: 2px; font-size: 0.9rem;"></p>
-        <!-- スクロールダウンの指示 -->
-        <a href="#nav-menu" class="scroll-down">SCROLL</a>
-    </header>
+        <div class="menu-row menu-topics-area">
+            <div class="menu-left-col">
+                <p class="menu-label">TOPICS</p>
+            </div>
+            <div class="menu-right-col">
+                <div class="menu-bottom-content">
+                    <span class="menu-divider">-</span>
+                    <p class="menu-topics-text">「第六回公演」今秋決定！</p>
+                    <div class="menu-contact-box">
+                        <a href="#contact">CONTACT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-row menu-sns-area">
+            <div class="menu-left-col">
+                <p class="menu-label">OFFICIAL<br>SNS</p>
+            </div>
+            <div class="menu-right-col">
+                <div class="menu-sns-icons">
+                    <div class="sns-icon">
+                        <div class="icon-circle icon-x"></div>
+                        <span>@haretokemusical</span>
+                    </div>
+                    <div class="sns-icon">
+                        <div class="icon-circle icon-insta"></div>
+                        <span>@haretoke.musical</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hero-scroll-container">
+        <header id="hero-header">
+            <!-- ハレトケロゴのアップロード -->
+            <div class="logo-wrapper">
+                <svg class="animated-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+                    <!-- 追加: 完璧な真円の白丸背景 -->
+                    <circle class="bg-white-circle" cx="540.125" cy="960" r="399" fill="#FDFDFD" />
+                    <!-- 追加: スクロール時に左側に白丸がはみ出さないようにする巨大な黒マスク -->
+                    <rect class="bg-black-mask" x="-5000" y="-5000" width="5334" height="11920" fill="#111"
+                        style="opacity: 0; transition: opacity 0.1s;" />
+                    <!-- 追加: 左から迫る黒い波 -->
+                    <rect class="bg-black-sweep" x="141" y="561" width="0" height="798" fill="#111" />
+
+                    <!-- 追加: 外から伸びてくるフェイクの黒線 -->
+                    <!-- レ (Path 3) 用: 上から伸びる -->
+                    <line class="fake-line" style="--len: 221; stroke-dasharray: 221;" x1="513.5" y1="561" x2="513.5"
+                        y2="782" stroke="#010101" stroke-width="53" stroke-linecap="butt" />
+                    <!-- ケ (Path 2) 用: 左から伸びる -->
+                    <line class="fake-line" style="--len: 343; stroke-dasharray: 343;" x1="141" y1="1114" x2="484"
+                        y2="1114" stroke="#010101" stroke-width="70" stroke-linecap="butt" />
+                    <!-- ハ (Path 9) 用: 右下から斜めに伸びる -->
+                    <line class="fake-line" style="--len: 350; stroke-dasharray: 350;" x1="939" y1="1030" x2="691"
+                        y2="782" stroke="#010101" stroke-width="50" stroke-linecap="butt" />
+
+                    <path
+                        d="M0 0 C356.4 0 712.8 0 1080 0 C1080 633.6 1080 1267.2 1080 1920 C723.6 1920 367.2 1920 0 1920 C0 1286.4 0 652.8 0 0 Z "
+                        fill="#000000" transform="translate(0,0)" />
+                    <path
+                        d="M0 0 C3.78401709 0.01072788 7.56755962 0.00003555 11.3515625 -0.01269531 C30.74911165 -0.02512106 49.61074658 1.26129144 68.7265625 4.57324219 C70.00305664 4.79197998 71.27955078 5.01071777 72.59472656 5.23608398 C113.78834773 12.44006 152.61338306 26.26826537 189.7890625 45.26074219 C191.16215576 45.95586914 191.16215576 45.95586914 192.56298828 46.66503906 C203.42212439 52.21243719 213.64838225 58.63410798 223.7890625 65.38574219 C224.35079163 65.7596106 224.91252075 66.133479 225.49127197 66.51867676 C237.41561639 74.48634472 248.79512386 83.05144307 259.7890625 92.26074219 C260.54396469 92.88858612 260.54396469 92.88858612 261.31411743 93.52911377 C270.04945921 100.81050117 278.30187806 108.45569013 286.3137207 116.5246582 C288.11122055 118.33295826 289.91928566 120.13020196 291.72851562 121.92675781 C298.54182917 128.73234388 304.81931229 135.69531664 310.7890625 143.26074219 C311.6519926 144.28867701 312.52039794 145.31208939 313.3984375 146.32714844 C333.70730473 170.00847355 350.40294848 197.26547704 363.86669922 225.35107422 C364.78198271 227.24608413 365.72273089 229.1266186 366.66796875 231.00683594 C377.75201485 253.38071028 385.52813146 277.14593955 391.7890625 301.26074219 C392.03350098 302.18274414 392.27793945 303.10474609 392.52978516 304.0546875 C395.7259178 316.27881279 397.7293673 328.64536482 399.5390625 341.13574219 C399.64624603 341.86810089 399.75342957 342.60045959 399.86386108 343.35501099 C402.51065306 361.64121378 403.02884708 379.80614629 403.0390625 398.26074219 C403.04007462 399.91314911 403.04007462 399.91314911 403.04110718 401.59893799 C403.01391289 429.67513628 400.41397149 456.70614124 394.7890625 484.26074219 C394.61713379 485.14068848 394.44520508 486.02063477 394.26806641 486.92724609 C385.47496921 531.33019958 365.88550516 575.23540255 341.7890625 613.26074219 C341.11746094 614.32679688 340.44585938 615.39285156 339.75390625 616.49121094 C330.98033948 629.99617041 321.17736218 642.9607068 310.7890625 655.26074219 C309.52292114 656.77837158 309.52292114 656.77837158 308.23120117 658.32666016 C301.34925226 666.51809176 294.11584628 674.24844006 286.52514648 681.78540039 C284.71684642 683.58290023 282.91960273 685.39096535 281.12304688 687.20019531 C274.31534442 694.01556999 267.3397861 700.27000046 259.7890625 706.26074219 C258.69791516 707.19439501 257.61314829 708.13563593 256.5390625 709.08886719 C248.21969727 716.41558088 239.28545891 722.60749555 230.0625 728.74121094 C228.02127327 730.10553602 225.99593303 731.48936895 223.9765625 732.88574219 C207.31374474 744.343984 189.57468213 753.63879664 171.24462891 762.12109375 C169.18308078 763.07787508 167.13021198 764.04924316 165.08203125 765.03417969 C148.79122696 772.77999607 131.89967579 778.29129982 114.63037109 783.41650391 C112.31138557 784.10554428 109.9966104 784.80594637 107.68359375 785.51464844 C94.16580851 789.5557214 80.31984581 792.09484594 66.4140625 794.38574219 C65.00096802 794.62357422 65.00096802 794.62357422 63.55932617 794.86621094 C44.91834154 797.83504697 26.43443391 798.58492434 7.578125 798.52148438 C3.79410791 798.51075649 0.01056538 798.52144883 -3.7734375 798.53417969 C-23.99548127 798.54787819 -43.5236263 797.06708549 -63.3984375 793.38574219 C-64.88652393 793.11530207 -66.37464288 792.84504081 -67.86279297 792.57495117 C-114.18944087 784.10867905 -157.37553888 768.00976687 -198.14233398 744.44067383 C-199.47880543 743.67835039 -200.83477096 742.94882546 -202.2109375 742.26074219 C-202.2109375 515.88074219 -202.2109375 289.50074219 -202.2109375 56.26074219 C-178.6718626 43.42124679 -155.4941395 31.13915715 -130.2109375 22.26074219 C-129.40785156 21.9784375 -128.60476563 21.69613281 -127.77734375 21.40527344 C-107.5228658 14.34549345 -87.39191822 9.51364324 -66.26757812 5.80419922 C-63.03865404 5.23011096 -59.81820802 4.62113139 -56.60058594 3.98706055 C-37.80791518 0.55308287 -19.07129837 -0.06416327 0 0 Z "
+                        fill="#FDFDFD" transform="translate(536.2109375,560.7392578125)" />
+                    <path
+                        d="M0 0 C4.47915328 -0.02886338 8.95828291 -0.04675187 13.4375 -0.0625 C14.71689453 -0.07087891 15.99628906 -0.07925781 17.31445312 -0.08789062 C19.13686523 -0.09272461 19.13686523 -0.09272461 20.99609375 -0.09765625 C22.12200928 -0.10289307 23.2479248 -0.10812988 24.40795898 -0.11352539 C27 0 27 0 28 1 C27.67 6.28 27.34 11.56 27 17 C82.77 17 138.54 17 196 17 C196 34.16 196 51.32 196 69 C194.41523948 70.58476052 192.77107999 70.16427317 190.57202148 70.20532227 C189.63112167 70.22526749 188.69022186 70.24521271 187.72080994 70.26576233 C186.18645042 70.29083107 186.18645042 70.29083107 184.62109375 70.31640625 C183.57929459 70.33718735 182.53749542 70.35796844 181.46412659 70.37937927 C178.12198753 70.44499057 174.77976715 70.50381331 171.4375 70.5625 C169.17772582 70.60567422 166.91795999 70.64928814 164.65820312 70.69335938 C159.10555579 70.80068367 153.55282679 70.90242812 148 71 C147.94593994 72.0324585 147.89187988 73.06491699 147.83618164 74.12866211 C145.62035141 114.18001251 130.89553446 150.0786043 103 179 C101.74123047 180.37091797 101.74123047 180.37091797 100.45703125 181.76953125 C76.08897478 207.53847447 39.15240742 223.58687367 4 226 C-0.33402287 226.05277639 -4.66591728 226.04032652 -9 226 C-9.0246501 220.89136104 -9.04283607 215.78275641 -9.05493164 210.67407227 C-9.05997204 208.93480832 -9.0668043 207.19554864 -9.07543945 205.45629883 C-9.08751792 202.96174063 -9.09323108 200.46723827 -9.09765625 197.97265625 C-9.10539818 196.7992141 -9.10539818 196.7992141 -9.11329651 195.60206604 C-9.11349226 193.73432886 -9.06199694 191.86670796 -9 190 C-7.12291087 188.12291087 -3.6891718 188.8198373 -1.1875 188.75 C24.01886579 187.56300461 48.63254191 176.86599674 68 161 C68.85078125 160.31421875 69.7015625 159.6284375 70.578125 158.921875 C77.30111438 153.21367647 82.60750714 146.63200344 87.83251953 139.57617188 C88.78915066 138.28465984 89.76498988 137.00739568 90.74609375 135.734375 C104.61955847 116.63486259 108.68239545 92.85567927 111 70 C108.36 70 105.72 70 103 70 C102.92652344 71.32451172 102.92652344 71.32451172 102.8515625 72.67578125 C102.37912673 80.2591899 101.60361155 87.5738794 100 95 C99.72736328 96.39605469 99.72736328 96.39605469 99.44921875 97.8203125 C97.56687155 106.48141923 94.03173628 114.17142733 90 122 C89.46375 123.04414062 88.9275 124.08828125 88.375 125.1640625 C83.89109933 133.33424689 78.21126584 140.11675511 72 147 C71.04867187 148.09441406 71.04867187 148.09441406 70.078125 149.2109375 C53.89519577 166.75437848 28.3843086 178.00898378 5 181 C0.38 181 -4.24 181 -9 181 C-9 168.46 -9 155.92 -9 143 C-6.174375 142.62875 -3.34875 142.2575 -0.4375 141.875 C19.03453859 138.9705256 36.32737105 129.97249272 48.625 114.375 C53.04760825 108.28247588 56.19492733 101.96743858 59 95 C59.31710937 94.25492188 59.63421875 93.50984375 59.9609375 92.7421875 C61.83838962 87.85337654 62.47089591 82.88316952 63.078125 77.70703125 C63.16787598 76.96505493 63.25762695 76.22307861 63.35009766 75.45861816 C63.56971715 73.6394367 63.78526749 71.81976479 64 70 C56.48859847 69.7103682 48.98012475 69.52346252 41.4635334 69.45853233 C37.96986206 69.42531721 34.48362399 69.36017045 30.99267578 69.21484375 C13.64384018 68.13440833 13.64384018 68.13440833 -1.69165039 74.91821289 C-5.59410412 78.60442825 -8.91695201 82.63708899 -12.1940155 86.87823486 C-23.7095959 100.40734159 -44.45746573 106.72233457 -61 111 C-61.92554688 111.2475 -62.85109375 111.495 -63.8046875 111.75 C-71.11948124 113.47677098 -77.07431499 113 -85 113 C-85 103.76 -85 94.52 -85 85 C-81.90625 84.649375 -78.8125 84.29875 -75.625 83.9375 C-51.16975777 80.69785015 -31.23329675 68.43052495 -16 49 C-13.69450319 45.45884248 -11.82098501 41.80935861 -10 38 C-9.48566406 37.02160156 -8.97132813 36.04320312 -8.44140625 35.03515625 C-3.05001297 23.94313765 -1.66303521 12.11298715 0 0 Z "
+                        fill="#010101" transform="translate(484,1079)" />
+                    <path
+                        d="M0 0 C17.49 0 34.98 0 53 0 C53 23.76 53 47.52 53 72 C68.22141763 68.95571647 81.39033057 65.85747023 91 53 C96.95772047 43.56791417 99.25719165 34.86692267 101 24 C110.9 24 120.8 24 131 24 C131 44.02756124 125.11041675 60.7749999 112 76 C111.31292969 76.79921875 110.62585938 77.5984375 109.91796875 78.421875 C100.5691254 88.48185485 88.93002065 94.71865008 76 99 C75.05898438 99.35964844 74.11796875 99.71929688 73.1484375 100.08984375 C69.27679058 101.20906674 65.63413847 101.45100484 61.625 101.625 C60.88894531 101.66367187 60.15289063 101.70234375 59.39453125 101.7421875 C57.59672594 101.83557998 55.79839892 101.9188371 54 102 C54 104.31 54 106.62 54 109 C80.66328125 105.88564133 103.33958657 96.92899039 120.64453125 75.3046875 C132.16061699 59.6821272 135.57402668 42.92259188 138 24 C147.24 24 156.48 24 166 24 C166 50.60316664 158.19118573 76.94305163 140 97 C139.31550781 97.81339844 138.63101563 98.62679687 137.92578125 99.46484375 C124.82483257 114.72968342 109.38876737 123.61663128 91 131 C89.96359375 131.46019531 89.96359375 131.46019531 88.90625 131.9296875 C63.45671872 142.75690037 20.32283126 137 0 137 C0 91.79 0 46.58 0 0 Z "
+                        fill="#010101" transform="translate(487,782)" />
+                    <path
+                        d="M0 0 C18.954375 -0.020625 37.90875 -0.04125 57.4375 -0.0625 C66.42955688 -0.07615601 66.42955688 -0.07615601 75.60327148 -0.09008789 C82.89855957 -0.09460449 82.89855957 -0.09460449 86.30897522 -0.09544373 C88.70143316 -0.09698379 91.09389031 -0.10050997 93.48634338 -0.10557556 C97.10085406 -0.11284898 100.71531713 -0.11390755 104.32983398 -0.11352539 C105.94047934 -0.11892255 105.94047934 -0.11892255 107.58366299 -0.12442875 C108.55064145 -0.12305125 109.51761992 -0.12167376 110.51390076 -0.12025452 C111.36102851 -0.12117631 112.20815626 -0.1220981 113.08095455 -0.12304783 C115 0 115 0 116 1 C116.09581822 2.53085839 116.12188108 4.06613756 116.12025452 5.59999084 C116.12231651 7.09135811 116.12231651 7.09135811 116.12442017 8.612854 C116.11902725 10.26254181 116.11902725 10.26254181 116.11352539 11.94555664 C116.11367142 13.09662399 116.11381744 14.24769135 116.1139679 15.43363953 C116.11326818 19.25916391 116.10547302 23.08464031 116.09765625 26.91015625 C116.09579228 29.55431593 116.09436828 32.19847596 116.09336853 34.84263611 C116.09025549 41.10415417 116.08204248 47.36565486 116.07201904 53.62716526 C116.06085705 60.75401537 116.05534724 67.8808663 116.05032361 75.00772297 C116.03985984 89.6718243 116.02226093 104.33591191 116 119 C113.18743719 119.02684312 110.37512759 119.04676188 107.5625 119.0625 C106.76005859 119.07087891 105.95761719 119.07925781 105.13085938 119.08789062 C103.08704779 119.0965143 101.04316098 119.0522815 99 119 C98.67 118.67 98.34 118.34 98 118 C98 116.02 98 114.04 98 112 C71.6 112 45.2 112 18 112 C18 114.31 18 116.62 18 119 C12.06 119 6.12 119 0 119 C0 79.73 0 40.46 0 0 Z "
+                        fill="#050505" transform="translate(679,960)" />
+                    <path
+                        d="M0 0 C17.82 0 35.64 0 54 0 C54.33 13.86 54.66 27.72 55 42 C74.14 42.33 93.28 42.66 113 43 C113 60.49 113 77.98 113 96 C93.53 96 74.06 96 54 96 C54 109.86 54 123.72 54 138 C36.18 138 18.36 138 0 138 C0 92.46 0 46.92 0 0 Z "
+                        fill="#010101" transform="translate(513,934)" />
+                    <path
+                        d="M0 0 C3.9290625 -0.0309375 3.9290625 -0.0309375 7.9375 -0.0625 C8.7637085 -0.071604 9.58991699 -0.08070801 10.44116211 -0.09008789 C12.29433759 -0.09723945 14.14749308 -0.0502852 16 0 C17 1 17 1 17 6 C25.58 6 34.16 6 43 6 C43 9.96 43 13.92 43 18 C34.42 18 25.84 18 17 18 C17 18.99 17 19.98 17 21 C17.78648926 20.9685791 18.57297852 20.9371582 19.38330078 20.90478516 C22.96357195 20.77968944 26.54338302 20.70190589 30.125 20.625 C31.98125 20.54958984 31.98125 20.54958984 33.875 20.47265625 C42.91005999 20.32692948 42.91005999 20.32692948 46.20605469 22.36230469 C47.8671875 24.0234375 47.8671875 24.0234375 50 27 C50.33 21.72 50.66 16.44 51 11 C56.28 11 61.56 11 67 11 C67 38.06 67 65.12 67 93 C61.72 93 56.44 93 51 93 C50.67 73.2 50.34 53.4 50 33 C48.35 36.3 46.7 39.6 45 43 C43.5975 42.855625 42.195 42.71125 40.75 42.5625 C39.96109375 42.48128906 39.1721875 42.40007813 38.359375 42.31640625 C36.17635361 42.02365007 34.1226818 41.57935581 32 41 C32.52268466 38.23723823 33.10869587 35.6739124 34 33 C27.73 33 21.46 33 15 33 C15 34.32 15 35.64 15 37 C16.07121094 36.91621094 17.14242187 36.83242188 18.24609375 36.74609375 C19.64320866 36.64295104 21.04034524 36.54010157 22.4375 36.4375 C23.49807617 36.35338867 23.49807617 36.35338867 24.58007812 36.26757812 C26.38427837 36.13809007 28.19231952 36.06478392 30 36 C31 37 31 37 31.09765625 39.06640625 C31.06510417 41.37760417 31.03255208 43.68880208 31 46 C25.72 46 20.44 46 15 46 C15.33 46.99 15.66 47.98 16 49 C20.95 49 25.9 49 31 49 C31.66 47.35 32.32 45.7 33 44 C37.02992782 44.55312735 41.02022924 45.1558062 45 46 C45.35288435 49.7935068 45.28393415 51.55941253 43.1875 54.8125 C38.3386668 59.6613332 30.4125998 58.2993453 23.94921875 58.35009766 C22.40316724 58.36666249 20.85719249 58.39396021 19.31152344 58.43212891 C17.07446879 58.48702888 14.83920088 58.50878617 12.6015625 58.5234375 C11.57163681 58.55744156 11.57163681 58.55744156 10.52090454 58.59213257 C6.6639073 58.57523712 5.09865951 58.0786766 2.04443359 55.64306641 C0 53 0 53 -0.3125 50.1875 C-0.1578125 49.1046875 -0.1578125 49.1046875 0 48 C-2.64 48.33 -5.28 48.66 -8 49 C-8.33 52.96 -8.66 56.92 -9 61 C9.48 61 27.96 61 47 61 C47 64.3 47 67.6 47 71 C43.535 71.99 43.535 71.99 40 73 C42.64 74.98 45.28 76.96 48 79 C46.65515286 83.04161955 44.9494838 85.38678154 41.875 88.3125 C41.15054688 89.00988281 40.42609375 89.70726562 39.6796875 90.42578125 C39.12539063 90.94527344 38.57109375 91.46476563 38 92 C39.49180382 95.83969961 41.62013522 97.42279409 45 99.6875 C45.886875 100.28949219 46.77375 100.89148438 47.6875 101.51171875 C49.90343595 102.9967142 49.90343595 102.9967142 52 104 C51.43174347 109.54050113 49.37113483 114.03715966 47 119 C42.95838045 117.65515286 40.61321846 115.9494838 37.6875 112.875 C36.99011719 112.15054688 36.29273438 111.42609375 35.57421875 110.6796875 C35.05472656 110.12539063 34.53523437 109.57109375 34 109 C33.82984375 109.67546875 33.6596875 110.3509375 33.484375 111.046875 C31.05418029 119.99205979 31.05418029 119.99205979 27 123 C24.65147472 124.17426264 23.26225935 124.11508173 20.6484375 124.09765625 C19.37226562 124.09282227 19.37226562 124.09282227 18.0703125 124.08789062 C17.18085937 124.07951172 16.29140625 124.07113281 15.375 124.0625 C14.4778125 124.05798828 13.580625 124.05347656 12.65625 124.04882812 C10.43743352 124.03702591 8.21874982 124.02056155 6 124 C5.01 121.69 4.02 119.38 3 117 C0.24639085 117.55072183 -1.96037662 118.42121782 -4.5625 119.5625 C-8 121 -8 121 -11 121 C-14 116.77777778 -14 116.77777778 -14 114 C-14.99 114 -15.98 114 -17 114 C-17.18175781 114.63808594 -17.36351562 115.27617188 -17.55078125 115.93359375 C-17.80214844 116.75988281 -18.05351563 117.58617187 -18.3125 118.4375 C-18.55613281 119.26121094 -18.79976562 120.08492187 -19.05078125 120.93359375 C-19.52064453 121.95646484 -19.52064453 121.95646484 -20 123 C-21.485 123.495 -21.485 123.495 -23 124 C-24.12935196 122.58680023 -25.25330626 121.16928595 -26.375 119.75 C-27.00148438 118.96109375 -27.62796875 118.1721875 -28.2734375 117.359375 C-29.78910737 115.28818811 -30.94219634 113.32930503 -32 111 C-32.66 111 -33.32 111 -34 111 C-33.37883706 107.4156053 -32.39033387 104.25386371 -31.04443359 100.87915039 C-28.96548246 95.25766701 -27.9562031 89.87336909 -27.2890625 83.93359375 C-27.16753815 82.90608505 -27.04601379 81.87857635 -26.92080688 80.81993103 C-25.61922839 68.92247408 -25.47209979 57.01926005 -25.375 45.0625 C-25.33840451 41.73881122 -25.29799079 38.41523646 -25.25234985 35.09165955 C-25.22525093 33.05068342 -25.20384482 31.00962179 -25.18881226 28.96852112 C-25.17855011 28.0650444 -25.16828796 27.16156769 -25.15771484 26.23071289 C-25.15121918 25.43484268 -25.14472351 24.63897247 -25.13803101 23.81898499 C-25 22 -25 22 -24 21 C-22.21928754 20.91273777 -20.4351686 20.89300959 -18.65234375 20.90234375 C-17.57275391 20.90556641 -16.49316406 20.90878906 -15.38085938 20.91210938 C-13.67639648 20.92467773 -13.67639648 20.92467773 -11.9375 20.9375 C-10.22723633 20.94426758 -10.22723633 20.94426758 -8.48242188 20.95117188 C-5.65492582 20.9630024 -2.82745655 20.9809385 0 21 C0 14.07 0 7.14 0 0 Z "
+                        fill="#060606" transform="translate(706,826)" />
+                    <path
+                        d="M0 0 C11.88 0 23.76 0 36 0 C36 7.84226919 35.88698658 15.06871255 34.8125 22.75 C34.68012939 23.69955566 34.54775879 24.64911133 34.41137695 25.62744141 C33.24211152 33.41510375 31.36548849 40.71130704 28.68261719 48.10546875 C27.98927996 50.02975233 27.3406543 51.96540141 26.6953125 53.90625 C13.79456589 91.61755618 -15.6834221 122.32966857 -51 140 C-73.00276356 150.67759692 -95.56496823 156 -120 156 C-120 143.79 -120 131.58 -120 119 C-115.2665625 118.62875 -115.2665625 118.62875 -110.4375 118.25 C-78.27951228 115.3654626 -48.9714694 100.06229897 -27.99609375 75.5546875 C-12.19396083 55.33043128 -2.69591303 32.11499048 -1.28125 6.3984375 C-1 3 -1 3 0 0 Z "
+                        fill="#010101" transform="translate(519,638)" />
+                    <path
+                        d="M0 0 C26.4 0 52.8 0 80 0 C80.020625 13.179375 80.04125 26.35875 80.0625 39.9375 C80.071604 44.1049585 80.08070801 48.27241699 80.09008789 52.56616211 C80.09460449 57.63977051 80.09460449 57.63977051 80.09544373 60.01197815 C80.09698327 61.67527025 80.10050841 63.33856122 80.10557556 65.00184631 C80.11285309 67.51549226 80.11390742 70.02906977 80.11352539 72.54272461 C80.1171235 73.2885955 80.12072161 74.03446638 80.12442875 74.80293941 C80.11402634 79.88597366 80.11402634 79.88597366 79 81 C76.57142965 81.10029857 74.17128387 81.13618425 71.7421875 81.12939453 C70.98286926 81.13114685 70.22355103 81.13289917 69.44122314 81.13470459 C66.91912584 81.1391233 64.39709807 81.13618506 61.875 81.1328125 C60.13004544 81.13348553 58.38509096 81.13445555 56.64013672 81.13571167 C52.97818105 81.13718867 49.31624972 81.13503403 45.65429688 81.13037109 C40.94955508 81.1246738 36.24487032 81.1279528 31.54013062 81.13394356 C27.93546109 81.13754912 24.33080518 81.13641061 20.72613525 81.13381577 C18.99090569 81.13314648 17.25567491 81.13397496 15.52044678 81.13629532 C13.09953513 81.13882177 10.67871714 81.13498138 8.2578125 81.12939453 C7.53362122 81.13141876 6.80942993 81.13344299 6.06329346 81.13552856 C1.11426266 81.11426266 1.11426266 81.11426266 0 80 C-0.0950257 77.5050359 -0.12556258 75.03797738 -0.11352539 72.54272461 C-0.11364593 71.74962922 -0.11376646 70.95653383 -0.11389065 70.13940525 C-0.1131415 67.56035667 -0.10551321 64.98137948 -0.09765625 62.40234375 C-0.09618684 60.81481969 -0.09516612 59.22729515 -0.09460449 57.63977051 C-0.08935154 51.73900631 -0.07539046 45.83825246 -0.0625 39.9375 C-0.041875 26.758125 -0.02125 13.57875 0 0 Z "
+                        fill="#F6F6F6" transform="translate(697,976)" />
+                    <path
+                        d="M0 0 C3.04530742 1.36348855 5.16099379 2.90554901 7.52485657 5.2507019 C8.20493271 5.92080292 8.88500885 6.59090393 9.58569336 7.28131104 C10.32094238 8.01589539 11.05619141 8.75047974 11.8137207 9.50732422 C12.59619675 10.28147675 13.37867279 11.05562927 14.18486023 11.85324097 C16.77065349 14.41492892 19.34871367 16.9842234 21.92578125 19.5546875 C23.7160014 21.335945 25.50630092 23.11712274 27.29667664 24.89822388 C31.04698107 28.63203657 34.79288206 32.3702051 38.53637695 36.11083984 C42.86675147 40.43757191 47.21010441 44.75097259 51.55950862 49.05856693 C55.74254954 53.2027974 59.91181989 57.36069164 64.07607079 61.52380753 C65.8506864 63.29420327 67.62944408 65.06045678 69.41231728 66.82253647 C71.8978761 69.28139088 74.36731132 71.75538007 76.83325195 74.23388672 C77.57862213 74.96442261 78.32399231 75.6949585 79.09194946 76.44763184 C79.75792648 77.1233725 80.4239035 77.79911316 81.11006165 78.49533081 C81.69573567 79.07899351 82.2814097 79.66265621 82.88483143 80.26400566 C84 82 84 82 83.7699213 84.10593224 C82.80046444 86.49087337 81.5379124 87.84316866 79.72119141 89.66699219 C79.03022369 90.36741638 78.33925598 91.06784058 77.62734985 91.78948975 C76.87634003 92.53442688 76.1253302 93.27936401 75.3515625 94.046875 C74.5832309 94.81807678 73.81489929 95.58927856 73.02328491 96.3838501 C71.39779295 98.01138312 69.76850797 99.63513539 68.13574219 101.25537109 C65.63122899 103.74381098 63.14312267 106.24785082 60.65625 108.75390625 C59.07648207 110.33169219 57.495784 111.9085475 55.9140625 113.484375 C55.16710114 114.23740906 54.42013977 114.99044312 53.65054321 115.76629639 C52.95327118 116.45411194 52.25599915 117.14192749 51.53759766 117.85058594 C50.92550446 118.46029236 50.31341125 119.06999878 49.68276978 119.69818115 C48 121 48 121 45 121 C43.44576168 119.52397156 43.44576168 119.52397156 41.79246521 117.48706055 C38.16931078 113.16715121 34.31612317 109.18135189 30.32055664 105.20703125 C29.58801666 104.47434525 28.85547668 103.74165924 28.10073853 102.98677063 C25.70624337 100.59296582 23.30823802 98.20271131 20.91015625 95.8125 C19.23842345 94.14263451 17.56691295 92.47254643 15.89561462 90.80224609 C11.51668864 86.42712068 7.13476684 82.05500793 2.75219727 77.68353271 C-1.72757509 73.2140276 -6.20448407 68.74165637 -10.68164062 64.26953125 C-19.45163968 55.51022607 -28.22480887 46.75410347 -37 38 C-30.7623583 30.63524112 -30.7623583 30.63524112 -27.47314453 27.35961914 C-26.85295441 26.73950455 -26.23276428 26.11938995 -25.59378052 25.48048401 C-24.94666107 24.83852585 -24.29954163 24.19656769 -23.6328125 23.53515625 C-22.95322479 22.85698349 -22.27363708 22.17881073 -21.57345581 21.48008728 C-19.42632998 19.33850859 -17.27573373 17.20045471 -15.125 15.0625 C-13.65862227 13.60114411 -12.1924742 12.13955774 -10.7265625 10.67773438 C-7.15369 7.11582065 -3.57770316 3.55706135 0 0 Z "
+                        fill="#010101" transform="translate(607,658)" />
+                    <path
+                        d="M0 0 C12.54 0 25.08 0 38 0 C38 16.32755518 38 16.32755518 36.375 22.9375 C36.19678711 23.69200439 36.01857422 24.44650879 35.83496094 25.22387695 C31.479247 42.7554413 23.27255621 59.69240893 11 73 C10.24589844 73.82564453 10.24589844 73.82564453 9.4765625 74.66796875 C-9.04854682 94.74422359 -34.37087236 108.84499237 -62 111 C-65.63 111 -69.26 111 -73 111 C-73 98.46 -73 85.92 -73 73 C-67.555 72.01 -67.555 72.01 -62 71 C-47.49063779 68.1199491 -35.10287935 63.04106552 -24 53 C-23.39027344 52.47019531 -22.78054688 51.94039062 -22.15234375 51.39453125 C-7.60432231 37.93361471 -2.69342249 18.8539574 0 0 Z "
+                        fill="#010101" transform="translate(472,638)" />
+                    <path
+                        d="M0 0 C1.30066406 -0.00128906 2.60132813 -0.00257812 3.94140625 -0.00390625 C4.96258545 -0.00076416 4.96258545 -0.00076416 6.00439453 0.00244141 C8.08503515 0.0077901 10.16545989 0.0024957 12.24609375 -0.00390625 C14.19708984 -0.00197266 14.19708984 -0.00197266 16.1875 0 C17.39083984 0.00112793 18.59417969 0.00225586 19.83398438 0.00341797 C22.59375 0.1328125 22.59375 0.1328125 23.59375 1.1328125 C23.47418236 22.35606781 14.7254255 41.49282655 0.21875 56.8828125 C-14.78595763 71.07462401 -33.97605844 78.1328125 -54.40625 78.1328125 C-54.40625 68.2328125 -54.40625 58.3328125 -54.40625 48.1328125 C-50.44625 47.4728125 -46.48625 46.8128125 -42.40625 46.1328125 C-28.9404179 42.09759682 -18.88521365 33.79594766 -12.15625 21.5703125 C-9.34441454 15.77044302 -8.37880644 10.24990005 -7.73046875 3.87109375 C-7.13148424 -1.18779949 -4.58842539 0.00430088 0 0 Z "
+                        fill="#020202" transform="translate(453.40625,1078.8671875)" />
+                    <path
+                        d="M0 0 C5.61 0 11.22 0 17 0 C17 3.96 17 7.92 17 12 C20.96 12 24.92 12 29 12 C29 16.95 29 21.9 29 27 C25.04 27 21.08 27 17 27 C17.01571045 28.15000488 17.0314209 29.30000977 17.04760742 30.48486328 C17.10206868 34.76750637 17.13640886 39.05011906 17.16479492 43.33300781 C17.17984471 45.18364619 17.20028933 47.03424911 17.22631836 48.88476562 C17.2628698 51.55087045 17.27976454 54.21650208 17.29296875 56.8828125 C17.30845261 57.70492218 17.32393646 58.52703186 17.33988953 59.37405396 C17.341329 64.33142186 16.75305126 67.70553646 14 72 C8.58032022 76.1831509 2.14157851 75.33717406 -4.375 75.1875 C-6.05142578 75.16719727 -6.05142578 75.16719727 -7.76171875 75.14648438 C-10.50831211 75.11127164 -13.25390289 75.06202096 -16 75 C-16.50806447 73.27318563 -17.00610467 71.54342021 -17.5 69.8125 C-17.7784375 68.84957031 -18.056875 67.88664062 -18.34375 66.89453125 C-19 64 -19 64 -19 59 C-13.06 59 -7.12 59 -1 59 C-1 48.77 -1 38.54 -1 28 C-21.295 27.505 -21.295 27.505 -42 27 C-42 22.05 -42 17.1 -42 12 C-28.14 12 -14.28 12 0 12 C0 8.04 0 4.08 0 0 Z "
+                        fill="#020202" transform="translate(744,979)" />
+                    <path
+                        d="M0 0 C5.61 0 11.22 0 17 0 C17.04639799 13.79561657 17.08190718 27.59121448 17.10362434 41.38689327 C17.11404895 47.79319457 17.12818411 54.19944237 17.15087891 60.60571289 C17.17265428 66.79135728 17.18457858 72.97695031 17.18975449 79.16263008 C17.1934418 81.51925019 17.20064217 83.87586758 17.21146011 86.23246574 C17.22603726 89.54037364 17.22797532 92.84807087 17.22705078 96.15600586 C17.23424133 97.1241774 17.24143188 98.09234894 17.24884033 99.08985901 C17.20716186 112.92573884 17.20716186 112.92573884 13.25 118.4375 C7.28276021 122.58141652 1.09424883 122.24776455 -5.875 122.125 C-7.33679688 122.11146484 -7.33679688 122.11146484 -8.828125 122.09765625 C-11.21900728 122.07421623 -13.60937261 122.04140442 -16 122 C-17.5849657 116.67904372 -18.78890831 111.44991262 -20 106 C-13.73 105.67 -7.46 105.34 -1 105 C-0.67 70.35 -0.34 35.7 0 0 Z "
+                        fill="#060606" transform="translate(780,828)" />
+                    <path
+                        d="M0 0 C5.28 0 10.56 0 16 0 C16 27.06 16 54.12 16 82 C10.72 82 5.44 82 0 82 C0 54.94 0 27.88 0 0 Z "
+                        fill="#000000" transform="translate(757,837)" />
+                    <path
+                        d="M0 0 C14.63636364 0 14.63636364 0 19 4 C20.57960269 5.57960269 20.16986544 7.19536816 20.1875 9.375 C20.20167969 10.16648437 20.21585937 10.95796875 20.23046875 11.7734375 C20 14 20 14 18 17 C18.21053391 19.31492671 18.21053391 19.31492671 19 22 C19.35529807 23.43722078 19.70940938 24.87473531 20.0625 26.3125 C20.371875 27.529375 20.68125 28.74625 21 30 C18.36 30 15.72 30 13 30 C12.01 26.37 11.02 22.74 10 19 C9.34 19 8.68 19 8 19 C8 22.63 8 26.26 8 30 C5.36 30 2.72 30 0 30 C0 20.1 0 10.2 0 0 Z "
+                        fill="#0D0D0D" transform="translate(420,902)" />
+                    <path
+                        d="M0 0 C3.97915159 -0.02886984 7.95827653 -0.04675406 11.9375 -0.0625 C13.07380859 -0.07087891 14.21011719 -0.07925781 15.38085938 -0.08789062 C16.46044922 -0.09111328 17.54003906 -0.09433594 18.65234375 -0.09765625 C20.15269165 -0.10551147 20.15269165 -0.10551147 21.68334961 -0.11352539 C24 0 24 0 25 1 C25.1002093 3.27947792 25.13081303 5.56207135 25.1328125 7.84375 C25.13424759 8.87018616 25.13424759 8.87018616 25.13571167 9.9173584 C25.1363933 11.36661877 25.13454023 12.81588218 25.13037109 14.26513672 C25.12502252 16.49062928 25.1303166 18.71592001 25.13671875 20.94140625 C25.13605797 22.34635461 25.1347768 23.75130285 25.1328125 25.15625 C25.13168457 26.44337891 25.13055664 27.73050781 25.12939453 29.05664062 C25 32 25 32 24 33 C21.73097824 33.09980173 19.45871075 33.12967809 17.1875 33.125 C15.32158203 33.12886719 15.32158203 33.12886719 13.41796875 33.1328125 C10.71213998 33.02767173 8.55665645 32.81143252 6 32 C5.67 32.66 5.34 33.32 5 34 C5 33.01 5 32.02 5 31 C7.1171875 29.39453125 7.1171875 29.39453125 9.875 27.8125 C10.77992188 27.28269531 11.68484375 26.75289062 12.6171875 26.20703125 C15 25 15 25 17 25 C10.32648872 10.97818678 10.32648872 10.97818678 0 0 Z "
+                        fill="#FBFBFB" transform="translate(719,1006)" />
+                    <path
+                        d="M0 0 C3.82297538 1.8051251 5.41036892 4.88369541 7.58203125 8.41015625 C8.01128906 9.07917969 8.44054687 9.74820313 8.8828125 10.4375 C10.09354999 12.33370117 11.27615493 14.24527812 12.45703125 16.16015625 C13.05257812 17.083125 13.648125 18.00609375 14.26171875 18.95703125 C15.45703125 21.16015625 15.45703125 21.16015625 15.45703125 24.16015625 C12.97265625 26.01953125 12.97265625 26.01953125 9.70703125 27.91015625 C8.6396875 28.544375 7.57234375 29.17859375 6.47265625 29.83203125 C3.45703125 31.16015625 3.45703125 31.16015625 1.3125 31.3125 C-1.78346011 29.38974582 -2.95479244 26.15996023 -4.48046875 22.97265625 C-6.45251827 18.92185312 -8.33972442 15.22483645 -11.296875 11.796875 C-13.54296875 9.16015625 -13.54296875 9.16015625 -13.54296875 7.16015625 C-11.3125 5.3984375 -11.3125 5.3984375 -8.35546875 3.47265625 C-7.39253906 2.82941406 -6.42960938 2.18617188 -5.4375 1.5234375 C-2.54296875 0.16015625 -2.54296875 0.16015625 0 0 Z "
+                        fill="#060606" transform="translate(720.54296875,1006.83984375)" />
+                    <path
+                        d="M0 0 C2.31 0 4.62 0 7 0 C7.33 2.64 7.66 5.28 8 8 C9.32 5.36 10.64 2.72 12 0 C14.64 0 17.28 0 20 0 C19.04372949 3.16304862 18.13779207 5.79076018 16.3125 8.5625 C14.63709762 11.67396157 15.08669208 12.63518134 16 16 C16.81387915 18.07872741 17.67025562 20.14118455 18.5625 22.1875 C21 27.78753541 21 27.78753541 21 30 C18.36 30 15.72 30 13 30 C12.01 27.03 11.02 24.06 10 21 C9.34 21.33 8.68 21.66 8 22 C7.53476937 23.89533342 7.53476937 23.89533342 7.375 26.0625 C7.189375 28.0115625 7.189375 28.0115625 7 30 C4.69 30 2.38 30 0 30 C0 20.1 0 10.2 0 0 Z "
+                        fill="#080808" transform="translate(420,1000)" />
+                    <path
+                        d="M0 0 C2.31 0 4.62 0 7 0 C7 3.63 7 7.26 7 11 C8.98 11 10.96 11 13 11 C13 7.37 13 3.74 13 0 C15.31 0 17.62 0 20 0 C20 9.57 20 19.14 20 29 C17.69 29 15.38 29 13 29 C13 25.04 13 21.08 13 17 C11.02 17 9.04 17 7 17 C7 20.96 7 24.92 7 29 C4.69 29 2.38 29 0 29 C0 19.43 0 9.86 0 0 Z "
+                        fill="#030303" transform="translate(420,837)" />
+                    <path
+                        d="M0 0 C2.64 0 5.28 0 8 0 C9.1521362 3.70640467 10.29558007 7.41543624 11.4375 11.125 C11.92573242 12.69507813 11.92573242 12.69507813 12.42382812 14.296875 C12.73642578 15.31523438 13.04902344 16.33359375 13.37109375 17.3828125 C13.65911865 18.31496582 13.94714355 19.24711914 14.24389648 20.20751953 C15.03338638 23.1233043 15.55119844 26.0144102 16 29 C13.36 29 10.72 29 8 29 C7.67 27.68 7.34 26.36 7 25 C4.69 24.67 2.38 24.34 0 24 C0 25.65 0 27.3 0 29 C-2.64 29 -5.28 29 -8 29 C-6.36559954 19.0301572 -3.13564949 9.57803752 0 0 Z "
+                        fill="#0E0E0E" transform="translate(426,870)" />
+                    <path
+                        d="M0 0 C5.61 0 11.22 0 17 0 C17 2.31 17 4.62 17 7 C14.03 7 11.06 7 8 7 C8 8.65 8 10.3 8 12 C10.31 12 12.62 12 15 12 C15 13.98 15 15.96 15 18 C12.69 18 10.38 18 8 18 C8 19.98 8 21.96 8 24 C10.97 24 13.94 24 17 24 C17 25.98 17 27.96 17 30 C11.39 30 5.78 30 0 30 C0 20.1 0 10.2 0 0 Z "
+                        fill="#0F0F0F" transform="translate(422,1033)" />
+                    <path
+                        d="M0 0 C5.61 0 11.22 0 17 0 C17 1.98 17 3.96 17 6 C14.03 6 11.06 6 8 6 C8 7.98 8 9.96 8 12 C10.64 12 13.28 12 16 12 C16 13.98 16 15.96 16 18 C13.36 18 10.72 18 8 18 C8 19.98 8 21.96 8 24 C10.97 24 13.94 24 17 24 C17 25.98 17 27.96 17 30 C11.39 30 5.78 30 0 30 C0 20.1 0 10.2 0 0 Z "
+                        fill="#111111" transform="translate(422,935)" />
+                    <path
+                        d="M0 0 C9 0 9 0 11.53515625 1.0625 C13.75150341 3.99398851 13.4941218 6.37620512 13.4375 10 C13.43621094 11.2375 13.43492187 12.475 13.43359375 13.75 C13 17 13 17 10 20 C6.7 20 3.4 20 0 20 C0 13.4 0 6.8 0 0 Z "
+                        fill="#171717" transform="translate(449,922)" />
+                    <path
+                        d="M0 0 C1.32 0 2.64 0 4 0 C5.32 2.31 6.64 4.62 8 7 C8.33 4.69 8.66 2.38 9 0 C10.32 0 11.64 0 13 0 C13 6.6 13 13.2 13 20 C11.68 20 10.36 20 9 20 C7.68 17.03 6.36 14.06 5 11 C4.67 13.97 4.34 16.94 4 20 C2.68 20 1.36 20 0 20 C0 13.4 0 6.8 0 0 Z "
+                        fill="#060606" transform="translate(449,967)" />
+                    <path
+                        d="M0 0 C1.65 0 3.3 0 5 0 C5.33 1.32 5.66 2.64 6 4 C6.66 2.68 7.32 1.36 8 0 C9.65 0 11.3 0 13 0 C12 3 11 6 10 9 C10.75410413 11.25794574 10.75410413 11.25794574 11.9375 13.5625 C14 17.82033898 14 17.82033898 14 20 C12.35 20 10.7 20 9 20 C8.01 18.02 7.02 16.04 6 14 C5.67 15.98 5.34 17.96 5 20 C3.35 20 1.7 20 0 20 C0 13.4 0 6.8 0 0 Z "
+                        fill="#1C1C1C" transform="translate(449,881)" />
+                    <path
+                        d="M0 0 C2.5 0.25 2.5 0.25 4.5 2.25 C4.88286803 5.98296326 4.64915785 7.02626323 2.5 10.25 C4.15 10.58 5.8 10.91 7.5 11.25 C7.83 14.22 8.16 17.19 8.5 20.25 C6.54196493 20.30389087 4.58351091 20.34274217 2.625 20.375 C0.98917969 20.40980469 0.98917969 20.40980469 -0.6796875 20.4453125 C-3.5 20.25 -3.5 20.25 -5.5 18.25 C-5.70146402 14.556493 -5.67353189 11.77059568 -4.5 8.25 C-4.520625 7.239375 -4.54125 6.22875 -4.5625 5.1875 C-4.48214422 1.41077826 -3.81040089 0.38104009 0 0 Z "
+                        fill="#1A1A1A" transform="translate(428.5,971.75)" />
+                    <path
+                        d="M0 0 C1.32 0 2.64 0 4 0 C4.84226 2.55986879 5.67398551 5.12239015 6.5 7.6875 C6.73847656 8.40873047 6.97695313 9.12996094 7.22265625 9.87304688 C8.44398994 13.69407657 9.32075577 16.93442056 9 21 C7.68 21 6.36 21 5 21 C4.67 20.01 4.34 19.02 4 18 C2.35 17.67 0.7 17.34 -1 17 C-1.33 18.32 -1.66 19.64 -2 21 C-3.32 21 -4.64 21 -6 21 C-2.68831169 2.68831169 -2.68831169 2.68831169 0 0 Z "
+                        fill="#232323" transform="translate(454,944)" />
+                    <path
+                        d="M0 0 C6.27 0 12.54 0 19 0 C18 5 18 5 17 8 C18.85625 8.185625 18.85625 8.185625 20.75 8.375 C23.8762197 8.75746305 26.28879237 9.30549523 29 11 C28.34 11 27.68 11 27 11 C27 11.66 27 12.32 27 13 C24.03 12.34 21.06 11.68 18 11 C17.855625 11.804375 17.71125 12.60875 17.5625 13.4375 C17 16 17 16 16 17 C13.46950598 17.07313567 10.96695163 17.09247527 8.4375 17.0625 C7.72658203 17.05798828 7.01566406 17.05347656 6.28320312 17.04882812 C4.52209987 17.03700864 2.76103964 17.01907263 1 17 C0.67 15.68 0.34 14.36 0 13 C5.28 13 10.56 13 16 13 C15.67 10.03 15.34 7.06 15 4 C10.05 4 5.1 4 0 4 C0 2.68 0 1.36 0 0 Z "
+                        fill="#E2E2E2" transform="translate(721,859)" />
+                    <path
+                        d="M0 0 C3.5 0.4375 3.5 0.4375 5.4375 1.75 C6.5 3.4375 6.5 3.4375 6.5 6.4375 C5.18 6.4375 3.86 6.4375 2.5 6.4375 C2.17 5.7775 1.84 5.1175 1.5 4.4375 C0.84 4.4375 0.18 4.4375 -0.5 4.4375 C-0.83 8.3975 -1.16 12.3575 -1.5 16.4375 C-0.51 16.1075 0.48 15.7775 1.5 15.4375 C1.83 14.7775 2.16 14.1175 2.5 13.4375 C1.84 13.4375 1.18 13.4375 0.5 13.4375 C0.5 12.1175 0.5 10.7975 0.5 9.4375 C2.48 9.4375 4.46 9.4375 6.5 9.4375 C6.41291331 10.89695288 6.30473093 12.35515868 6.1875 13.8125 C6.12949219 14.62460937 6.07148438 15.43671875 6.01171875 16.2734375 C5.5 18.4375 5.5 18.4375 2.5 20.4375 C0.0625 20.875 0.0625 20.875 -2.5 20.4375 C-5.37262668 18.18598179 -6.36972008 16.41604693 -6.8515625 12.796875 C-7.06790916 5.44108872 -7.06790916 5.44108872 -5.19140625 2.125 C-3.5 0.4375 -3.5 0.4375 0 0 Z "
+                        fill="#161616" transform="translate(455.5,836.5625)" />
+                    <path
+                        d="M0 0 C0.66 0 1.32 0 2 0 C1.66059185 2.73908335 1.23489047 3.79404175 -0.87109375 5.640625 C-22.17475728 19 -22.17475728 19 -30 19 C-29.48594831 14.03083364 -28.76615118 9.70973649 -27 5 C-25.29159719 6.63412443 -24.06546953 7.86906094 -23 10 C-17.55845604 9.45156092 -13.45965741 7.48377984 -8.6875 5 C-7.95982422 4.63132812 -7.23214844 4.26265625 -6.48242188 3.8828125 C-3.01701862 2.27092485 -3.01701862 2.27092485 0 0 Z "
+                        fill="#EFEFEF" transform="translate(721,918)" />
+                    <path
+                        d="M0 0 C3.63 0 7.26 0 11 0 C10.67 1.32 10.34 2.64 10 4 C8.02 4 6.04 4 4 4 C4 5.32 4 6.64 4 8 C5.98 8 7.96 8 10 8 C10 8.99 10 9.98 10 11 C8.02 11 6.04 11 4 11 C4 12.65 4 14.3 4 16 C6.31 16 8.62 16 11 16 C11 17.32 11 18.64 11 20 C7.37 20 3.74 20 0 20 C0 13.4 0 6.8 0 0 Z "
+                        fill="#131313" transform="translate(451,859)" />
+                    <path
+                        d="M0 0 C1.70840281 1.63412443 2.93453047 2.86906094 4 5 C8.86433164 4.50109419 12.68915064 2.92236169 17.046875 0.83984375 C19 0 19 0 21 0 C21 0.99 21 1.98 21 3 C18.77208002 4.12752649 16.54274113 5.25208139 14.3125 6.375 C13.68666016 6.69210937 13.06082031 7.00921875 12.41601562 7.3359375 C3.13647461 12 3.13647461 12 -2 12 C-1.85962479 10.18706911 -1.71255111 8.3746557 -1.5625 6.5625 C-1.48128906 5.55316406 -1.40007813 4.54382813 -1.31640625 3.50390625 C-1 1 -1 1 0 0 Z "
+                        fill="#E9E9E9" transform="translate(696,908)" />
+                    <path
+                        d="M0 0 C1.33804688 0.04060547 1.33804688 0.04060547 2.703125 0.08203125 C3.37859375 0.11683594 4.0540625 0.15164063 4.75 0.1875 C3.2640084 4.78056496 0.89985318 7.62319245 -2.25 11.1875 C-5.54148243 10.05250606 -6.2459869 9.19466624 -8 6.0625 C-8.4125 5.11375 -8.825 4.165 -9.25 3.1875 C-6.10408067 0.38704377 -4.182936 -0.16511589 0 0 Z "
+                        fill="#F2F2F2" transform="translate(737.25,897.8125)" />
+                    <path d="M0 0 C1.65 0 3.3 0 5 0 C5 5.94 5 11.88 5 18 C3.35 18 1.7 18 0 18 C0 12.06 0 6.12 0 0 Z "
+                        fill="#2C2C2C" transform="translate(453,902)" />
+                    <path
+                        d="M0 0 C5.61 0 11.22 0 17 0 C13.83317502 3.16682498 12.11199887 3.86363098 7.9375 5.1875 C6.34228516 5.70376953 6.34228516 5.70376953 4.71484375 6.23046875 C2 7 2 7 0 7 C0 4.69 0 2.38 0 0 Z "
+                        fill="#F3F3F3" transform="translate(696,898)" />
+                    <path
+                        d="M0 0 C1.65 0 3.3 0 5 0 C5.28875 0.61875 5.5775 1.2375 5.875 1.875 C6.93720042 4.13325765 6.93720042 4.13325765 9 6 C7.68 6 6.36 6 5 6 C5 8.97 5 11.94 5 15 C3.19590418 12.7858824 2.01039234 11.02979136 1.0625 8.3125 C0.23787497 5.80693523 0.23787497 5.80693523 -2.125 5.1875 C-2.74375 5.125625 -3.3625 5.06375 -4 5 C-3.01 5 -2.02 5 -1 5 C-0.67 3.35 -0.34 1.7 0 0 Z "
+                        fill="#EFEFEF" transform="translate(453,961)" />
+                    <path
+                        d="M0 0 C1.32 0.33 2.64 0.66 4 1 C4 4.63 4 8.26 4 12 C2.68 12.33 1.36 12.66 0 13 C0 8.71 0 4.42 0 0 Z "
+                        fill="#F3F3F3" transform="translate(454,926)" />
+                    <path d="M0 0 C2.97 0 5.94 0 9 0 C9 1.65 9 3.3 9 5 C6.03 5 3.06 5 0 5 C0 3.35 0 1.7 0 0 Z "
+                        fill="#EDEDED" transform="translate(697,859)" />
+                    <path
+                        d="M0 0 C0.125 2.875 0.125 2.875 0 6 C-2 8 -2 8 -4.1640625 8.1953125 C-5.38222656 8.16050781 -5.38222656 8.16050781 -6.625 8.125 C-7.44226563 8.10695313 -8.25953125 8.08890625 -9.1015625 8.0703125 C-9.72804688 8.04710937 -10.35453125 8.02390625 -11 8 C-8.93513431 5.84012516 -6.81221537 4.03929301 -4.375 2.3125 C-3.45847656 1.65701172 -3.45847656 1.65701172 -2.5234375 0.98828125 C-1 0 -1 0 0 0 Z "
+                        fill="#EEEEEE" transform="translate(725,931)" />
+                    <path
+                        d="M0 0 C2.475 0.495 2.475 0.495 5 1 C4.67 2.65 4.34 4.3 4 6 C2.68 6 1.36 6 0 6 C0 4.02 0 2.04 0 0 Z "
+                        fill="#E9E9E9" transform="translate(428,909)" />
+                </svg>
+            </div>
+
+            <p id="header-catchphrase" style="letter-spacing: 2px; font-size: 0.9rem;"></p>
+            <!-- スクロールダウンの指示 -->
+            <a href="#nav-menu" class="scroll-down">SCROLL</a>
+        </header>
     </div>
 
     <div class="main-layout" id="main-layout">
         <aside class="sidebar">
             <nav id="nav-menu">
-        <a href="#about">ABOUT</a>
-        <a href="#members">MEMBERS</a>
-        <a href="#performance">STAGE</a>
-        
-        <!-- ▼ MEMORYのドロップダウン▼ -->
-        <div class="dropdown">
-            <a href="#history">MEMORY</a>
-            <div class="dropdown-content" id="nav-dropdown">
-                <!-- JavaScriptで生成 -->
-            </div>
-        </div>
-        <!-- ▲ ここまで ▲ -->
+                <a href="#about">ABOUT</a>
+                <a href="#members">MEMBERS</a>
+                <a href="#performance">STAGE</a>
 
-        <a href="#links">LINKS</a>
-        <a href="#contact">CONTACT</a>
-    </nav>
+                <!-- ▼ MEMORYのドロップダウン▼ -->
+                <div class="dropdown">
+                    <a href="#history">MEMORY</a>
+                    <div class="dropdown-content" id="nav-dropdown">
+                        <!-- JavaScriptで生成 -->
+                    </div>
+                </div>
+                <!-- ▲ ここまで ▲ -->
+
+                <a href="#links">LINKS</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
             <div class="sidebar-bottom">
                 <p style="font-weight: bold; letter-spacing: 2px;">TOPICS</p>
                 <p style="font-size: 0.85rem; color: #ccc;">「第六回公演」今秋決定！</p>
                 <br><br>
                 <p style="font-weight: bold; letter-spacing: 2px;">OFFICIAL SNS</p>
-                <p style="font-size: 0.85rem; color: #ccc;"><a href="#" style="color:#ccc; text-decoration:none;">@haretokemusical</a></p>
+                <p style="font-size: 0.85rem; color: #ccc;"><a href="#"
+                        style="color:#ccc; text-decoration:none;">@haretokemusical</a></p>
             </div>
         </aside>
 
         <main class="content">
             <section id="about">
-        <h2 id="about-title"></h2>
-        <div id="about-content"></div>
-    </section>
+                <h2 id="about-title"></h2>
+                <div id="about-content"></div>
+            </section>
 
-    <section id="members">
-        <h2 id="members-title"></h2>
-        <p id="members-desc"></p>
-        <ul id="members-list">
-        </ul>
-    </section>
-
-<!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
-    <section id="performance">
-        <h2 id="stage-title"></h2>
-        <h3 id="stage-subtitle" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;"></h3>
-        
-        <!-- 中央に動画を配置（MP4ファイルなどを直接使う場合） -->
-        <div style="text-align: center; margin-bottom: 3rem;">
-            <!-- アップロードした動画の名前↓ -->
-            <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" controls style="max-width: 100%; width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                お使いのブラウザは動画の再生に対応していません。
-            </video>
-        </div>
-
-        <!-- 動画の下に説明とポスターを横並びで配置 -->
-        <div class="flex-container">
-            <div class="text-box">
-                <p id="stage-desc"></p>
-                <ul id="stage-details">
+            <section id="members">
+                <h2 id="members-title"></h2>
+                <p id="members-desc"></p>
+                <ul id="members-list">
                 </ul>
-            </div>
-            <div class="media-box">
-                <!-- 秋公演のポスター画像名に書き換えてください -->
-                <img src="gekidan haretoke_logo_icon (1).jpg" alt="秋公演ポスター">
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- ▼ MEMORYセクション ▼ -->
-    <section id="history">
-        <h2 id="history-title"></h2>
-        <div id="history-list"></div>
-    </section>
+            <!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
+            <section id="performance">
+                <h2 id="stage-title"></h2>
+                <h3 id="stage-subtitle" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;"></h3>
 
-    <section id="links">
-        <h2 id="links-title"></h2>
-        <div id="links-content"></div>
-    </section>
+                <!-- 中央に動画を配置（MP4ファイルなどを直接使う場合） -->
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <!-- アップロードした動画の名前↓ -->
+                    <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" controls
+                        style="max-width: 100%; width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                        お使いのブラウザは動画の再生に対応していません。
+                    </video>
+                </div>
 
-    <section id="contact">
-        <h2 id="contact-title"></h2>
-        <p id="contact-desc1"></p>
-        <p>👉 <a id="contact-form" href="#" target="_blank"></a></p>
-        
-        <h3 id="sns-title"></h3>
-        <ul id="sns-list">
-        </ul>
-    </section>
+                <!-- 動画の下に説明とポスターを横並びで配置 -->
+                <div class="flex-container">
+                    <div class="text-box">
+                        <p id="stage-desc"></p>
+                        <ul id="stage-details">
+                        </ul>
+                    </div>
+                    <div class="media-box">
+                        <!-- 秋公演のポスター画像名に書き換えてください -->
+                        <img src="gekidan haretoke_logo_icon (1).jpg" alt="秋公演ポスター">
+                    </div>
+                </div>
+            </section>
 
-    <footer>
-        <p>&copy; 2026 劇団ハレトケ. All Rights Reserved.</p>
-    </footer>
-    </main>
+            <!-- ▼ MEMORYセクション ▼ -->
+            <section id="history">
+                <h2 id="history-title"></h2>
+                <div id="history-list"></div>
+            </section>
+
+            <section id="links">
+                <h2 id="links-title"></h2>
+                <div id="links-content"></div>
+            </section>
+
+            <section id="contact">
+                <h2 id="contact-title"></h2>
+                <p id="contact-desc1"></p>
+                <p>👉 <a id="contact-form" href="#" target="_blank"></a></p>
+
+                <h3 id="sns-title"></h3>
+                <ul id="sns-list">
+                </ul>
+            </section>
+
+            <footer>
+                <p>&copy; 2026 劇団ハレトケ. All Rights Reserved.</p>
+            </footer>
+        </main>
     </div>
 
     <!-- データを読み込む -->
@@ -633,7 +1239,7 @@
                 div.id = perf.id;
                 div.className = "flex-container";
                 div.style.marginBottom = isLast ? "0" : "5rem";
-                
+
                 div.innerHTML = `
                     <div class="text-box">
                         <h3 style="margin-top: 0;">${perf.title}</h3>
@@ -653,16 +1259,16 @@
             // Links
             document.getElementById('links-title').innerText = siteData.links.title;
             const linksContent = document.getElementById('links-content');
-            
+
             const ul = document.createElement('ul');
             siteData.links.recruitment.forEach(htmlText => {
                 const p = document.createElement('p');
                 p.innerHTML = htmlText;
                 ul.appendChild(p);
             });
-            
+
             ul.appendChild(document.createElement('br'));
-            
+
             const feeP = document.createElement('p');
             feeP.innerHTML = siteData.links.fee;
             ul.appendChild(feeP);
@@ -679,14 +1285,14 @@
             // Contact
             document.getElementById('contact-title').innerText = siteData.contact.title;
             document.getElementById('contact-desc1').innerText = siteData.contact.description1;
-            
+
             const formLink = document.getElementById('contact-form');
             formLink.href = siteData.contact.formUrl;
             formLink.innerText = siteData.contact.formText;
 
             document.getElementById('sns-title').innerText = siteData.contact.snsTitle;
             const snsList = document.getElementById('sns-list');
-            
+
             const liTw = document.createElement('li');
             liTw.innerHTML = `X (Twitter): <a href="${siteData.contact.twitterUrl}">${siteData.contact.twitterId}</a>`;
             snsList.appendChild(liTw);
@@ -701,19 +1307,19 @@
                 // 特殊なパスのインデックス
                 const specialPaths = new Set([0, 1, 5, 9, 3, 2, 7, 10, 11]);
 
-                if(logoPaths[5]) logoPaths[5].classList.add('path-to');
-                if(logoPaths[0]) logoPaths[0].classList.add('path-bg-black');
-                if(logoPaths[1]) logoPaths[1].classList.add('path-bg-white');
-                if(logoPaths[9]) logoPaths[9].classList.add('path-ha-main');
-                if(logoPaths[3]) logoPaths[3].classList.add('path-re-main');
-                if(logoPaths[2]) logoPaths[2].classList.add('path-ke-main');
-                if(logoPaths[7]) logoPaths[7].classList.add('path-ha-long-1');
-                if(logoPaths[10]) logoPaths[10].classList.add('path-ha-long-2');
-                if(logoPaths[11]) logoPaths[11].classList.add('path-ke-short');
+                if (logoPaths[5]) logoPaths[5].classList.add('path-to');
+                if (logoPaths[0]) logoPaths[0].classList.add('path-bg-black');
+                if (logoPaths[1]) logoPaths[1].classList.add('path-bg-white');
+                if (logoPaths[9]) logoPaths[9].classList.add('path-ha-main');
+                if (logoPaths[3]) logoPaths[3].classList.add('path-re-main');
+                if (logoPaths[2]) logoPaths[2].classList.add('path-ke-main');
+                if (logoPaths[7]) logoPaths[7].classList.add('path-ha-long-1');
+                if (logoPaths[10]) logoPaths[10].classList.add('path-ha-long-2');
+                if (logoPaths[11]) logoPaths[11].classList.add('path-ke-short');
 
                 // 残りの文字を順番にフェードイン
                 let otherIndex = 0;
-                for(let i = 0; i < logoPaths.length; i++) {
+                for (let i = 0; i < logoPaths.length; i++) {
                     if (!specialPaths.has(i)) {
                         logoPaths[i].classList.add('path-others');
                         // 8.5秒後から少しずつずらして出現
@@ -722,7 +1328,7 @@
                     }
                 }
             }
-            
+
             // ▼ スクロールによるロゴズームの処理 ▼
             const scrollContainer = document.getElementById('hero-scroll-container');
             const logoWrapper = document.querySelector('.logo-wrapper');
@@ -759,14 +1365,42 @@
                     if (blackMask) {
                         blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10)); // 少しスクロールしたらすぐマスク
                     }
-                    
+
                     // キャッチフレーズ等はスクロールで消す
                     if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
                     if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
                 });
             }
+            
+            // ▼ ハンバーガーメニューのJS処理 ▼
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const fullscreenMenu = document.getElementById('fullscreen-menu');
+            const menuCloseBtn = document.getElementById('menu-close-btn');
+            const menuLinks = fullscreenMenu.querySelectorAll('a');
+
+            function toggleMenu() {
+                if (fullscreenMenu.classList.contains('open')) {
+                    fullscreenMenu.classList.remove('open');
+                    document.body.style.overflow = ''; // スクロール再開
+                } else {
+                    fullscreenMenu.classList.add('open');
+                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                }
+            }
+
+            if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
+            if (menuCloseBtn) menuCloseBtn.addEventListener('click', toggleMenu);
+            
+            // リンクをクリックしたらメニューを閉じる
+            menuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    fullscreenMenu.classList.remove('open');
+                    document.body.style.overflow = '';
+                });
+            });
             // ▲ ここまで ▲
         });
     </script>
 </body>
+
 </html>
