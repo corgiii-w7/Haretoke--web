@@ -29,6 +29,11 @@
             align-items: center;
             position: relative; /* スクロールアイコン配置用 */
             text-align: center; 
+            /* 一番最後に周り全体も黒くする */
+            animation: headerToBlack 2s ease forwards 5.5s;
+        }
+        @keyframes headerToBlack {
+            to { background: #000; color: #fff; }
         }
         
         /* ロゴ画像のサイズ調整 */
@@ -51,19 +56,20 @@
             animation: animTo 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0% { transform: translateX(-200px); } /* 中央左寄りからスタート */
+            0% { transform: translateX(-30px); } /* 中央左寄りからスタート */
             100% { transform: translateX(0); } /* 右へ移動して定位置へ */
         }
 
         /* 2. 左の黒い塗りつぶし (Path 0) */
         .path-bg-black {
             opacity: 1 !important;
-            /* 左から黒が押されてくるように */
+            /* 左から黒が押されてくるようにワイプ */
+            clip-path: inset(0 100% 0 0); /* 初期状態 */
             animation: animBgBlack 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animBgBlack {
-            0% { transform: translateX(-1100px); } /* 完全に左の外側に隠す */
-            100% { transform: translateX(0); }
+            0% { clip-path: inset(0 100% 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
         }
 
         /* 背景の白 (Path 1) は最初から表示（周りが白なので最初は見えない） */
@@ -73,25 +79,27 @@
 
         /* 3. ハの太線 (Path 9) - 上から */
         .path-ha-main {
-            transform-origin: top;
+            opacity: 1 !important;
+            clip-path: inset(0 0 100% 0); /* 初期状態 */
             animation: animStretchY 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             animation-delay: 1.5s;
         }
         @keyframes animStretchY {
-            0% { opacity: 0; transform: scaleY(0); }
-            100% { opacity: 1; transform: scaleY(1); }
+            0% { clip-path: inset(0 0 100% 0); }
+            100% { clip-path: inset(0 0 0 0); }
         }
 
         /* 4. レの太線 (Path 3) - 右下から（右側カーブを隠す） */
         .path-re-main {
-            transform-origin: bottom right;
+            opacity: 1 !important;
+            clip-path: inset(100% 60% 0 40%); /* 初期状態 */
             animation: animReMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
                        animReReveal 0.5s ease forwards 3.5s;
             animation-delay: 1.8s, 3.5s;
         }
         @keyframes animReMain {
-            0% { opacity: 0; transform: translate(30px, 30px) scale(0); clip-path: inset(0 60% 0 0); }
-            100% { opacity: 1; transform: translate(0, 0) scale(1); clip-path: inset(0 60% 0 0); }
+            0% { clip-path: inset(100% 60% 0 40%); }
+            100% { clip-path: inset(0 60% 0 0); }
         }
         @keyframes animReReveal {
             to { clip-path: inset(0 0 0 0); }
@@ -99,14 +107,15 @@
 
         /* 5. ケの太線 (Path 2) - 左から（下側カーブを隠す） */
         .path-ke-main {
-            transform-origin: left;
+            opacity: 1 !important;
+            clip-path: inset(0 100% 75% 0); /* 初期状態 */
             animation: animKeMain 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
                        animKeReveal 0.5s ease forwards 3.2s;
             animation-delay: 2.1s, 3.2s;
         }
         @keyframes animKeMain {
-            0% { opacity: 0; transform: scaleX(0); clip-path: inset(0 0 75% 0); }
-            100% { opacity: 1; transform: scaleX(1); clip-path: inset(0 0 75% 0); }
+            0% { clip-path: inset(0 100% 75% 0); }
+            100% { clip-path: inset(0 0 75% 0); }
         }
         @keyframes animKeReveal {
             to { clip-path: inset(0 0 0 0); }
@@ -141,7 +150,9 @@
             text-decoration: none;
             opacity: 0; /* 最初は隠しておく */
             /* アニメーションが終わる頃(5秒後)にフェードインしてフワフワし始める */
-            animation: fadeInScroll 1s ease forwards 5s, bounce 2s infinite 6s;
+            animation: fadeInScroll 1s ease forwards 5.5s, 
+                       colorToWhite 2s ease forwards 5.5s, 
+                       bounce 2s infinite 6.5s;
         }
         .scroll-down::after {
             content: "";
@@ -150,10 +161,17 @@
             height: 40px;
             background: #111;
             margin: 10px auto 0;
+            animation: bgToWhite 2s ease forwards 5.5s;
         }
 
         @keyframes fadeInScroll {
             to { opacity: 0.8; }
+        }
+        @keyframes colorToWhite { 
+            to { color: #fff; } 
+        }
+        @keyframes bgToWhite { 
+            to { background: #fff; } 
         }
 
         @keyframes bounce {
