@@ -102,8 +102,8 @@
             animation: animTo 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0%, 14.28% { transform: translateX(-150px); } /* 最初の0.5秒間は左で停止 */
-            100% { transform: translateX(0); } /* 右へ移動して定位置へ */
+            0%, 14.28% { transform: translateX(-80px); } /* 最初の0.5秒間は中央左寄りで待機(ぽんっと出る) */
+            100% { transform: translateX(0); } /* 黒背景が迫るのと同時に定位置へ移動 */
         }
 
         /* 背景の白 (Path 1) は最初から表示 */
