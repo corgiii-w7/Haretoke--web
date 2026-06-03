@@ -32,6 +32,16 @@
             z-index: 1;
         }
 
+        :root {
+            /* SVGの表示幅 (最大400px) */
+            --svg-width: min(100vw, 400px);
+            /* 白黒境界線の位置 (中心からのズレ)
+               白の形(Path 1)の左端はSVG幅の 30.925% の位置にあります。
+               中央(50%)からの距離は 50% - 30.925% = 19.075%
+               よって、中心より --svg-width * 0.19075 だけ左になります。*/
+            --bg-boundary: calc(50% - (var(--svg-width) * 0.19075));
+        }
+
         /* 画面左側から黒が迫ってくるアニメーション */
         header::before {
             content: "";
@@ -40,16 +50,16 @@
             width: 0%;
             background: #111; /* 黒 */
             z-index: -1;
-            /* 1段階目: 左半分まで (3秒) */
+            /* 1段階目: 丸の中の黒の位置と同じ位置まで (3秒) */
             /* 2段階目: 画面全体へ (8.5秒から開始) */
             animation: bgSlideHalf 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
                        bgSlideFull 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 8.5s;
         }
         @keyframes bgSlideHalf {
-            to { width: 50%; }
+            to { width: var(--bg-boundary); }
         }
         @keyframes bgSlideFull {
-            from { width: 50%; }
+            from { width: var(--bg-boundary); }
             to { width: 100%; }
         }
         
@@ -81,8 +91,9 @@
             animation: animTo 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
         @keyframes animTo {
-            0% { transform: translateX(-50px); } /* 中央左寄りからスタート */
-            100% { transform: translateX(0); } /* 右へ移動して定位置へ */
+            0% { transform: translateX(-150px); opacity: 0; } /* さらに左からスタート */
+            10% { opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; } /* 右へ移動して定位置へ */
         }
 
         /* 背景の白 (Path 1) は最初から表示 */
