@@ -159,7 +159,7 @@
         .animated-logo path.path-to {
             opacity: 0;
             transform: translate(-163px, -43px);
-            animation: animToSeq 7.5s forwards;
+            animation: animToSeq 6.5s forwards;
         }
 
         @keyframes animToSeq {
@@ -168,22 +168,22 @@
                 transform: translate(-163px, -43px);
                 animation-timing-function: ease;
             }
-            26.666% {
+            30.769% { /* 2.0s */
                 opacity: 1;
                 transform: translate(-163px, -43px);
                 animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
             }
-            66.666% {
+            61.538% { /* 4.0s */
                 opacity: 1;
                 transform: translate(0px, -43px);
-                animation-timing-function: linear;
+                animation-timing-function: linear; /* wait at center */
             }
-            86.666% {
+            84.615% { /* 5.5s */
                 opacity: 1;
                 transform: translate(0px, -43px);
                 animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
             }
-            100% {
+            100% { /* 6.5s */
                 opacity: 1;
                 transform: translate(0px, 0px);
             }
@@ -198,13 +198,13 @@
         .animated-logo .path-keline-0,
         .animated-logo .path-keline-1 {
             animation: sweepKelineVertical 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 5.0s;
+            animation-delay: 4.0s;
         }
 
         /* ケ (keline-2) は横方向のスイープ */
         .animated-logo .path-keline-2 {
             animation: sweepKelineHorizontal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 5.0s;
+            animation-delay: 4.0s;
         }
 
         @keyframes sweepKelineVertical {
@@ -224,19 +224,15 @@
         /* 3. 残る太線 (ke) */
         .animated-logo .path-ke {
             opacity: 0;
-            animation: revealKe 0.1s forwards;
-            animation-delay: 5.75s; /* 伸びきった瞬間 (5.0s + 0.75s) */
-        }
-
-        @keyframes revealKe {
-            to { opacity: 1; }
+            animation: animFadeIn 0.1s forwards;
+            animation-delay: 4.75s; /* 伸びきった瞬間 (4.0s + 0.75s) */
         }
 
         /* 4. 残りの文字 (text.svg内の他のパス) */
         .animated-logo .path-text:not(.path-to) {
             opacity: 0;
             animation: animFadeIn 1s ease forwards;
-            animation-delay: 6.5s; /* 全ての文字が出るタイミング */
+            animation-delay: 5.5s; /* 全ての文字が出るタイミング */
         }
 
         @keyframes animFadeIn {
