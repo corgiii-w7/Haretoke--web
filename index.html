@@ -1148,33 +1148,6 @@
             liIg.innerHTML = `Instagram: <a href="${siteData.contact.instagramUrl}">${siteData.contact.instagramId}</a>`;
             snsList.appendChild(liIg);
 
-            // SVGアニメーションの詳細な順序付け
-            const logoPaths = document.querySelectorAll('.animated-logo path');
-            if (logoPaths.length > 0) {
-                // 特殊なパスのインデックス
-                const specialPaths = new Set([0, 1, 5, 9, 3, 2, 7, 10, 11]);
-
-                if (logoPaths[5]) logoPaths[5].classList.add('path-to');
-                if (logoPaths[0]) logoPaths[0].classList.add('path-bg-black');
-                if (logoPaths[1]) logoPaths[1].classList.add('path-bg-white');
-                if (logoPaths[9]) logoPaths[9].classList.add('path-ha-main');
-                if (logoPaths[3]) logoPaths[3].classList.add('path-re-main');
-                if (logoPaths[2]) logoPaths[2].classList.add('path-ke-main');
-                if (logoPaths[7]) logoPaths[7].classList.add('path-ha-long-1');
-                if (logoPaths[10]) logoPaths[10].classList.add('path-ha-long-2');
-                if (logoPaths[11]) logoPaths[11].classList.add('path-ke-short');
-
-                // 残りの文字を順番にフェードイン
-                let otherIndex = 0;
-                for (let i = 0; i < logoPaths.length; i++) {
-                    if (!specialPaths.has(i)) {
-                        logoPaths[i].classList.add('path-others');
-                        // 8.5秒後から少しずつずらして出現
-                        logoPaths[i].style.animationDelay = `${8.5 + (otherIndex * 0.1)}s`;
-                        otherIndex++;
-                    }
-                }
-            }
 
             // ▼ スクロールによるロゴズームの処理 ▼
             const scrollContainer = document.getElementById('hero-scroll-container');
