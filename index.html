@@ -159,7 +159,7 @@
         .animated-logo path.path-to {
             opacity: 0;
             transform: translate(-163px, -43px);
-            animation: animToSeq 6.5s forwards;
+            animation: animToSeq 7.5s forwards;
         }
 
         @keyframes animToSeq {
@@ -168,17 +168,17 @@
                 transform: translate(-163px, -43px);
                 animation-timing-function: ease;
             }
-            30.769% {
+            26.666% {
                 opacity: 1;
                 transform: translate(-163px, -43px);
                 animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
             }
-            76.923% {
+            66.666% {
                 opacity: 1;
                 transform: translate(-29px, -43px);
                 animation-timing-function: linear;
             }
-            88.461% {
+            86.666% {
                 opacity: 1;
                 transform: translate(-29px, -43px);
                 animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -198,13 +198,13 @@
         .animated-logo .path-keline-0,
         .animated-logo .path-keline-1 {
             animation: sweepKelineVertical 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 5.8s;
+            animation-delay: 5.0s;
         }
 
         /* ケ (keline-2) は横方向のスイープ */
         .animated-logo .path-keline-2 {
             animation: sweepKelineHorizontal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 5.8s;
+            animation-delay: 5.0s;
         }
 
         @keyframes sweepKelineVertical {
@@ -225,7 +225,7 @@
         .animated-logo .path-ke {
             opacity: 0;
             animation: revealKe 0.1s forwards;
-            animation-delay: 6.55s; /* 伸びきった瞬間 (5.8s + 0.75s) */
+            animation-delay: 5.75s; /* 伸びきった瞬間 (5.0s + 0.75s) */
         }
 
         @keyframes revealKe {
@@ -236,7 +236,7 @@
         .animated-logo .path-text:not(.path-to) {
             opacity: 0;
             animation: animFadeIn 1s ease forwards;
-            animation-delay: 6.8s; /* 少し遅れてフワッと */
+            animation-delay: 6.5s; /* 全ての文字が出るタイミング */
         }
 
         @keyframes animFadeIn {
