@@ -20,11 +20,11 @@ const siteData = {
     "title": "「劇団ハレトケ」",
     "countText": "団員 〇〇名 (2026/05現在)",
     "membersList": [
-      { "name": "Gaku" },
-      { "name": "〇〇〇〇〇" },
-      { "name": "〇〇〇〇〇" },
-      { "name": "〇〇〇〇〇" },
-      { "name": "〇〇〇〇〇" },
+      { "name": "ごっちゃん" },
+      { "name": "みなや" },
+      { "name": "がく" },
+      { "name": "監物" },
+      { "name": "いきちゃん" },
       { "name": "〇〇〇〇〇" },
       { "name": "〇〇〇〇〇" },
       { "name": "〇〇〇〇〇" },
@@ -39,7 +39,7 @@ const siteData = {
     "subtitle": "秋公演企画中！",
     "description": "次回公演に向けて鋭意稽古中です！\nティザー動画もぜひご覧ください。",
     "details": [
-      "脚本・演出: 〇〇 〇〇",
+      "脚本・演出: 秋梨夜風",
       "日程: 2026年10月24日(土) ※予備日: 25日(日)",
       "会場: 〇〇劇場",
       "チケット: 準備中"
@@ -52,7 +52,7 @@ const siteData = {
         "id": "perf6",
         "title": "第5回公演「怪盗スターダスト」",
         "description": "あらすじや、公演に込めた思いなどを記載します。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: ゆい",
         "date": "202X年 X月",
         "venue": "〇〇劇場",
         "image": "Stardust_mv.JPG"
@@ -61,7 +61,7 @@ const siteData = {
         "id": "perf5",
         "title": "第4回公演「Terreur」",
         "description": "あらすじや、公演に込めた思いなどを記載します。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: ",
         "date": "202X年 X月",
         "venue": "〇〇劇場",
         "image": "Terreur.JPG"
@@ -70,7 +70,7 @@ const siteData = {
         "id": "perf4",
         "title": "グリーンカレッジ公演「注文の多い音楽会」",
         "description": "あらすじや、公演に込めた思いなどを記載します。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: ゆい",
         "date": "202X年 X月",
         "venue": "〇〇劇場",
         "image": "Chumonnoooi.PNG"
@@ -79,7 +79,7 @@ const siteData = {
         "id": "perf3",
         "title": "第3回公演「オールド・サマー・バケーション」",
         "description": "あらすじや、公演に込めた思いなどを記載します。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: 秋梨夜風",
         "date": "202X年 X月",
         "venue": "〇〇劇場",
         "image": "OSV_mv_0814.jpg"
@@ -88,7 +88,7 @@ const siteData = {
         "id": "perf2",
         "title": "第2回公演「ゴースト・アクター」",
         "description": "あらすじや、公演に込めた思いなどを記載します。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: ゆい",
         "date": "202X年 X月",
         "venue": "〇〇劇場",
         "image": "GA_mv_A3_0109_big.jpg"
@@ -97,7 +97,7 @@ const siteData = {
         "id": "perf1",
         "title": "旗揚げ公演『ハレ舞台』",
         "description": "自分が今、目の当たりにしているものが現実なのか夢なのか想像なのか、よく分からなくなってしまう事ってありませんか？\nどれであるにせよ、素敵なあなたの物語に変わりありません。\nハートフルな作品ばかりじゃない、辛いものや残酷なものも時にはあるはずです。しかし、結末を急ぎすぎてはなりません。\n物語を織りなす人物として、一世一代のハレ舞台を大切にすごそうじゃありませんか。\nもっとあなたらしい物語が出来上がるはずです。",
-        "staff": "脚本・演出: 〇〇 〇〇",
+        "staff": "脚本・演出: みなや",
         "date": "2023年 8月20,21日",
         "venue": "JOY JOY THEATER",
         "image": "harebutai_MV_for-SNS.jpg"
