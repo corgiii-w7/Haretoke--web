@@ -17,11 +17,25 @@ const siteData = {
     ]
   },
   "members": {
-    "title": "団員紹介",
-    "description": "キャスト・スタッフの紹介です。",
-    "list": [
-      { "name": "〇〇 〇〇", "role": "団長" },
-      { "name": "△△ △△", "role": "団長" }
+    "title": "「劇団ハレトケ」",
+    "countText": "団員 〇〇名 (2026/05現在)",
+    "leaders": [
+      { "name": "Miyu Goto" },
+      { "name": "Mina Yamano" }
+    ],
+    "membersList": [
+      { "name": "Gaku" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" }
     ]
   },
   "stage": {

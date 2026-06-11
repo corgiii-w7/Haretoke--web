@@ -999,11 +999,19 @@
                 <div id="about-content"></div>
             </section>
 
-            <section id="members">
-                <h2 id="members-title"></h2>
-                <p id="members-desc"></p>
-                <ul id="members-list">
-                </ul>
+            <section id="members" style="padding-top: 5rem;">
+                <h2 id="members-title" style="border: none; padding-left: 0; font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: 1px;"></h2>
+                <p id="members-count" style="font-size: 0.85rem; font-weight: bold; margin-bottom: 3rem;"></p>
+
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 2rem; font-weight: bold;">団長</h3>
+                <div id="leaders-grid" style="display: flex; gap: 2rem; margin-bottom: 4rem;">
+                    <!-- JSで生成 -->
+                </div>
+
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 2rem; font-weight: bold;">団員</h3>
+                <div id="members-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem 1rem;">
+                    <!-- JSで生成 -->
+                </div>
             </section>
 
             <!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
@@ -1133,13 +1141,56 @@
 
             // Members
             document.getElementById('members-title').innerText = siteData.members.title;
-            document.getElementById('members-desc').innerText = siteData.members.description;
-            const membersList = document.getElementById('members-list');
-            siteData.members.list.forEach(member => {
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>${member.name}</strong>（${member.role}）`;
-                membersList.appendChild(li);
-            });
+            document.getElementById('members-count').innerText = siteData.members.countText;
+            
+            const leadersGrid = document.getElementById('leaders-grid');
+            if (siteData.members.leaders) {
+                siteData.members.leaders.forEach(leader => {
+                    const div = document.createElement('div');
+                    div.style.textAlign = "center";
+                    div.style.width = "120px";
+                    
+                    const imgPlaceholder = document.createElement('div');
+                    imgPlaceholder.style.width = "120px";
+                    imgPlaceholder.style.height = "120px";
+                    imgPlaceholder.style.borderRadius = "50%";
+                    imgPlaceholder.style.backgroundColor = "#777";
+                    imgPlaceholder.style.marginBottom = "0.5rem";
+                    imgPlaceholder.style.border = "1px solid #444";
+                    
+                    const nameSpan = document.createElement('div');
+                    nameSpan.style.fontSize = "0.85rem";
+                    nameSpan.innerText = leader.name;
+                    
+                    div.appendChild(imgPlaceholder);
+                    div.appendChild(nameSpan);
+                    leadersGrid.appendChild(div);
+                });
+            }
+
+            const membersGrid = document.getElementById('members-grid');
+            if (siteData.members.membersList) {
+                siteData.members.membersList.forEach(member => {
+                    const div = document.createElement('div');
+                    div.style.textAlign = "center";
+                    
+                    const imgPlaceholder = document.createElement('div');
+                    imgPlaceholder.style.width = "100%";
+                    imgPlaceholder.style.aspectRatio = "1 / 1";
+                    imgPlaceholder.style.borderRadius = "50%";
+                    imgPlaceholder.style.backgroundColor = "#777";
+                    imgPlaceholder.style.marginBottom = "0.5rem";
+                    imgPlaceholder.style.border = "1px solid #444";
+                    
+                    const nameSpan = document.createElement('div');
+                    nameSpan.style.fontSize = "0.8rem";
+                    nameSpan.innerText = member.name;
+                    
+                    div.appendChild(imgPlaceholder);
+                    div.appendChild(nameSpan);
+                    membersGrid.appendChild(div);
+                });
+            }
 
             // Stage
             document.getElementById('stage-title').innerText = siteData.stage.title;
