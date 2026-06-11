@@ -981,7 +981,6 @@
                 </div>
                 <!-- ▲ ここまで ▲ -->
 
-                <a href="#links">LINKS</a>
                 <a href="#contact">CONTACT</a>
             </nav>
             <div class="sidebar-bottom">
@@ -1041,19 +1040,28 @@
                 <div id="history-list"></div>
             </section>
 
-            <section id="links">
-                <h2 id="links-title"></h2>
-                <div id="links-content"></div>
-            </section>
+            <section id="contact" style="padding-top: 5rem;">
+                <div id="contact-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 1rem; line-height: 1.8;">
+                    <!-- JSで生成 -->
+                </div>
+                <div style="font-size: 0.85rem; margin-bottom: 2rem;">
+                    👉 <a id="contact-form" href="#" target="_blank" style="color: #111; text-decoration: underline;"></a>
+                </div>
 
-            <section id="contact">
-                <h2 id="contact-title"></h2>
-                <p id="contact-desc1"></p>
-                <p>👉 <a id="contact-form" href="#" target="_blank"></a></p>
+                <h3 id="sns-title" style="margin-top: 3rem; margin-bottom: 2rem; font-size: 1.3rem;"></h3>
+                <div id="sns-container" style="display: flex; gap: 2rem; align-items: center; justify-content: flex-start; margin-bottom: 3rem;">
+                    <!-- JSでSNSアイコンとIDを生成 -->
+                </div>
 
-                <h3 id="sns-title"></h3>
-                <ul id="sns-list">
-                </ul>
+                <hr style="border: none; border-top: 1px solid #ccc; margin-bottom: 3rem;">
+
+                <h3 id="recruitment-title" style="font-size: 1.3rem; margin-bottom: 2rem;"></h3>
+                <div style="text-align: left; margin-bottom: 2rem;">
+                    <img id="recruitment-poster" src="media__1781175961689.jpg" alt="団員募集" style="max-width: 100%; width: 400px; border-radius: 4px;">
+                </div>
+                <div id="recruitment-text" style="font-size: 0.85rem; line-height: 1.8;">
+                    <!-- JSで生成 -->
+                </div>
             </section>
 
             <footer>
@@ -1170,50 +1178,69 @@
                 historyList.appendChild(div);
             });
 
-            // Links
-            document.getElementById('links-title').innerText = siteData.links.title;
-            const linksContent = document.getElementById('links-content');
-
-            const ul = document.createElement('ul');
-            siteData.links.recruitment.forEach(htmlText => {
-                const p = document.createElement('p');
-                p.innerHTML = htmlText;
-                ul.appendChild(p);
-            });
-
-            ul.appendChild(document.createElement('br'));
-
-            const feeP = document.createElement('p');
-            feeP.innerHTML = siteData.links.fee;
-            ul.appendChild(feeP);
-
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = siteData.links.linkUrl;
-            a.innerText = siteData.links.linkText;
-            li.appendChild(a);
-            ul.appendChild(li);
-
-            linksContent.appendChild(ul);
-
             // Contact
-            document.getElementById('contact-title').innerText = siteData.contact.title;
-            document.getElementById('contact-desc1').innerText = siteData.contact.description1;
-
+            document.getElementById('contact-desc').innerText = siteData.contact.description1;
             const formLink = document.getElementById('contact-form');
             formLink.href = siteData.contact.formUrl;
             formLink.innerText = siteData.contact.formText;
 
             document.getElementById('sns-title').innerText = siteData.contact.snsTitle;
-            const snsList = document.getElementById('sns-list');
+            const snsContainer = document.getElementById('sns-container');
 
-            const liTw = document.createElement('li');
-            liTw.innerHTML = `X (Twitter): <a href="${siteData.contact.twitterUrl}">${siteData.contact.twitterId}</a>`;
-            snsList.appendChild(liTw);
+            // X (Twitter)
+            const twBox = document.createElement('div');
+            twBox.style.textAlign = "center";
+            twBox.innerHTML = `
+                <a href="${siteData.contact.twitterUrl}" target="_blank" style="text-decoration: none;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #000; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 2rem;">𝕏</div>
+                    <span style="font-weight: bold; font-size: 0.85rem; color: #111;">${siteData.contact.twitterId}</span>
+                </a>
+            `;
+            snsContainer.appendChild(twBox);
 
-            const liIg = document.createElement('li');
-            liIg.innerHTML = `Instagram: <a href="${siteData.contact.instagramUrl}">${siteData.contact.instagramId}</a>`;
-            snsList.appendChild(liIg);
+            // Instagram
+            const igBox = document.createElement('div');
+            igBox.style.textAlign = "center";
+            igBox.innerHTML = `
+                <a href="${siteData.contact.instagramUrl}" target="_blank" style="text-decoration: none;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #111; color: #111; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 2rem;">📷</div>
+                    <span style="font-weight: bold; font-size: 0.85rem; color: #111;">${siteData.contact.instagramId}</span>
+                </a>
+            `;
+            snsContainer.appendChild(igBox);
+
+            // YouTube
+            if (siteData.contact.youtubeId) {
+                const ytBox = document.createElement('div');
+                ytBox.style.textAlign = "center";
+                ytBox.innerHTML = `
+                    <a href="${siteData.contact.youtubeUrl}" target="_blank" style="text-decoration: none;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #111; color: #111; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 2rem;">▶</div>
+                        <span style="font-weight: bold; font-size: 0.85rem; color: #111;">${siteData.contact.youtubeId}</span>
+                    </a>
+                `;
+                snsContainer.appendChild(ytBox);
+            }
+
+            // Recruitment
+            document.getElementById('recruitment-title').innerText = siteData.links.title;
+            const recText = document.getElementById('recruitment-text');
+            
+            siteData.links.recruitment.forEach(htmlText => {
+                const p = document.createElement('p');
+                p.innerHTML = htmlText;
+                recText.appendChild(p);
+            });
+
+            const feeP = document.createElement('p');
+            feeP.style.marginTop = "2rem";
+            feeP.innerHTML = siteData.links.fee;
+            recText.appendChild(feeP);
+
+            const recLink = document.createElement('p');
+            recLink.style.marginTop = "1rem";
+            recLink.innerHTML = `<a href="${siteData.links.linkUrl}" target="_blank" style="color: #111; text-decoration: underline;">${siteData.links.linkText}</a>`;
+            recText.appendChild(recLink);
 
 
             // ▼ スクロールによるロゴズームの処理 ▼

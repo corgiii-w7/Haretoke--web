@@ -102,10 +102,12 @@ const siteData = {
     "description1": "公演に関するご質問や、チケットのお問い合わせは以下のフォームより承っております。",
     "formText": "お問い合わせフォームはこちら",
     "formUrl": "https://docs.google.com/forms/d/e/1FAIpQLSelOIThFwEVI8Yc99L6PChKt-mCClAt8G852VLiGTJseDqEqg/viewform?usp=header",
-    "snsTitle": "各種SNS",
+    "snsTitle": "公式SNSアカウント",
     "twitterId": "@haretokemusical",
     "twitterUrl": "https://x.com/haretokemusical?s=21&t=mtbf5MTQ_Et1zKMI2koXbw",
     "instagramId": "@haretoke.musical",
-    "instagramUrl": "https://www.instagram.com/haretoke.musical?igsh=bDhucXAyNXgzcXB3&utm_source=qr"
+    "instagramUrl": "https://www.instagram.com/haretoke.musical?igsh=bDhucXAyNXgzcXB3&utm_source=qr",
+    "youtubeId": "@haretoke.musical",
+    "youtubeUrl": "#"
   }
 };
