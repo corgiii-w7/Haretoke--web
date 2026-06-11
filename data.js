@@ -19,10 +19,6 @@ const siteData = {
   "members": {
     "title": "「劇団ハレトケ」",
     "countText": "団員 〇〇名 (2026/05現在)",
-    "leaders": [
-      { "name": "Miyu Goto" },
-      { "name": "Mina Yamano" }
-    ],
     "membersList": [
       { "name": "Gaku" },
       { "name": "〇〇〇〇〇" },
