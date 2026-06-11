@@ -107,7 +107,7 @@ const siteData = {
     "twitterUrl": "https://x.com/haretokemusical?s=21&t=mtbf5MTQ_Et1zKMI2koXbw",
     "instagramId": "@haretoke.musical",
     "instagramUrl": "https://www.instagram.com/haretoke.musical?igsh=bDhucXAyNXgzcXB3&utm_source=qr",
-    "youtubeId": "@haretoke.musical",
-    "youtubeUrl": "#"
+    "youtubeId": "@UCKKov_LWYETl3ohX0XLZ2FA",
+    "youtubeUrl": "https://youtube.com/channel/UCKKov_LWYETl3ohX0XLZ2FA?si=jWwnxhVn3OdI5ATY"
   }
 };
