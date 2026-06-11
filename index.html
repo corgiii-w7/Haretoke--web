@@ -1306,6 +1306,7 @@
                         <h3 style="margin-top: 0;">${perf.title}</h3>
                         <p>${perf.description}</p>
                         <ul>
+                            ${perf.staff ? `<li>${perf.staff}</li>` : ''}
                             <li>日程: ${perf.date}</li>
                             <li>会場: ${perf.venue}</li>
                         </ul>
