@@ -859,6 +859,12 @@
             color: #111;
         }
 
+        #members-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3rem 1rem;
+        }
+
         /* スマホ向けメディアクエリ */
         @media (max-width: 768px) {
             html {
@@ -873,6 +879,10 @@
             }
             .content {
                 padding: 30px 15px; /* 左右の余白を狭くする */
+            }
+            #members-grid {
+                grid-template-columns: repeat(3, 1fr); /* スマホでは3列に戻す */
+                gap: 2rem 1rem;
             }
             .about-catchphrase {
                 font-size: 1rem; /* スマホで1行に収まりやすいように調整 */
@@ -1079,7 +1089,7 @@
                 </div>
 
                 <h3 id="members-heading" style="font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 2rem; font-weight: bold;">団員</h3>
-                <div id="members-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem 1rem;">
+                <div id="members-grid">
                     <!-- JSで生成 -->
                 </div>
             </section>
