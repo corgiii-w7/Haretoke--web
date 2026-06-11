@@ -422,6 +422,31 @@
             padding: 5rem 2rem;
         }
 
+        #about h2 {
+            border-left: none;
+            padding-left: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-catchphrase {
+            display: inline-block;
+            background-color: #111;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            margin-bottom: 2rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        .about-logo {
+            margin: 3rem auto;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: block;
+        }
+
         /* ⬇︎⬇︎ 画像のサイズを統一する設定 ⬇︎⬇︎ */
         .media-box img {
             width: 100%;
@@ -1048,11 +1073,47 @@
             // About
             document.getElementById('about-title').innerText = siteData.about.title;
             const aboutContent = document.getElementById('about-content');
+            
+            // Catchphrase
+            if (siteData.about.catchphrase) {
+                const catchphrase = document.createElement('div');
+                catchphrase.className = 'about-catchphrase';
+                catchphrase.innerText = siteData.about.catchphrase;
+                aboutContent.appendChild(catchphrase);
+            }
+
+            // Paragraphs
             siteData.about.paragraphs.forEach(p => {
                 const pTag = document.createElement('p');
+                pTag.style.textAlign = "left";
+                pTag.style.fontSize = "0.95rem";
+                pTag.style.marginBottom = "1.5rem";
+                pTag.style.lineHeight = "1.8";
                 pTag.innerText = p;
                 aboutContent.appendChild(pTag);
             });
+
+            // Logo Image
+            if (siteData.about.logoImage) {
+                const img = document.createElement('img');
+                img.src = siteData.about.logoImage;
+                img.className = 'about-logo';
+                img.alt = '劇団ハレトケ ロゴ';
+                aboutContent.appendChild(img);
+            }
+
+            // Logo Paragraphs
+            if (siteData.about.logoParagraphs) {
+                siteData.about.logoParagraphs.forEach(p => {
+                    const pTag = document.createElement('p');
+                    pTag.style.textAlign = "left";
+                    pTag.style.fontSize = "0.85rem";
+                    pTag.style.marginBottom = "1.5rem";
+                    pTag.style.lineHeight = "1.8";
+                    pTag.innerHTML = p.replace(/\n/g, '<br>');
+                    aboutContent.appendChild(pTag);
+                });
+            }
 
             // Members
             document.getElementById('members-title').innerText = siteData.members.title;
