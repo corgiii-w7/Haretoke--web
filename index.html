@@ -829,10 +829,16 @@
 
         #sns-container {
             display: flex;
-            gap: 2rem;
-            align-items: center;
-            justify-content: flex-start;
+            align-items: flex-start; /* 上揃えにして丸の位置を揃える */
+            justify-content: space-evenly;
             margin-bottom: 3rem;
+            width: 100%;
+        }
+        #sns-container > div {
+            flex: 1; /* 各項目の幅を均等にする */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .sns-icon {
             width: 80px;
@@ -874,8 +880,8 @@
                 padding: 0.5rem 0.8rem;
             }
             #sns-container {
-                gap: 1rem; /* スマホでは間隔を狭める */
-                justify-content: center; /* 綺麗に中央に寄せる */
+                gap: 0; /* スマホではflex: 1で均等配置されるのでgapは不要 */
+                justify-content: space-evenly;
             }
             .sns-icon {
                 width: 60px; /* アイコンを小さく */
