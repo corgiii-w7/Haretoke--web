@@ -231,16 +231,18 @@
         /* 4. 残りの文字 (text.svg内の他のパス) */
         .animated-logo .path-text:not(.path-to) {
             opacity: 0;
-            animation: animFadeIn 1s ease forwards;
+            animation: animFadeInDrop 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             animation-delay: 6.0s; /* 全ての文字が出るタイミング */
         }
 
-        @keyframes animFadeIn {
+        @keyframes animFadeInDrop {
             0% {
                 opacity: 0;
+                transform: translateY(-43px);
             }
             100% {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
