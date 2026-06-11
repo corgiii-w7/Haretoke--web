@@ -871,46 +871,47 @@
                 font-size: 14px; /* 全体的な文字サイズを少し小さく */
             }
             .sidebar {
-                flex: 0 0 15%; /* 黒い部分を少し細くして白い部分を広げる */
-                width: 15%;
+                flex: 0 0 30.926%; /* トップロゴの黒い波のアニメーションと完全に幅を合わせる */
+                width: 30.926%;
+                padding-top: 30px; /* 上部の余白を詰める */
+            }
+            .sidebar nav {
+                gap: 15px; /* メニューの間隔を狭める */
+            }
+            .sidebar nav a {
+                font-size: 0.65rem; /* スマホ用にメニュー文字を小さく */
+                letter-spacing: 1px;
             }
             .sidebar-bottom {
                 display: none; /* スマホではサイドバー下部の情報を隠す */
             }
             .content {
-                padding: 30px 15px; /* 左右の余白を狭くする */
+                padding: 20px 10px; /* 左右の余白をさらに狭くする */
             }
             #members-grid {
                 grid-template-columns: repeat(3, 1fr); /* スマホでは3列に戻す */
                 gap: 2rem 1rem;
             }
             .about-catchphrase {
-                font-size: 1rem; /* スマホで1行に収まりやすいように調整 */
-                letter-spacing: 1px;
-                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem; /* スマホで確実に1行に収まるように調整 */
+                letter-spacing: 0px;
+                padding: 0.5rem 0.5rem;
             }
             #sns-container {
                 gap: 0; /* スマホではflex: 1で均等配置されるのでgapは不要 */
                 justify-content: space-evenly;
             }
             .sns-icon {
-                width: 60px; /* アイコンを小さく */
-                height: 60px;
-                font-size: 1.5rem;
+                width: 50px; /* アイコンを小さく */
+                height: 50px;
+                font-size: 1.2rem;
             }
             .sns-id-text {
-                font-size: 0.75rem; /* ID文字を小さく */
+                font-size: 0.65rem; /* ID文字を小さく */
             }
             #hamburger-btn {
-                display: flex; /* スマホのみハンバーガー表示 */
+                display: none !important; /* スマホでも左にメニューが出るのでハンバーガーは完全に不要 */
             }
-            .sidebar nav {
-                display: none; /* スマホではサイドバーのナビを隠す */
-            }
-            /* スマホの狭い画面での文字サイズ微調整 */
-            .menu-links a { font-size: 1.3rem; }
-            .menu-contact-box { max-width: 200px; padding: 15px 20px; }
-            .menu-contact-box a { font-size: 1rem; }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
     </style>
