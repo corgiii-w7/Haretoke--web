@@ -1479,26 +1479,36 @@
                     const rows = data.table.rows;
                     const headers = data.table.cols;
                     
-                    const imgColIdx = headers.findIndex(c => c && c.label && c.label.includes("画像"));
-                    const staffColIdx = headers.findIndex(c => c && c.label && c.label.includes("脚本"));
+                    // 各列のインデックスをヘッダー名から動的に取得する
+                    const getColIdx = (keyword) => headers.findIndex(c => c && c.label && c.label.includes(keyword));
+                    
+                    const noColIdx = getColIdx("No");
+                    const titleColIdx = getColIdx("作品名");
+                    const staffColIdx = getColIdx("脚本");
+                    const descColIdx = getColIdx("あらすじ");
+                    const dateColIdx = getColIdx("日時");
+                    const venueColIdx = getColIdx("場所");
+                    const noteColIdx = getColIdx("注釈");
+                    const imgColIdx = getColIdx("画像");
+                    const nowColIdx = getColIdx("Now");
 
                     // Option A: スプレッドシートを正とするため、元データをクリア
                     siteData.memory.performances = [];
 
                     rows.forEach((row, i) => {
                         const cols = row.c;
-                        if (!cols || !cols[0] || !cols[0].v) return;
+                        // No列が空ならスキップ
+                        if (noColIdx === -1 || !cols[noColIdx] || !cols[noColIdx].v) return;
 
-                        const noStr = cols[0].v;
-                        const title = cols[1] && cols[1].v ? cols[1].v : "";
-                        const desc = cols[2] && cols[2].v ? cols[2].v : "";
-                        const date = cols[3] && cols[3].v ? cols[3].v : "";
-                        const venue = cols[4] && cols[4].v ? cols[4].v : "";
-                        const note = cols[5] && cols[5].v ? cols[5].v : "";
-                        const isNow = cols[6] && cols[6].v == 1;
-                        
-                        const img = (imgColIdx !== -1 && cols[imgColIdx] && cols[imgColIdx].v) ? cols[imgColIdx].v : "gekidan haretoke_logo_icon (1).jpg";
+                        const noStr = cols[noColIdx].v;
+                        const title = (titleColIdx !== -1 && cols[titleColIdx] && cols[titleColIdx].v) ? cols[titleColIdx].v : "";
                         const staff = (staffColIdx !== -1 && cols[staffColIdx] && cols[staffColIdx].v) ? "脚本・演出: " + cols[staffColIdx].v : "";
+                        const desc = (descColIdx !== -1 && cols[descColIdx] && cols[descColIdx].v) ? cols[descColIdx].v : "";
+                        const date = (dateColIdx !== -1 && cols[dateColIdx] && cols[dateColIdx].v) ? cols[dateColIdx].v : "";
+                        const venue = (venueColIdx !== -1 && cols[venueColIdx] && cols[venueColIdx].v) ? cols[venueColIdx].v : "";
+                        const note = (noteColIdx !== -1 && cols[noteColIdx] && cols[noteColIdx].v) ? cols[noteColIdx].v : "";
+                        const img = (imgColIdx !== -1 && cols[imgColIdx] && cols[imgColIdx].v) ? cols[imgColIdx].v : "gekidan haretoke_logo_icon (1).jpg";
+                        const isNow = (nowColIdx !== -1 && cols[nowColIdx] && cols[nowColIdx].v == 1);
 
                         if (isNow) {
                             if (title) siteData.stage.subtitle = title;
