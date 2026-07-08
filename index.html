@@ -1117,8 +1117,7 @@
                         </ul>
                     </div>
                     <div class="media-box">
-                        <!-- 秋公演のポスター画像名に書き換えてください -->
-                        <img src="gekidan haretoke_logo_icon (1).jpg" alt="秋公演ポスター">
+                        <img id="stage-poster" src="" alt="秋公演ポスター">
                     </div>
                 </div>
             </section>
@@ -1162,12 +1161,14 @@
     <!-- データを読み込む -->
     <script src="data.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function renderApp() {
             // Header
             document.getElementById('header-catchphrase').innerText = siteData.header.catchphrase;
 
             // Nav dropdown
             const navDropdown = document.getElementById('nav-dropdown');
+            // 一度クリアする（再描画のため）
+            navDropdown.innerHTML = '';
             siteData.memory.performances.forEach(perf => {
                 const a = document.createElement('a');
                 a.href = '#' + perf.id;
@@ -1178,6 +1179,7 @@
             // About
             document.getElementById('about-title').innerText = siteData.about.title;
             const aboutContent = document.getElementById('about-content');
+            aboutContent.innerHTML = ''; // クリア
             
             // Catchphrase
             if (siteData.about.catchphrase) {
@@ -1228,6 +1230,8 @@
             const leadersHeading = document.getElementById('leaders-heading');
             const membersHeading = document.getElementById('members-heading');
             
+            leadersGrid.innerHTML = ''; // クリア
+
             if (siteData.members.leaders && siteData.members.leaders.length > 0) {
                 siteData.members.leaders.forEach(leader => {
                     const div = document.createElement('div');
@@ -1252,12 +1256,13 @@
                 });
             } else {
                 // 団長データがない場合は見出しを非表示にする
-                leadersHeading.style.display = 'none';
-                leadersGrid.style.display = 'none';
-                membersHeading.style.display = 'none';
+                if(leadersHeading) leadersHeading.style.display = 'none';
+                if(leadersGrid) leadersGrid.style.display = 'none';
+                if(membersHeading) membersHeading.style.display = 'none';
             }
 
             const membersGrid = document.getElementById('members-grid');
+            membersGrid.innerHTML = ''; // クリア
             if (siteData.members.membersList) {
                 siteData.members.membersList.forEach(member => {
                     const div = document.createElement('div');
@@ -1285,7 +1290,12 @@
             document.getElementById('stage-title').innerText = siteData.stage.title;
             document.getElementById('stage-subtitle').innerText = siteData.stage.subtitle;
             document.getElementById('stage-desc').innerHTML = siteData.stage.description.replace(/\n/g, '<br>');
+            
+            const stagePoster = document.getElementById('stage-poster');
+            if(siteData.stage.image) stagePoster.src = siteData.stage.image;
+            
             const stageDetails = document.getElementById('stage-details');
+            stageDetails.innerHTML = ''; // クリア
             siteData.stage.details.forEach(detail => {
                 const li = document.createElement('li');
                 li.innerText = detail;
@@ -1295,6 +1305,7 @@
             // History
             document.getElementById('history-title').innerText = siteData.memory.title;
             const historyList = document.getElementById('history-list');
+            historyList.innerHTML = ''; // クリア
             siteData.memory.performances.forEach((perf, index) => {
                 const isLast = index === siteData.memory.performances.length - 1;
                 const div = document.createElement('div');
@@ -1327,6 +1338,7 @@
 
             document.getElementById('sns-title').innerText = siteData.contact.snsTitle;
             const snsContainer = document.getElementById('sns-container');
+            snsContainer.innerHTML = ''; // クリア
 
             // X (Twitter)
             const twBox = document.createElement('div');
@@ -1454,6 +1466,71 @@
                 });
             });
             // ▲ ここまで ▲
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
+
+            fetch(sheetUrl)
+                .then(res => res.text())
+                .then(text => {
+                    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+                    const data = JSON.parse(jsonStr);
+                    const rows = data.table.rows;
+                    const headers = data.table.cols;
+                    
+                    const imgColIdx = headers.findIndex(c => c && c.label && c.label.includes("画像"));
+                    const staffColIdx = headers.findIndex(c => c && c.label && c.label.includes("脚本"));
+
+                    // Option A: スプレッドシートを正とするため、元データをクリア
+                    siteData.memory.performances = [];
+
+                    rows.forEach((row, i) => {
+                        const cols = row.c;
+                        if (!cols || !cols[0] || !cols[0].v) return;
+
+                        const noStr = cols[0].v;
+                        const title = cols[1] && cols[1].v ? cols[1].v : "";
+                        const desc = cols[2] && cols[2].v ? cols[2].v : "";
+                        const date = cols[3] && cols[3].v ? cols[3].v : "";
+                        const venue = cols[4] && cols[4].v ? cols[4].v : "";
+                        const note = cols[5] && cols[5].v ? cols[5].v : "";
+                        const isNow = cols[6] && cols[6].v == 1;
+                        
+                        const img = (imgColIdx !== -1 && cols[imgColIdx] && cols[imgColIdx].v) ? cols[imgColIdx].v : "gekidan haretoke_logo_icon (1).jpg";
+                        const staff = (staffColIdx !== -1 && cols[staffColIdx] && cols[staffColIdx].v) ? "脚本・演出: " + cols[staffColIdx].v : "";
+
+                        if (isNow) {
+                            if (title) siteData.stage.subtitle = title;
+                            if (desc) siteData.stage.description = desc;
+                            siteData.stage.image = img;
+                            
+                            const newDetails = [];
+                            if (staff) newDetails.push(staff);
+                            if (date) newDetails.push("日程: " + date);
+                            if (venue) newDetails.push("会場: " + venue);
+                            if (note) newDetails.push(note);
+                            siteData.stage.details = newDetails;
+                        } else {
+                            const perf = {
+                                id: "perf_" + i,
+                                title: noStr + (title ? "「" + title + "」" : ""),
+                                description: desc,
+                                staff: staff,
+                                date: date,
+                                venue: venue,
+                                image: img
+                            };
+                            siteData.memory.performances.unshift(perf);
+                        }
+                    });
+
+                    renderApp();
+                })
+                .catch(err => {
+                    console.error("Failed to fetch spreadsheet data:", err);
+                    renderApp(); // フォールバック
+                });
         });
     </script>
 </body>
