@@ -1556,7 +1556,13 @@
                     // 白丸が左側（黒メニュー部分）にはみ出さないようにマスクをフェードイン
                     const blackMask = document.querySelector('.bg-black-mask');
                     if (blackMask) {
-                        blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10)); // 少しスクロールしたらすぐマスク
+                        if (window.innerWidth > 768) {
+                            // PCでは左側の黒メニューを残すためにマスクをかける
+                            blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10));
+                        } else {
+                            // スマホでは白丸が画面全体を覆い尽くし、黒い部分がだんだん無くなるようにする
+                            blackMask.style.opacity = 0;
+                        }
                     }
 
                     // キャッチフレーズ等はスクロールで消す
