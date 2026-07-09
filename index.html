@@ -865,6 +865,86 @@
             gap: 3rem 1rem;
         }
 
+        .member-item {
+            position: relative;
+            cursor: pointer;
+            text-align: center;
+        }
+        .member-bubble {
+            position: absolute;
+            bottom: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            background: #fff;
+            border: 2px solid #111;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-in-out;
+            z-index: 100;
+            pointer-events: none;
+            text-align: left;
+        }
+        /* 吹き出しの尻尾 */
+        .member-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #111 transparent transparent transparent;
+        }
+        /* 尻尾の重なり（白） */
+        .member-bubble::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -3px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+            z-index: 1;
+        }
+        .member-item:hover .member-bubble,
+        .member-item.active .member-bubble {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .bubble-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            border: 1px solid #ccc;
+        }
+        .bubble-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+            color: #111;
+        }
+        .bubble-role {
+            font-size: 0.85rem;
+            color: #d9534f;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+        }
+        .bubble-exp {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #333;
+        }
+
         /* スマホ向けメディアクエリ */
         @media (max-width: 768px) {
             html {
@@ -1266,23 +1346,68 @@
             if (siteData.members.membersList) {
                 siteData.members.membersList.forEach(member => {
                     const div = document.createElement('div');
-                    div.style.textAlign = "center";
+                    div.className = "member-item";
                     
                     const imgPlaceholder = document.createElement('div');
                     imgPlaceholder.style.width = "100%";
                     imgPlaceholder.style.aspectRatio = "1 / 1";
                     imgPlaceholder.style.borderRadius = "50%";
-                    imgPlaceholder.style.backgroundColor = "#777";
+                    imgPlaceholder.style.backgroundColor = "#eee";
                     imgPlaceholder.style.marginBottom = "0.5rem";
-                    imgPlaceholder.style.border = "1px solid #444";
+                    imgPlaceholder.style.border = "1px solid #ddd";
+                    imgPlaceholder.style.backgroundImage = member.image ? `url('${member.image}')` : "url('gekidan haretoke_logo_icon (1).jpg')";
+                    imgPlaceholder.style.backgroundSize = "cover";
+                    imgPlaceholder.style.backgroundPosition = "center";
                     
                     const nameSpan = document.createElement('div');
-                    nameSpan.style.fontSize = "0.8rem";
+                    nameSpan.style.fontSize = "0.85rem";
+                    nameSpan.style.fontWeight = "bold";
                     nameSpan.innerText = member.name;
+
+                    const bubble = document.createElement('div');
+                    bubble.className = "member-bubble";
+                    
+                    const bubbleImg = document.createElement('img');
+                    bubbleImg.className = "bubble-img";
+                    bubbleImg.src = member.image || "gekidan haretoke_logo_icon (1).jpg";
+
+                    const bName = document.createElement('div');
+                    bName.className = "bubble-name";
+                    bName.innerText = member.name;
+
+                    const bRole = document.createElement('div');
+                    bRole.className = "bubble-role";
+                    bRole.innerText = member.role || "";
+
+                    const bExp = document.createElement('div');
+                    bExp.className = "bubble-exp";
+                    bExp.innerText = member.exp || "";
+
+                    bubble.appendChild(bubbleImg);
+                    bubble.appendChild(bName);
+                    if (member.role) bubble.appendChild(bRole);
+                    if (member.exp) bubble.appendChild(bExp);
                     
                     div.appendChild(imgPlaceholder);
                     div.appendChild(nameSpan);
+                    div.appendChild(bubble);
+
+                    // For mobile tap
+                    div.addEventListener('click', (e) => {
+                        const isActive = div.classList.contains('active');
+                        document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
+                        if (!isActive) {
+                            div.classList.add('active');
+                            e.stopPropagation();
+                        }
+                    });
+
                     membersGrid.appendChild(div);
+                });
+
+                // Click outside to close bubbles
+                document.addEventListener('click', () => {
+                    document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
                 });
             }
 
@@ -1469,17 +1594,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
+            const perfSheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
+            const memberSheetUrl = "https://docs.google.com/spreadsheets/d/1OiRvK_Um0RVv09KXLU-jj1EVIrUNTmPO1pgUv-cETsE/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
 
-            fetch(sheetUrl)
+            const fetchJSON = (url) => fetch(url)
                 .then(res => res.text())
                 .then(text => {
                     const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-                    const data = JSON.parse(jsonStr);
-                    const rows = data.table.rows;
-                    const headers = data.table.cols;
-                    
-                    // 各列のインデックスをヘッダー名から動的に取得する
+                    return JSON.parse(jsonStr);
+                });
+
+            Promise.all([
+                fetchJSON(perfSheetUrl).catch(err => { console.error("Perf fetch error:", err); return null; }),
+                fetchJSON(memberSheetUrl).catch(err => { console.error("Member fetch error:", err); return null; })
+            ]).then(([perfData, memberData]) => {
+                
+                // 1. 公演情報の反映
+                if (perfData) {
+                    const rows = perfData.table.rows;
+                    const headers = perfData.table.cols;
                     const getColIdx = (keyword) => headers.findIndex(c => c && c.label && c.label.includes(keyword));
                     
                     const noColIdx = getColIdx("No");
@@ -1492,12 +1625,10 @@
                     const imgColIdx = getColIdx("画像");
                     const nowColIdx = getColIdx("Now");
 
-                    // Option A: スプレッドシートを正とするため、元データをクリア
                     siteData.memory.performances = [];
 
                     rows.forEach((row, i) => {
                         const cols = row.c;
-                        // No列が空ならスキップ
                         if (noColIdx === -1 || !cols[noColIdx] || !cols[noColIdx].v) return;
 
                         const noStr = cols[noColIdx].v;
@@ -1534,13 +1665,57 @@
                             siteData.memory.performances.unshift(perf);
                         }
                     });
+                }
 
-                    renderApp();
-                })
-                .catch(err => {
-                    console.error("Failed to fetch spreadsheet data:", err);
-                    renderApp(); // フォールバック
-                });
+                // 2. メンバー情報の反映
+                if (memberData) {
+                    const rows = memberData.table.rows;
+                    const headers = memberData.table.cols;
+                    const getColIdx = (keyword) => headers.findIndex(c => c && c.label && c.label.includes(keyword));
+
+                    const permColIdx = getColIdx("HPメンバー紹介に載せて良いか");
+                    const roleColIdx = getColIdx("担当役職");
+                    const expColIdx = getColIdx("実績");
+                    const picColIdx = getColIdx("写真ファイル");
+                    const nameColIdx = getColIdx("表示名");
+
+                    siteData.members.leaders = []; // リーダー枠は廃止
+                    siteData.members.membersList = []; // 初期化
+
+                    rows.forEach(row => {
+                        const cols = row.c;
+                        if (!cols) return;
+                        
+                        const permission = (permColIdx !== -1 && cols[permColIdx] && cols[permColIdx].v) ? cols[permColIdx].v : "";
+                        if (permission.includes("載せたくない")) return; // 除外
+
+                        const name = (nameColIdx !== -1 && cols[nameColIdx] && cols[nameColIdx].v) ? cols[nameColIdx].v : "";
+                        if (!name) return; // 名前必須
+
+                        const role = (roleColIdx !== -1 && cols[roleColIdx] && cols[roleColIdx].v) ? cols[roleColIdx].v : "";
+                        const exp = (expColIdx !== -1 && cols[expColIdx] && cols[expColIdx].v) ? cols[expColIdx].v : "";
+                        let pic = (picColIdx !== -1 && cols[picColIdx] && cols[picColIdx].v) ? cols[picColIdx].v : "";
+
+                        // Google Drive URL変換
+                        if (pic && pic.includes("drive.google.com/open?id=")) {
+                            const id = pic.split("id=")[1].split("&")[0];
+                            pic = "https://drive.google.com/uc?export=view&id=" + id;
+                        } else if (pic && pic.includes("drive.google.com/file/d/")) {
+                            const id = pic.split("/d/")[1].split("/")[0];
+                            pic = "https://drive.google.com/uc?export=view&id=" + id;
+                        }
+
+                        siteData.members.membersList.push({
+                            name: name,
+                            image: pic,
+                            role: role,
+                            exp: exp
+                        });
+                    });
+                }
+
+                renderApp();
+            });
         });
     </script>
 </body>
