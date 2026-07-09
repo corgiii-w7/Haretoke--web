@@ -951,22 +951,10 @@
                 font-size: 14px; /* 全体的な文字サイズを少し小さく */
             }
             .sidebar {
-                flex: 0 0 30.926%; /* トップロゴの黒い波のアニメーションと完全に幅を合わせる */
-                width: 30.926%;
-                padding-top: 30px; /* 上部の余白を詰める */
-            }
-            .sidebar nav {
-                gap: 15px; /* メニューの間隔を狭める */
-            }
-            .sidebar nav a {
-                font-size: 0.65rem; /* スマホ用にメニュー文字を小さく */
-                letter-spacing: 1px;
-            }
-            .sidebar-bottom {
-                display: none; /* スマホではサイドバー下部の情報を隠す */
+                display: none !important; /* スマホではサイドバーを完全に非表示にして白背景を全画面に */
             }
             .content {
-                padding: 20px 10px; /* 左右の余白をさらに狭くする */
+                padding: 20px 15px; /* 左右の余白を少し広めに確保 */
             }
             #members-grid {
                 grid-template-columns: repeat(3, 1fr); /* スマホでは3列に戻す */
@@ -990,7 +978,7 @@
                 font-size: 0.65rem; /* ID文字を小さく */
             }
             #hamburger-btn {
-                display: none !important; /* スマホでも左にメニューが出るのでハンバーガーは完全に不要 */
+                display: flex !important; /* スマホでは右上のハンバーガーメニューを復活 */
             }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
