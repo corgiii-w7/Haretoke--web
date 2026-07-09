@@ -948,7 +948,7 @@
         /* スマホ向けメディアクエリ */
         @media (max-width: 768px) {
             html {
-                font-size: 14px; /* 全体的な文字サイズを少し小さく */
+                font-size: 12.5px; /* 全体的な文字サイズをさらに小さく調整 */
             }
             .sidebar {
                 display: none !important; /* スマホではサイドバーを完全に非表示にして白背景を全画面に */
@@ -958,7 +958,38 @@
             }
             #members-grid {
                 grid-template-columns: repeat(3, 1fr); /* スマホでは3列に戻す */
-                gap: 2rem 1rem;
+                gap: 2rem 0.5rem; /* スマホでは左右の隙間を少し詰める */
+            }
+            
+            /* スマホでの吹き出し画面外はみ出し防止 */
+            .member-bubble {
+                width: 220px; /* スマホ画面に収まりやすい幅へ縮小 */
+                padding: 0.8rem;
+            }
+            .bubble-img {
+                height: 160px; /* 画像も少し小さく */
+            }
+            /* 左端（1列目）のアイテム */
+            .member-item:nth-child(3n+1) .member-bubble {
+                left: -10px;
+                transform: translateX(0);
+            }
+            .member-item:nth-child(3n+1) .member-bubble::after,
+            .member-item:nth-child(3n+1) .member-bubble::before {
+                left: 45px; /* 矢印（尻尾）を左側へ寄せる */
+                margin-left: 0;
+            }
+            /* 右端（3列目）のアイテム */
+            .member-item:nth-child(3n) .member-bubble {
+                left: auto;
+                right: -10px;
+                transform: translateX(0);
+            }
+            .member-item:nth-child(3n) .member-bubble::after,
+            .member-item:nth-child(3n) .member-bubble::before {
+                left: auto;
+                right: 35px; /* 矢印（尻尾）を右側へ寄せる */
+                margin-left: 0;
             }
             .about-catchphrase {
                 font-size: 0.85rem; /* スマホで確実に1行に収まるように調整 */
