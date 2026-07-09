@@ -1357,7 +1357,7 @@
                     imgPlaceholder.style.border = "1px solid #ddd";
                     imgPlaceholder.style.backgroundImage = member.image ? `url('${member.image}')` : "url('gekidan haretoke_logo_icon (1).jpg')";
                     imgPlaceholder.style.backgroundSize = "cover";
-                    imgPlaceholder.style.backgroundPosition = "center";
+                    imgPlaceholder.style.backgroundPosition = member.photoType === "縦" ? "top center" : "center";
                     
                     const nameSpan = document.createElement('div');
                     nameSpan.style.fontSize = "0.85rem";
@@ -1370,6 +1370,7 @@
                     const bubbleImg = document.createElement('img');
                     bubbleImg.className = "bubble-img";
                     bubbleImg.src = member.image || "gekidan haretoke_logo_icon (1).jpg";
+                    bubbleImg.style.objectPosition = member.photoType === "縦" ? "top center" : "center";
 
                     const bName = document.createElement('div');
                     bName.className = "bubble-name";
@@ -1678,6 +1679,7 @@
                     const expColIdx = getColIdx("実績");
                     const picColIdx = getColIdx("写真ファイル");
                     const nameColIdx = getColIdx("表示名");
+                    const photoTypeColIdx = getColIdx("写真種類");
 
                     siteData.members.leaders = []; // リーダー枠は廃止
                     siteData.members.membersList = []; // 初期化
@@ -1696,6 +1698,7 @@
                         const role = (roleColIdx !== -1 && cols[roleColIdx] && cols[roleColIdx].v) ? cols[roleColIdx].v : "";
                         const exp = (expColIdx !== -1 && cols[expColIdx] && cols[expColIdx].v) ? cols[expColIdx].v : "";
                         let pic = (picColIdx !== -1 && cols[picColIdx] && cols[picColIdx].v) ? cols[picColIdx].v : "";
+                        const photoType = (photoTypeColIdx !== -1 && cols[photoTypeColIdx] && cols[photoTypeColIdx].v) ? cols[photoTypeColIdx].v : "";
 
                         // Google Drive URL変換 (Hotlinking対応のthumbnailエンドポイントを使用)
                         if (pic && pic.includes("drive.google.com/open?id=")) {
@@ -1710,7 +1713,8 @@
                             name: name,
                             image: pic,
                             role: role,
-                            exp: exp
+                            exp: exp,
+                            photoType: photoType
                         });
                     });
 
