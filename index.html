@@ -1687,7 +1687,8 @@
                         if (!cols) return;
                         
                         const permission = (permColIdx !== -1 && cols[permColIdx] && cols[permColIdx].v) ? cols[permColIdx].v : "";
-                        if (permission.includes("載せたくない")) return; // 除外
+                        // 「載せたくない🙅」に完全一致する場合のみ除外
+                        if (permission === "載せたくない🙅") return;
 
                         const name = (nameColIdx !== -1 && cols[nameColIdx] && cols[nameColIdx].v) ? cols[nameColIdx].v : "";
                         if (!name) return; // 名前必須
@@ -1696,13 +1697,13 @@
                         const exp = (expColIdx !== -1 && cols[expColIdx] && cols[expColIdx].v) ? cols[expColIdx].v : "";
                         let pic = (picColIdx !== -1 && cols[picColIdx] && cols[picColIdx].v) ? cols[picColIdx].v : "";
 
-                        // Google Drive URL変換
+                        // Google Drive URL変換 (Hotlinking対応のthumbnailエンドポイントを使用)
                         if (pic && pic.includes("drive.google.com/open?id=")) {
                             const id = pic.split("id=")[1].split("&")[0];
-                            pic = "https://drive.google.com/uc?export=view&id=" + id;
+                            pic = "https://drive.google.com/thumbnail?id=" + id + "&sz=w1000";
                         } else if (pic && pic.includes("drive.google.com/file/d/")) {
                             const id = pic.split("/d/")[1].split("/")[0];
-                            pic = "https://drive.google.com/uc?export=view&id=" + id;
+                            pic = "https://drive.google.com/thumbnail?id=" + id + "&sz=w1000";
                         }
 
                         siteData.members.membersList.push({
@@ -1712,6 +1713,9 @@
                             exp: exp
                         });
                     });
+
+                    // あいうえお順（五十音順）にソート
+                    siteData.members.membersList.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
                 }
 
                 renderApp();
