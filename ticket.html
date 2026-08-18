@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チケット予約 | 劇団ハレトケ 公式サイト</title>
     <meta name="description" content="劇団ハレトケの公演チケット予約・販売ページです。公演日程、券種、残席状況の確認およびWeb予約が可能です。">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --bg-primary: #f8f9fa;
@@ -217,6 +219,7 @@
                 opacity: 0;
                 transform: translateY(12px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1104,10 +1107,12 @@
                     <a href="https://x.com/haretokemusical" target="_blank" rel="noopener noreferrer" class="sns-btn">
                         <span>𝕏</span> Twitter (X)
                     </a>
-                    <a href="https://www.instagram.com/haretoke.musical" target="_blank" rel="noopener noreferrer" class="sns-btn">
+                    <a href="https://www.instagram.com/haretoke.musical" target="_blank" rel="noopener noreferrer"
+                        class="sns-btn">
                         <span>📷</span> Instagram
                     </a>
-                    <a href="https://youtube.com/channel/UCKKov_LWYETl3ohX0XLZ2FA" target="_blank" rel="noopener noreferrer" class="sns-btn">
+                    <a href="https://youtube.com/channel/UCKKov_LWYETl3ohX0XLZ2FA" target="_blank"
+                        rel="noopener noreferrer" class="sns-btn">
                         <span>▶</span> YouTube
                     </a>
                 </div>
@@ -1122,7 +1127,8 @@
         <div id="scheduledView" class="status-card state-scheduled" style="display: none;">
             <div class="scheduled-badge-bar">
                 <span>⏰</span>
-                <span>予約受付開始：<strong class="scheduled-time-highlight" id="scheduledStartTimeDisplay">--月--日 --:--</strong> 〜</span>
+                <span>予約受付開始：<strong class="scheduled-time-highlight" id="scheduledStartTimeDisplay">--月--日
+                        --:--</strong> 〜</span>
             </div>
 
             <div class="event-preview-card">
@@ -1158,7 +1164,7 @@
              3. ステータス: 予約受付中 (ACTIVE)
              ========================================================= -->
         <div id="activeView" class="status-card" style="display: none;">
-            
+
             <!-- 公演情報サマリー -->
             <div class="event-info-box">
                 <h2 class="event-info-title" id="activeEventTitle">劇団ハレトケ 公演</h2>
@@ -1169,7 +1175,7 @@
             </div>
 
             <form id="reservationForm" novalidate>
-                
+
                 <!-- STEP 1: 公演日時選択 -->
                 <div class="section-heading">
                     <span class="step-number">1</span>
@@ -1231,7 +1237,8 @@
                             メールアドレス
                             <span class="required-tag">必須</span>
                         </label>
-                        <input type="email" id="inputEmail" class="form-input" placeholder="example@domain.com" required>
+                        <input type="email" id="inputEmail" class="form-input" placeholder="example@domain.com"
+                            required>
                         <p class="form-hint">予約完了メールをお送りします</p>
                     </div>
 
@@ -1264,7 +1271,8 @@
                             備考・メッセージ
                             <span class="optional-tag">任意</span>
                         </label>
-                        <textarea id="inputRemarks" class="form-textarea" rows="3" placeholder="車椅子でのご来場や、劇団へのメッセージなどがございましたらご記入ください。"></textarea>
+                        <textarea id="inputRemarks" class="form-textarea" rows="3"
+                            placeholder="車椅子でのご来場や、劇団へのメッセージなどがございましたらご記入ください。"></textarea>
                     </div>
                 </div>
 
@@ -1294,7 +1302,8 @@
             </form>
 
             <!-- 注意事項 -->
-            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: #666; line-height: 1.8;" id="activeNotesContainer">
+            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: #666; line-height: 1.8;"
+                id="activeNotesContainer">
                 <strong style="color: #333;">【ご予約に関するご案内】</strong>
                 <p id="activeNotesContent" style="white-space: pre-line; margin-top: 6px;">
                     ・開場は各回開演の30分前です。<br>
@@ -1565,7 +1574,7 @@
                 const isSoldOut = sch.status === '完売';
                 const pill = document.createElement('div');
                 pill.className = `date-pill ${isSoldOut ? 'soldout' : ''}`;
-                
+
                 let badgeClass = 'badge-available';
                 if (sch.status === '残りわずか') badgeClass = 'badge-few';
                 if (sch.status === '完売') badgeClass = 'badge-soldout';
