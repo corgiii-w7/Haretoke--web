@@ -499,6 +499,11 @@
             color: #6b7280;
         }
 
+        .badge-closed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .date-pill-note {
             font-size: 0.8rem;
             color: #6b7280;
@@ -1251,18 +1256,16 @@
                     </div>
 
                     <div class="form-group-full">
-                        <label class="form-label" for="inputCast">
-                            応援しているキャスト
+                        <label class="form-label" for="inputSource">
+                            何でこの公演をお知りになりましたか。
                             <span class="optional-tag">任意</span>
                         </label>
-                        <select id="inputCast" class="form-select">
-                            <option value="">-- 選択してください（劇団全体 / なし） --</option>
-                            <option value="ごっちゃん">ごっちゃん</option>
-                            <option value="みなや">みなや</option>
-                            <option value="がく">がく</option>
-                            <option value="監物">監物</option>
-                            <option value="いきちゃん">いきちゃん</option>
-                            <option value="劇団ハレトケ全体">劇団ハレトケ全体</option>
+                        <select id="inputSource" class="form-select">
+                            <option value="">-- 選択してください（任意） --</option>
+                            <option value="団員からの紹介">団員からの紹介</option>
+                            <option value="劇団SNS">劇団SNS</option>
+                            <option value="知人に誘われて">知人に誘われて</option>
+                            <option value="その他">その他</option>
                         </select>
                     </div>
 
@@ -1401,9 +1404,9 @@
             description: '次回公演に向けて鋭意稽古中です！\n全編オリジナルのミュージカル作品をどうぞお楽しみに。',
             notes: '・開場は各回開演の30分前です。\n・チケット代金は当日受付にてご精算ください。\n・未就学児のご入場はご遠慮いただいております。',
             schedules: [
-                { datetime: '2026年10月24日(土) 14:00', status: '受付中', note: '開場 13:30' },
-                { datetime: '2026年10月24日(土) 18:30', status: '受付中', note: '開場 18:00' },
-                { datetime: '2026年10月25日(日) 13:00', status: '残りわずか', note: '開場 12:30' }
+                { datetime: '2026年10月24日(土) 14:00', status: '受付中', salesEndDate: '2026-10-24 12:00', note: '開場 13:30' },
+                { datetime: '2026年10月24日(土) 18:30', status: '受付中', salesEndDate: '2026-10-24 16:30', note: '開場 18:00' },
+                { datetime: '2026年10月25日(日) 13:00', status: '残りわずか', salesEndDate: '2026-10-25 11:00', note: '開場 12:30' }
             ],
             ticketTypes: [
                 { name: '一般', price: 3000, description: '一般前売券' },
@@ -1571,23 +1574,34 @@
             selectedSchedule = null;
 
             (appData.schedules || []).forEach((sch, idx) => {
-                const isSoldOut = sch.status === '完売';
+                let status = sch.status || '受付中';
+
+                // クライアント側でも公演ごとの販売終了日時を判定
+                if (sch.salesEndDate) {
+                    const slotEnd = new Date(sch.salesEndDate);
+                    if (!isNaN(slotEnd.getTime()) && new Date() > slotEnd) {
+                        status = '受付終了';
+                    }
+                }
+
+                const isUnavailable = (status === '完売' || status === '受付終了');
                 const pill = document.createElement('div');
-                pill.className = `date-pill ${isSoldOut ? 'soldout' : ''}`;
+                pill.className = `date-pill ${isUnavailable ? 'soldout' : ''}`;
 
                 let badgeClass = 'badge-available';
-                if (sch.status === '残りわずか') badgeClass = 'badge-few';
-                if (sch.status === '完売') badgeClass = 'badge-soldout';
+                if (status === '残りわずか') badgeClass = 'badge-few';
+                if (status === '完売') badgeClass = 'badge-soldout';
+                if (status === '受付終了') badgeClass = 'badge-closed';
 
                 pill.innerHTML = `
                     <div class="date-pill-header">
                         <span class="date-pill-time">${sch.datetime}</span>
-                        <span class="seat-badge ${badgeClass}">${sch.status || '受付中'}</span>
+                        <span class="seat-badge ${badgeClass}">${status}</span>
                     </div>
                     ${sch.note ? `<div class="date-pill-note">${sch.note}</div>` : ''}
                 `;
 
-                if (!isSoldOut) {
+                if (!isUnavailable) {
                     pill.addEventListener('click', () => {
                         document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
                         pill.classList.add('selected');
@@ -1596,7 +1610,7 @@
                         updateSummary();
                     });
 
-                    // 1つ目を自動選択
+                    // 最初の有効な公演回を自動選択
                     if (!selectedSchedule) {
                         pill.classList.add('selected');
                         selectedSchedule = sch;
@@ -1746,7 +1760,7 @@
                 return;
             }
 
-            const cast = document.getElementById('inputCast').value;
+            const source = document.getElementById('inputSource').value;
             const remarks = document.getElementById('inputRemarks').value.trim();
             const total = (selectedTicketType.price * ticketCount).toLocaleString();
 
@@ -1758,7 +1772,7 @@
                 <div><strong>お名前:</strong> ${name} 様 (${furigana})</div>
                 <div><strong>メールアドレス:</strong> ${email}</div>
                 <div><strong>電話番号:</strong> ${phone}</div>
-                ${cast ? `<div><strong>応援キャスト:</strong> ${cast}</div>` : ''}
+                ${source ? `<div><strong>知ったきっかけ:</strong> ${source}</div>` : ''}
                 ${remarks ? `<div><strong>備考:</strong> ${remarks}</div>` : ''}
             `;
 
@@ -1781,7 +1795,7 @@
             const furigana = document.getElementById('inputFurigana').value.trim();
             const email = document.getElementById('inputEmail').value.trim();
             const phone = document.getElementById('inputPhone').value.trim();
-            const cast = document.getElementById('inputCast').value;
+            const source = document.getElementById('inputSource').value;
             const remarks = document.getElementById('inputRemarks').value.trim();
             const totalPriceText = `¥${(selectedTicketType.price * ticketCount).toLocaleString()}`;
 
@@ -1794,7 +1808,7 @@
                 ticketType: selectedTicketType.name,
                 count: ticketCount,
                 totalPrice: totalPriceText,
-                cast: cast,
+                source: source,
                 remarks: remarks
             };
 

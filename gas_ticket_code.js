@@ -32,8 +32,7 @@ function initialSetup() {
     settingSheet.appendRow(['会場名', '〇〇劇場', '会場名（例：JOY JOY THEATER、〇〇ホール等）']);
     settingSheet.appendRow(['会場住所・アクセス', '東京都〇〇区...（〇〇駅 徒歩5分）', 'アクセス情報']);
     settingSheet.appendRow(['販売ステータス', '自動', '「自動」「販売中」「予約開始前」「販売停止/終了」のいずれか']);
-    settingSheet.appendRow(['販売開始日時', '2026-09-01 12:00', '自動判定時の開始日時 (YYYY-MM-DD HH:mm 形式)']);
-    settingSheet.appendRow(['販売終了日時', '2026-10-23 23:59', '自動判定時の終了日時 (YYYY-MM-DD HH:mm 形式)']);
+    settingSheet.appendRow(['販売開始日時', '2026-09-01 12:00', '共通の販売開始日時 (YYYY-MM-DD HH:mm 形式)']);
     settingSheet.appendRow(['公演説明・あらすじ', '次回公演に向けて鋭意稽古中です！団員一同、劇場でお待ちしております。', '公演のあらすじや概要']);
     settingSheet.appendRow(['注意事項・備考', '・開場は各回開演の30分前です。\n・未就学児のご入場はご遠慮いただいております。\n・当日受付にてご予約名をお伝えいただき、代金をご精算ください。', 'チケットに関する注意事項']);
     settingSheet.appendRow(['自動返信メール件名', '【劇団ハレトケ】チケットご予約完了のお知らせ', '予約者へ自動送信するメールの件名']);
@@ -46,19 +45,20 @@ function initialSetup() {
     settingSheet.setColumnWidth(3, 280);
   }
 
-  // ② 日程シート
+  // ② 日程シート（公演時間ごとの販売終了日時を設定可能）
   let scheduleSheet = ss.getSheetByName('日程');
   if (!scheduleSheet) {
     scheduleSheet = ss.insertSheet('日程');
-    scheduleSheet.appendRow(['公演日時', '残席ステータス', '備考/開場時間']);
-    scheduleSheet.appendRow(['2026年10月24日(土) 14:00', '受付中', '開場 13:30']);
-    scheduleSheet.appendRow(['2026年10月24日(土) 18:30', '受付中', '開場 18:00']);
-    scheduleSheet.appendRow(['2026年10月25日(日) 13:00', '残りわずか', '開場 12:30']);
+    scheduleSheet.appendRow(['公演日時', '残席ステータス', '販売終了日時', '備考/開場時間']);
+    scheduleSheet.appendRow(['2026年10月24日(土) 14:00', '受付中', '2026-10-24 12:00', '開場 13:30']);
+    scheduleSheet.appendRow(['2026年10月24日(土) 18:30', '受付中', '2026-10-24 16:30', '開場 18:00']);
+    scheduleSheet.appendRow(['2026年10月25日(日) 13:00', '残りわずか', '2026-10-25 11:00', '開場 12:30']);
     
-    scheduleSheet.getRange('A1:C1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
+    scheduleSheet.getRange('A1:D1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
     scheduleSheet.setColumnWidth(1, 240);
-    scheduleSheet.setColumnWidth(2, 140);
-    scheduleSheet.setColumnWidth(3, 200);
+    scheduleSheet.setColumnWidth(2, 120);
+    scheduleSheet.setColumnWidth(3, 160);
+    scheduleSheet.setColumnWidth(4, 200);
   }
 
   // ③ 券種シート
@@ -91,7 +91,7 @@ function initialSetup() {
       '券種',
       '枚数',
       '合計金額',
-      '応援キャスト',
+      '知ったきっかけ',
       '備考・メッセージ'
     ]);
     resSheet.getRange('A1:L1').setBackground('#111111').setFontColor('#ffffff').setFontWeight('bold');
@@ -105,7 +105,7 @@ function initialSetup() {
     resSheet.setColumnWidth(8, 120);
     resSheet.setColumnWidth(9, 80);
     resSheet.setColumnWidth(10, 100);
-    resSheet.setColumnWidth(11, 120);
+    resSheet.setColumnWidth(11, 150);
     resSheet.setColumnWidth(12, 220);
   }
 
@@ -124,6 +124,7 @@ function initialSetup() {
 function doGet(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const now = new Date();
     
     // 設定シートの読み取り
     const settingSheet = ss.getSheetByName('設定');
@@ -139,17 +140,38 @@ function doGet(e) {
       }
     }
 
-    // 日程シートの読み取り
+    // 日程シートの読み取り（公演ごとの販売終了日時判定）
     const scheduleSheet = ss.getSheetByName('日程');
     const schedules = [];
+    let availableScheduleCount = 0;
+
     if (scheduleSheet) {
       const schValues = scheduleSheet.getDataRange().getValues();
       for (let i = 1; i < schValues.length; i++) {
         const datetime = String(schValues[i][0]).trim();
-        const status = String(schValues[i][1] || '受付中').trim();
-        const note = String(schValues[i][2] || '').trim();
+        let status = String(schValues[i][1] || '受付中').trim();
+        let salesEndDateStr = schValues[i][2] ? String(schValues[i][2]).trim() : '';
+        const note = String(schValues[i][3] || '').trim();
+
         if (datetime) {
-          schedules.push({ datetime, status, note });
+          // 公演ごとの販売終了日時の判定
+          if (salesEndDateStr) {
+            const slotEndDate = new Date(salesEndDateStr);
+            if (!isNaN(slotEndDate.getTime()) && now > slotEndDate) {
+              status = '受付終了';
+            }
+          }
+
+          if (status !== '完売' && status !== '受付終了') {
+            availableScheduleCount++;
+          }
+
+          schedules.push({
+            datetime: datetime,
+            status: status,
+            salesEndDate: salesEndDateStr,
+            note: note
+          });
         }
       }
     }
@@ -170,14 +192,11 @@ function doGet(e) {
     }
 
     // 販売ステータスの自動判定
-    const now = new Date();
     const mode = settings['販売ステータス'] || '自動';
     let currentStatus = 'closed'; // 'active' (販売中), 'scheduled' (予約開始前), 'closed' (売出なし/終了)
 
     const startDateStr = settings['販売開始日時'];
-    const endDateStr = settings['販売終了日時'];
     const startDate = startDateStr ? new Date(startDateStr) : null;
-    const endDate = endDateStr ? new Date(endDateStr) : null;
 
     if (mode === '販売中') {
       currentStatus = 'active';
@@ -187,14 +206,12 @@ function doGet(e) {
       currentStatus = 'closed';
     } else {
       // 「自動」判定
-      if (!startDate || isNaN(startDate.getTime())) {
-        currentStatus = schedules.length > 0 ? 'active' : 'closed';
-      } else if (now < startDate) {
+      if (startDate && !isNaN(startDate.getTime()) && now < startDate) {
         currentStatus = 'scheduled';
-      } else if (endDate && !isNaN(endDate.getTime()) && now > endDate) {
-        currentStatus = 'closed';
+      } else if (schedules.length === 0 || availableScheduleCount === 0) {
+        currentStatus = 'closed'; // 有効な日程がすべて受付終了または完売
       } else {
-        currentStatus = schedules.length > 0 ? 'active' : 'closed';
+        currentStatus = 'active';
       }
     }
 
@@ -207,7 +224,6 @@ function doGet(e) {
         venue: settings['会場名'] || '',
         venueAccess: settings['会場住所・アクセス'] || '',
         salesStartDate: settings['販売開始日時'] ? formatDate(new Date(settings['販売開始日時'])) : '',
-        salesEndDate: settings['販売終了日時'] ? formatDate(new Date(settings['販売終了日時'])) : '',
         description: settings['公演説明・あらすじ'] || '',
         notes: settings['注意事項・備考'] || '',
         schedules: schedules,
@@ -262,7 +278,7 @@ function doPost(e) {
     const ticketType = data.ticketType || '';
     const count = Number(data.count) || 1;
     const totalPrice = data.totalPrice || '';
-    const cast = data.cast || '';
+    const source = data.source || data.hearing || data.cast || '';
     const remarks = data.remarks || '';
 
     // スプレッドシートに追記
@@ -277,7 +293,7 @@ function doPost(e) {
       ticketType,
       count,
       totalPrice,
-      cast,
+      source,
       remarks
     ]);
 
@@ -315,7 +331,7 @@ function doPost(e) {
         + `【枚数】: ${count}枚\n`
         + (totalPrice ? `【合計金額】: ${totalPrice}\n` : '')
         + (venue ? `【会場】: ${venue}\n` : '')
-        + (cast ? `【応援キャスト】: ${cast}\n` : '')
+        + (source ? `【知ったきっかけ】: ${source}\n` : '')
         + `----------------------------------------\n\n`
         + `【ご来場の案内・注意事項】\n`
         + (notes ? `${notes}\n\n` : `・開場は開演の30分前となります。\n・当日受付にて上記「予約番号」または「お名前」をお伝えください。\n\n`)
