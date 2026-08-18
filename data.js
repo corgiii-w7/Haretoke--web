@@ -42,7 +42,7 @@ const siteData = {
       "脚本・演出: 秋梨夜風",
       "日程: 2026年10月24日(土) ※予備日: 25日(日)",
       "会場: 〇〇劇場",
-      "チケット: 準備中"
+      "チケット: <a href='ticket.html' style='display: inline-flex; align-items: center; gap: 6px; background: #111; color: #fff; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85rem; margin-top: 4px;'>🎟️ チケット予約・詳細はこちら</a>"
     ]
   },
   "memory": {

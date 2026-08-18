@@ -1035,6 +1035,7 @@
                 <a href="#about" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px;" class="menu-close-link">ABOUT</a>
                 <a href="#members" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px;" class="menu-close-link">MEMBERS</a>
                 <a href="#performance" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px;" class="menu-close-link">STAGE</a>
+                <a href="ticket.html" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px; background: rgba(255,255,255,0.15); padding: 4px 16px; border-radius: 6px;" class="menu-close-link">TICKET 🎟️</a>
                 <a href="#history" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px;" class="menu-close-link">MEMORY</a>
                 <a href="#contact" style="color:#fff; text-decoration:none; font-size:1.5rem; font-weight:bold; letter-spacing:2px;" class="menu-close-link">CONTACT</a>
             </div>
@@ -1129,6 +1130,7 @@
                 <a href="#about">ABOUT</a>
                 <a href="#members">MEMBERS</a>
                 <a href="#performance">STAGE</a>
+                <a href="ticket.html" style="color: #fff; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 4px; font-size: 0.95rem;">TICKET 🎟️</a>
 
                 <!-- ▼ MEMORYのドロップダウン▼ -->
                 <div class="dropdown">
@@ -1441,7 +1443,7 @@
             stageDetails.innerHTML = ''; // クリア
             siteData.stage.details.forEach(detail => {
                 const li = document.createElement('li');
-                li.innerText = detail;
+                li.innerHTML = detail;
                 stageDetails.appendChild(li);
             });
 

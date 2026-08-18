@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チケット予約 | 劇団ハレトケ 公式サイト</title>
+    <meta name="description" content="劇団ハレトケの公演チケット予約・販売ページです。公演日程、券種、残席状況の確認およびWeb予約が可能です。">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-muted: #888888;
+            --accent-black: #111111;
+            --border-color: #e5e7eb;
+            --border-hover: #111111;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.09);
+            --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            letter-spacing: 0.02em;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ヘッダー */
+        .site-header {
+            background-color: #111111;
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .logo-badge {
+            display: inline-block;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            background: #ffffff;
+            color: #111111;
+            padding: 4px 10px;
+            border-radius: 2px;
+        }
+
+        .logo-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .header-back-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ヒーローバナー */
+        .page-hero {
+            background: linear-gradient(180deg, #111111 0%, #1f2429 100%);
+            color: #ffffff;
+            padding: 3.5rem 1.5rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #aaaaaa;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 4px;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.6rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: #cccccc;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* メインコンテナ */
+        .main-container {
+            max-width: 860px;
+            width: 100%;
+            margin: -1.5rem auto 4rem;
+            padding: 0 1.25rem;
+            flex: 1;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ローディングスケルトン */
+        .loading-skeleton {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 1.2rem;
+            border: 3px solid #e5e7eb;
+            border-top-color: #111111;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ステータスカード共通 */
+        .status-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===================================================
+           ステータス A: 売出なし / 受付終了
+           =================================================== */
+        .state-closed {
+            text-align: center;
+            padding: 3.5rem 2rem;
+        }
+
+        .state-closed-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .state-closed-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .state-closed-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+        }
+
+        .sns-box {
+            background: #f4f5f7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            text-align: left;
+        }
+
+        .sns-box-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #111111;
+            text-align: center;
+        }
+
+        .sns-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sns-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            color: #111111;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .sns-btn:hover {
+            border-color: #111111;
+            background: #111111;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* ===================================================
+           ステータス B: 予約開始前（告知・予告）
+           =================================================== */
+        .state-scheduled {
+            padding: 2.5rem 2rem;
+        }
+
+        .scheduled-badge-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            border: 1px solid #fde68a;
+        }
+
+        .scheduled-time-highlight {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #b45309;
+            text-decoration: underline;
+        }
+
+        .event-preview-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background: #fafafa;
+        }
+
+        .preview-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .preview-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 0.3rem;
+        }
+
+        .preview-subtitle {
+            font-size: 0.9rem;
+            color: #666666;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 0.8rem 1rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .preview-label {
+            font-weight: 700;
+            color: #444444;
+        }
+
+        .preview-value {
+            color: #111111;
+        }
+
+        /* ===================================================
+           ステータス C: 予約受付中（販売中フォーム）
+           =================================================== */
+        .event-info-box {
+            border-left: 4px solid #111111;
+            padding: 1rem 1.25rem;
+            background: #f9fafb;
+            margin-bottom: 2rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .event-info-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 0.3rem;
+        }
+
+        .event-info-meta {
+            font-size: 0.85rem;
+            color: #555555;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #111111;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            border-radius: 50%;
+        }
+
+        /* 日時選択ピル */
+        .date-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .date-pill {
+            position: relative;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            background: #ffffff;
+            user-select: none;
+        }
+
+        .date-pill:hover:not(.soldout) {
+            border-color: #9ca3af;
+            transform: translateY(-2px);
+        }
+
+        .date-pill.selected {
+            border-color: #111111;
+            background: #f9fafb;
+            box-shadow: 0 0 0 1px #111111;
+        }
+
+        .date-pill.soldout {
+            opacity: 0.5;
+            background: #f3f4f6;
+            cursor: not-allowed;
+            border-color: #e5e7eb;
+        }
+
+        .date-pill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .date-pill-time {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #111111;
+        }
+
+        .seat-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-few {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-soldout {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .date-pill-note {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* 券種セレクター */
+        .ticket-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .type-pill {
+            position: relative;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            background: #ffffff;
+            user-select: none;
+        }
+
+        .type-pill:hover {
+            border-color: #9ca3af;
+            transform: translateY(-2px);
+        }
+
+        .type-pill.selected {
+            border-color: #111111;
+            background: #f9fafb;
+            box-shadow: 0 0 0 1px #111111;
+        }
+
+        .type-pill-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .type-pill-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #111111;
+        }
+
+        .type-pill-price {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #111111;
+        }
+
+        .type-pill-desc {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* 枚数カウンター */
+        .count-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .count-btn {
+            width: 42px;
+            height: 42px;
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+            color: #111111;
+        }
+
+        .count-btn:hover:not(:disabled) {
+            border-color: #111111;
+            background: #111111;
+            color: #ffffff;
+        }
+
+        .count-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .count-display {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* フォームフィールド */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #222222;
+            margin-bottom: 6px;
+        }
+
+        .form-label .required-tag {
+            display: inline-block;
+            background: #111111;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 2px;
+            margin-left: 6px;
+            letter-spacing: 0.05em;
+        }
+
+        .form-label .optional-tag {
+            display: inline-block;
+            background: #e5e7eb;
+            color: #555555;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 2px;
+            margin-left: 6px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: #111111;
+            background: #ffffff;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #111111;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #aaaaaa;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: #777777;
+            margin-top: 4px;
+        }
+
+        /* 料金サマリーカード */
+        .order-summary-card {
+            background: #111111;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #cccccc;
+            margin-bottom: 8px;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 12px 0;
+        }
+
+        .summary-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .summary-total-price {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .summary-payment-note {
+            font-size: 0.78rem;
+            color: #999999;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        /* 送信ボタン */
+        .submit-btn {
+            width: 100%;
+            background: #111111;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #333333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .submit-btn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+
+        /* ===================================================
+           ステータス D: 予約完了画面 (Success)
+           =================================================== */
+        .state-success {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #10b981;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .success-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .success-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .reservation-id-box {
+            display: inline-block;
+            background: #f4f5f7;
+            border: 1px dashed #9ca3af;
+            border-radius: 8px;
+            padding: 12px 24px;
+            margin-bottom: 2rem;
+        }
+
+        .id-label {
+            font-size: 0.75rem;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .id-value {
+            font-family: 'Outfit', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111111;
+            letter-spacing: 2px;
+        }
+
+        .success-details-table {
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:nth-child(odd) {
+            background: #f9fafb;
+        }
+
+        .detail-dt {
+            font-weight: 700;
+            color: #555555;
+        }
+
+        .detail-dd {
+            color: #111111;
+            font-weight: 500;
+        }
+
+        .success-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #111111;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-primary:hover {
+            background: #333333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #ffffff;
+            color: #111111;
+            border: 1.5px solid #d1d5db;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: #111111;
+            background: #f9fafb;
+        }
+
+        /* 確認モーダル */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            max-width: 520px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .modal-desc {
+            font-size: 0.85rem;
+            color: #666666;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-summary {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-confirm {
+            background: #111111;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-confirm:hover {
+            background: #333333;
+        }
+
+        /* エラーメッセージ */
+        .error-alert {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        /* フッター */
+        .site-footer {
+            background: #ffffff;
+            color: #555555;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 1.6rem;
+            }
+
+            .main-container {
+                padding: 0 1rem;
+                margin-top: -1rem;
+            }
+
+            .status-card {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group-full {
+                grid-column: span 1;
+            }
+
+            .preview-grid,
+            .detail-row {
+                grid-template-columns: 100px 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- サイトヘッダー -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="index.html" class="header-logo">
+                <span class="logo-badge">HARETOKE</span>
+                <span class="logo-text">劇団ハレトケ</span>
+            </a>
+            <a href="index.html" class="header-back-link">
+                <span>←</span> TOPページへ戻る
+            </a>
+        </div>
+    </header>
+
+    <!-- ヒーローバナー -->
+    <section class="page-hero">
+        <div class="hero-tag">TICKET RESERVATION</div>
+        <h1 class="hero-title" id="heroEventTitle">TICKET</h1>
+        <p class="hero-subtitle" id="heroEventSubtitle">劇団ハレトケ 公演チケットご予約受付</p>
+    </section>
+
+    <!-- メインコンテンツ -->
+    <main class="main-container">
+
+        <!-- ローディング表示 -->
+        <div id="loadingView" class="loading-skeleton">
+            <div class="spinner"></div>
+            <p style="color: #666; font-size: 0.95rem; font-weight: 500;">最新のチケット情報を読み込んでいます...</p>
+        </div>
+
+        <!-- エラー表示バナー -->
+        <div id="errorBanner" class="error-alert"></div>
+
+        <!-- =========================================================
+             1. ステータス: 売出なし / 受付終了 (CLOSED)
+             ========================================================= -->
+        <div id="closedView" class="status-card state-closed" style="display: none;">
+            <div class="state-closed-icon">🎭</div>
+            <h2 class="state-closed-title">現在予約可能なチケットはありません</h2>
+            <p class="state-closed-desc">
+                次回の公演情報やチケット発売スケジュールは、劇団ハレトケ公式サイトおよび公式SNSにて随時お知らせいたします。<br>
+                最新情報をぜひチェックしてください！
+            </p>
+
+            <div class="sns-box">
+                <div class="sns-box-title">劇団ハレトケ 公式SNS</div>
+                <div class="sns-links">
+                    <a href="https://x.com/haretokemusical" target="_blank" rel="noopener noreferrer" class="sns-btn">
+                        <span>𝕏</span> Twitter (X)
+                    </a>
+                    <a href="https://www.instagram.com/haretoke.musical" target="_blank" rel="noopener noreferrer" class="sns-btn">
+                        <span>📷</span> Instagram
+                    </a>
+                    <a href="https://youtube.com/channel/UCKKov_LWYETl3ohX0XLZ2FA" target="_blank" rel="noopener noreferrer" class="sns-btn">
+                        <span>▶</span> YouTube
+                    </a>
+                </div>
+            </div>
+
+            <a href="index.html" class="btn-primary">劇団ハレトケ TOPページへ</a>
+        </div>
+
+        <!-- =========================================================
+             2. ステータス: 予約開始前 (SCHEDULED)
+             ========================================================= -->
+        <div id="scheduledView" class="status-card state-scheduled" style="display: none;">
+            <div class="scheduled-badge-bar">
+                <span>⏰</span>
+                <span>予約受付開始：<strong class="scheduled-time-highlight" id="scheduledStartTimeDisplay">--月--日 --:--</strong> 〜</span>
+            </div>
+
+            <div class="event-preview-card">
+                <div class="preview-header">
+                    <h2 class="preview-title" id="scheduledEventTitle">次回公演</h2>
+                    <p class="preview-subtitle" id="scheduledEventSubtitle"></p>
+                </div>
+                <div class="preview-grid">
+                    <div class="preview-label">会場</div>
+                    <div class="preview-value" id="scheduledVenue">〇〇劇場</div>
+
+                    <div class="preview-label">公演日程</div>
+                    <div class="preview-value" id="scheduledDatesList"></div>
+
+                    <div class="preview-label">券種・料金</div>
+                    <div class="preview-value" id="scheduledTicketsList"></div>
+
+                    <div class="preview-label">公演概要</div>
+                    <div class="preview-value" id="scheduledDescription" style="white-space: pre-line;"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center; color: #555; font-size: 0.95rem; margin-bottom: 2rem;">
+                <p>チケットの受付開始まで今しばらくお待ちください。<br>発売開始日時になるとこちらのページからご予約いただけます。</p>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="index.html" class="btn-secondary">TOPページへ戻る</a>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             3. ステータス: 予約受付中 (ACTIVE)
+             ========================================================= -->
+        <div id="activeView" class="status-card" style="display: none;">
+            
+            <!-- 公演情報サマリー -->
+            <div class="event-info-box">
+                <h2 class="event-info-title" id="activeEventTitle">劇団ハレトケ 公演</h2>
+                <div class="event-info-meta">
+                    <span id="activeVenue">📍 会場: 〇〇劇場</span>
+                    <span id="activeVenueAccess"></span>
+                </div>
+            </div>
+
+            <form id="reservationForm" novalidate>
+                
+                <!-- STEP 1: 公演日時選択 -->
+                <div class="section-heading">
+                    <span class="step-number">1</span>
+                    <span>公演日時を選択</span>
+                </div>
+                <div class="date-selector-grid" id="dateSelectorContainer">
+                    <!-- JSで動的生成 -->
+                </div>
+                <input type="hidden" id="selectedDateInput" required>
+
+                <!-- STEP 2: 券種・枚数選択 -->
+                <div class="section-heading">
+                    <span class="step-number">2</span>
+                    <span>券種と枚数を選択</span>
+                </div>
+                <div class="ticket-type-grid" id="ticketTypeContainer">
+                    <!-- JSで動的生成 -->
+                </div>
+                <input type="hidden" id="selectedTicketTypeInput" required>
+                <input type="hidden" id="selectedPriceInput" value="0">
+
+                <div class="form-label">
+                    枚数
+                    <span class="required-tag">必須</span>
+                </div>
+                <div class="count-wrapper">
+                    <button type="button" class="count-btn" id="btnCountMinus" disabled>−</button>
+                    <span class="count-display" id="countDisplay">1</span>
+                    <button type="button" class="count-btn" id="btnCountPlus">+</button>
+                    <span style="font-size: 0.9rem; color: #666;">枚（最大5枚まで）</span>
+                </div>
+                <input type="hidden" id="ticketCountInput" value="1">
+
+                <!-- STEP 3: お客様情報 -->
+                <div class="section-heading">
+                    <span class="step-number">3</span>
+                    <span>お客様情報を入力</span>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label" for="inputName">
+                            お名前
+                            <span class="required-tag">必須</span>
+                        </label>
+                        <input type="text" id="inputName" class="form-input" placeholder="山田 太郎" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="inputFurigana">
+                            フリガナ
+                            <span class="required-tag">必須</span>
+                        </label>
+                        <input type="text" id="inputFurigana" class="form-input" placeholder="ヤマダ タロウ" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="inputEmail">
+                            メールアドレス
+                            <span class="required-tag">必須</span>
+                        </label>
+                        <input type="email" id="inputEmail" class="form-input" placeholder="example@domain.com" required>
+                        <p class="form-hint">予約完了メールをお送りします</p>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="inputPhone">
+                            電話番号
+                            <span class="required-tag">必須</span>
+                        </label>
+                        <input type="tel" id="inputPhone" class="form-input" placeholder="090-1234-5678" required>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label class="form-label" for="inputCast">
+                            応援しているキャスト
+                            <span class="optional-tag">任意</span>
+                        </label>
+                        <select id="inputCast" class="form-select">
+                            <option value="">-- 選択してください（劇団全体 / なし） --</option>
+                            <option value="ごっちゃん">ごっちゃん</option>
+                            <option value="みなや">みなや</option>
+                            <option value="がく">がく</option>
+                            <option value="監物">監物</option>
+                            <option value="いきちゃん">いきちゃん</option>
+                            <option value="劇団ハレトケ全体">劇団ハレトケ全体</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label class="form-label" for="inputRemarks">
+                            備考・メッセージ
+                            <span class="optional-tag">任意</span>
+                        </label>
+                        <textarea id="inputRemarks" class="form-textarea" rows="3" placeholder="車椅子でのご来場や、劇団へのメッセージなどがございましたらご記入ください。"></textarea>
+                    </div>
+                </div>
+
+                <!-- 料金サマリー -->
+                <div class="order-summary-card">
+                    <div class="summary-row">
+                        <span>選択公演:</span>
+                        <span id="summaryDateText" style="font-weight: 600; color: #fff;">未選択</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>券種・枚数:</span>
+                        <span id="summaryTypeCountText">未選択</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-total-row">
+                        <span>合計金額 (税込)</span>
+                        <span class="summary-total-price" id="summaryTotalDisplay">¥0</span>
+                    </div>
+                    <p class="summary-payment-note">※ チケット代金は当日受付にて現金精算となります</p>
+                </div>
+
+                <!-- 送信ボタン -->
+                <button type="button" id="btnOpenConfirmModal" class="submit-btn">
+                    <span>予約内容を確認する</span>
+                    <span>→</span>
+                </button>
+            </form>
+
+            <!-- 注意事項 -->
+            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: #666; line-height: 1.8;" id="activeNotesContainer">
+                <strong style="color: #333;">【ご予約に関するご案内】</strong>
+                <p id="activeNotesContent" style="white-space: pre-line; margin-top: 6px;">
+                    ・開場は各回開演の30分前です。<br>
+                    ・予約完了後、ご入力いただいたメールアドレスに自動返信メールをお送りいたします。<br>
+                    ・当日は受付にてお名前または予約番号をお伝えください。
+                </p>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             4. ステータス: 予約完了 (SUCCESS)
+             ========================================================= -->
+        <div id="successView" class="status-card state-success" style="display: none;">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">ご予約が完了いたしました</h2>
+            <p class="success-subtitle">
+                ご予約ありがとうございます！自動返信メールをお送りしましたのでご確認ください。
+            </p>
+
+            <div class="reservation-id-box">
+                <div class="id-label">予約番号</div>
+                <div class="id-value" id="successResId">HT-0000-0000</div>
+            </div>
+
+            <div class="success-details-table">
+                <div class="detail-row">
+                    <div class="detail-dt">お名前</div>
+                    <div class="detail-dd" id="successName"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-dt">公演日時</div>
+                    <div class="detail-dd" id="successDate"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-dt">券種・枚数</div>
+                    <div class="detail-dd" id="successTicketInfo"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-dt">合計金額</div>
+                    <div class="detail-dd" id="successTotal"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-dt">送信先メール</div>
+                    <div class="detail-dd" id="successEmail"></div>
+                </div>
+            </div>
+
+            <div class="success-actions">
+                <a href="index.html" class="btn-primary">TOPページへ戻る</a>
+                <button type="button" id="btnBookAnother" class="btn-secondary">別の予約を行う</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 確認モーダル -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title">ご予約内容の確認</h3>
+            <p class="modal-desc">以下の内容で予約を送信します。内容をご確認ください。</p>
+
+            <div class="modal-summary" id="modalSummaryContent">
+                <!-- JSで生成 -->
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" id="btnModalCancel">修正する</button>
+                <button type="button" class="btn-confirm" id="btnModalSubmit">この内容で予約確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <footer class="site-footer">
+        <p>&copy; 2026 劇団ハレトケ (Gekidan Haretoke). All rights reserved.</p>
+    </footer>
+
+    <!-- スクリプト -->
+    <script>
+        // =========================================================================
+        // 設定: GAS Web App URL
+        // =========================================================================
+        // ★ SPREADSHEET_SETUP.md の手順でデプロイしたWebアプリURLをここに設定してください ★
+        const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxR6mw95aQD19kAdy8GmPek1mISja-c-GeUGA5xlPNRg6qcLwaJUzkYN7HvRsjMV7kO/exec';
+
+        // フォールバック用の初期データ（GAS接続前・オフライン時も正常表示可能）
+        const FALLBACK_DATA = {
+            salesStatus: 'active', // 'active' | 'scheduled' | 'closed'
+            title: '劇団ハレトケ 2026年 秋公演',
+            subtitle: '〜いま、ここ、こそ、パラダイス〜',
+            venue: '〇〇劇場',
+            venueAccess: '東京都〇〇区（〇〇駅 徒歩5分）',
+            salesStartDate: '2026年9月1日(火) 12:00',
+            salesEndDate: '2026年10月23日(金) 23:59',
+            description: '次回公演に向けて鋭意稽古中です！\n全編オリジナルのミュージカル作品をどうぞお楽しみに。',
+            notes: '・開場は各回開演の30分前です。\n・チケット代金は当日受付にてご精算ください。\n・未就学児のご入場はご遠慮いただいております。',
+            schedules: [
+                { datetime: '2026年10月24日(土) 14:00', status: '受付中', note: '開場 13:30' },
+                { datetime: '2026年10月24日(土) 18:30', status: '受付中', note: '開場 18:00' },
+                { datetime: '2026年10月25日(日) 13:00', status: '残りわずか', note: '開場 12:30' }
+            ],
+            ticketTypes: [
+                { name: '一般', price: 3000, description: '一般前売券' },
+                { name: 'U-25', price: 2000, description: '25歳以下対象（当日要身分証）' },
+                { name: '応援プレミアム', price: 4500, description: '前方席 ＋ 限定特典付き' }
+            ]
+        };
+
+        // 状態保持
+        let appData = null;
+        let selectedSchedule = null;
+        let selectedTicketType = null;
+        let ticketCount = 1;
+
+        // DOM要素
+        const loadingView = document.getElementById('loadingView');
+        const closedView = document.getElementById('closedView');
+        const scheduledView = document.getElementById('scheduledView');
+        const activeView = document.getElementById('activeView');
+        const successView = document.getElementById('successView');
+        const errorBanner = document.getElementById('errorBanner');
+
+        // =========================================================================
+        // 初期化: データ取得
+        // =========================================================================
+        async function fetchTicketData() {
+            showView('loading');
+            hideError();
+
+            try {
+                // GASからデータ取得 (doGet)
+                const response = await fetch(GAS_ENDPOINT_URL, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result && result.status === 'success' && result.data) {
+                    appData = result.data;
+                } else {
+                    console.warn('GASレスポンスが空または不正形式のためフォールバックを使用します', result);
+                    appData = FALLBACK_DATA;
+                }
+            } catch (err) {
+                console.warn('GASデータ取得失敗、フォールバックデータを使用します:', err);
+                appData = FALLBACK_DATA;
+            }
+
+            renderApp();
+        }
+
+        // =========================================================================
+        // 画面描画ディスパッチャー
+        // =========================================================================
+        function renderApp() {
+            if (!appData) return;
+
+            // ヒーローバナーのテキスト更新
+            if (appData.title) {
+                document.getElementById('heroEventTitle').textContent = appData.title;
+            }
+            if (appData.subtitle) {
+                document.getElementById('heroEventSubtitle').textContent = appData.subtitle;
+            }
+
+            const status = appData.salesStatus || 'closed';
+
+            if (status === 'closed') {
+                showView('closed');
+            } else if (status === 'scheduled') {
+                renderScheduledView();
+                showView('scheduled');
+            } else if (status === 'active') {
+                renderActiveView();
+                showView('active');
+            } else {
+                showView('closed');
+            }
+        }
+
+        // 表示切り替えヘルパー
+        function showView(viewName) {
+            loadingView.style.display = viewName === 'loading' ? 'block' : 'none';
+            closedView.style.display = viewName === 'closed' ? 'block' : 'none';
+            scheduledView.style.display = viewName === 'scheduled' ? 'block' : 'none';
+            activeView.style.display = viewName === 'active' ? 'block' : 'none';
+            successView.style.display = viewName === 'success' ? 'block' : 'none';
+        }
+
+        function showError(msg) {
+            errorBanner.textContent = msg;
+            errorBanner.style.display = 'block';
+        }
+
+        function hideError() {
+            errorBanner.style.display = 'none';
+            errorBanner.textContent = '';
+        }
+
+        // =========================================================================
+        // 予約開始前 (SCHEDULED) 画面描画
+        // =========================================================================
+        function renderScheduledView() {
+            document.getElementById('scheduledStartTimeDisplay').textContent = appData.salesStartDate || '近日公開';
+            document.getElementById('scheduledEventTitle').textContent = appData.title || '次回公演';
+            document.getElementById('scheduledEventSubtitle').textContent = appData.subtitle || '';
+            document.getElementById('scheduledVenue').textContent = appData.venue || '未定';
+            document.getElementById('scheduledDescription').textContent = appData.description || '公演の詳細は決まり次第お知らせいたします。';
+
+            // 日程リスト
+            const datesList = document.getElementById('scheduledDatesList');
+            datesList.innerHTML = '';
+            if (appData.schedules && appData.schedules.length > 0) {
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                appData.schedules.forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = `・${s.datetime} ${s.note ? '(' + s.note + ')' : ''}`;
+                    ul.appendChild(li);
+                });
+                datesList.appendChild(ul);
+            } else {
+                datesList.textContent = '調整中';
+            }
+
+            // 券種リスト
+            const ticketsList = document.getElementById('scheduledTicketsList');
+            ticketsList.innerHTML = '';
+            if (appData.ticketTypes && appData.ticketTypes.length > 0) {
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                appData.ticketTypes.forEach(t => {
+                    const li = document.createElement('li');
+                    li.textContent = `・${t.name}: ¥${t.price.toLocaleString()} ${t.description ? '(' + t.description + ')' : ''}`;
+                    ul.appendChild(li);
+                });
+                ticketsList.appendChild(ul);
+            } else {
+                ticketsList.textContent = '未定';
+            }
+        }
+
+        // =========================================================================
+        // 予約受付中 (ACTIVE) 画面描画 & インタラクション
+        // =========================================================================
+        function renderActiveView() {
+            document.getElementById('activeEventTitle').textContent = appData.title || '劇団ハレトケ 公演';
+            document.getElementById('activeVenue').textContent = `📍 会場: ${appData.venue || '〇〇劇場'}`;
+            if (appData.venueAccess) {
+                document.getElementById('activeVenueAccess').textContent = `(${appData.venueAccess})`;
+            }
+            if (appData.notes) {
+                document.getElementById('activeNotesContent').textContent = appData.notes;
+            }
+
+            // 日程ピル生成
+            const dateContainer = document.getElementById('dateSelectorContainer');
+            dateContainer.innerHTML = '';
+            selectedSchedule = null;
+
+            (appData.schedules || []).forEach((sch, idx) => {
+                const isSoldOut = sch.status === '完売';
+                const pill = document.createElement('div');
+                pill.className = `date-pill ${isSoldOut ? 'soldout' : ''}`;
+                
+                let badgeClass = 'badge-available';
+                if (sch.status === '残りわずか') badgeClass = 'badge-few';
+                if (sch.status === '完売') badgeClass = 'badge-soldout';
+
+                pill.innerHTML = `
+                    <div class="date-pill-header">
+                        <span class="date-pill-time">${sch.datetime}</span>
+                        <span class="seat-badge ${badgeClass}">${sch.status || '受付中'}</span>
+                    </div>
+                    ${sch.note ? `<div class="date-pill-note">${sch.note}</div>` : ''}
+                `;
+
+                if (!isSoldOut) {
+                    pill.addEventListener('click', () => {
+                        document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
+                        pill.classList.add('selected');
+                        selectedSchedule = sch;
+                        document.getElementById('selectedDateInput').value = sch.datetime;
+                        updateSummary();
+                    });
+
+                    // 1つ目を自動選択
+                    if (!selectedSchedule) {
+                        pill.classList.add('selected');
+                        selectedSchedule = sch;
+                        document.getElementById('selectedDateInput').value = sch.datetime;
+                    }
+                }
+
+                dateContainer.appendChild(pill);
+            });
+
+            // 券種ピル生成
+            const typeContainer = document.getElementById('ticketTypeContainer');
+            typeContainer.innerHTML = '';
+            selectedTicketType = null;
+
+            (appData.ticketTypes || []).forEach((type, idx) => {
+                const pill = document.createElement('div');
+                pill.className = 'type-pill';
+                pill.innerHTML = `
+                    <div class="type-pill-top">
+                        <span class="type-pill-name">${type.name}</span>
+                        <span class="type-pill-price">¥${type.price.toLocaleString()}</span>
+                    </div>
+                    ${type.description ? `<div class="type-pill-desc">${type.description}</div>` : ''}
+                `;
+
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('selected'));
+                    pill.classList.add('selected');
+                    selectedTicketType = type;
+                    document.getElementById('selectedTicketTypeInput').value = type.name;
+                    document.getElementById('selectedPriceInput').value = type.price;
+                    updateSummary();
+                });
+
+                // 1つ目を自動選択
+                if (!selectedTicketType) {
+                    pill.classList.add('selected');
+                    selectedTicketType = type;
+                    document.getElementById('selectedTicketTypeInput').value = type.name;
+                    document.getElementById('selectedPriceInput').value = type.price;
+                }
+
+                typeContainer.appendChild(pill);
+            });
+
+            ticketCount = 1;
+            updateCountDisplay();
+            updateSummary();
+        }
+
+        // 枚数変更ボタン
+        const btnMinus = document.getElementById('btnCountMinus');
+        const btnPlus = document.getElementById('btnCountPlus');
+        const countDisplay = document.getElementById('countDisplay');
+        const ticketCountInput = document.getElementById('ticketCountInput');
+
+        btnMinus.addEventListener('click', () => {
+            if (ticketCount > 1) {
+                ticketCount--;
+                updateCountDisplay();
+                updateSummary();
+            }
+        });
+
+        btnPlus.addEventListener('click', () => {
+            if (ticketCount < 5) {
+                ticketCount++;
+                updateCountDisplay();
+                updateSummary();
+            }
+        });
+
+        function updateCountDisplay() {
+            countDisplay.textContent = ticketCount;
+            ticketCountInput.value = ticketCount;
+            btnMinus.disabled = ticketCount <= 1;
+            btnPlus.disabled = ticketCount >= 5;
+        }
+
+        // 料金サマリー更新
+        function updateSummary() {
+            const summaryDateText = document.getElementById('summaryDateText');
+            const summaryTypeCountText = document.getElementById('summaryTypeCountText');
+            const summaryTotalDisplay = document.getElementById('summaryTotalDisplay');
+
+            if (selectedSchedule) {
+                summaryDateText.textContent = selectedSchedule.datetime;
+            } else {
+                summaryDateText.textContent = '未選択';
+            }
+
+            if (selectedTicketType) {
+                summaryTypeCountText.textContent = `${selectedTicketType.name} (¥${selectedTicketType.price.toLocaleString()}) × ${ticketCount}枚`;
+                const total = selectedTicketType.price * ticketCount;
+                summaryTotalDisplay.textContent = `¥${total.toLocaleString()}`;
+            } else {
+                summaryTypeCountText.textContent = '未選択';
+                summaryTotalDisplay.textContent = '¥0';
+            }
+        }
+
+        // =========================================================
+        // モーダルとバリデーション
+        // =========================================================
+        const confirmModal = document.getElementById('confirmModal');
+        const btnOpenConfirmModal = document.getElementById('btnOpenConfirmModal');
+        const btnModalCancel = document.getElementById('btnModalCancel');
+        const btnModalSubmit = document.getElementById('btnModalSubmit');
+        const modalSummaryContent = document.getElementById('modalSummaryContent');
+
+        btnOpenConfirmModal.addEventListener('click', () => {
+            hideError();
+
+            if (!selectedSchedule) {
+                showError('公演日時を選択してください。');
+                return;
+            }
+            if (!selectedTicketType) {
+                showError('券種を選択してください。');
+                return;
+            }
+
+            const name = document.getElementById('inputName').value.trim();
+            const furigana = document.getElementById('inputFurigana').value.trim();
+            const email = document.getElementById('inputEmail').value.trim();
+            const phone = document.getElementById('inputPhone').value.trim();
+
+            if (!name) {
+                showError('お名前を入力してください。');
+                document.getElementById('inputName').focus();
+                return;
+            }
+            if (!furigana) {
+                showError('フリガナを入力してください。');
+                document.getElementById('inputFurigana').focus();
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                showError('正しいメールアドレスを入力してください。');
+                document.getElementById('inputEmail').focus();
+                return;
+            }
+            if (!phone) {
+                showError('電話番号を入力してください。');
+                document.getElementById('inputPhone').focus();
+                return;
+            }
+
+            const cast = document.getElementById('inputCast').value;
+            const remarks = document.getElementById('inputRemarks').value.trim();
+            const total = (selectedTicketType.price * ticketCount).toLocaleString();
+
+            modalSummaryContent.innerHTML = `
+                <div><strong>公演日時:</strong> ${selectedSchedule.datetime}</div>
+                <div><strong>券種・枚数:</strong> ${selectedTicketType.name} × ${ticketCount}枚</div>
+                <div><strong>合計金額:</strong> ¥${total} (当日受付精算)</div>
+                <hr style="margin: 8px 0; border: none; border-top: 1px solid #e5e7eb;">
+                <div><strong>お名前:</strong> ${name} 様 (${furigana})</div>
+                <div><strong>メールアドレス:</strong> ${email}</div>
+                <div><strong>電話番号:</strong> ${phone}</div>
+                ${cast ? `<div><strong>応援キャスト:</strong> ${cast}</div>` : ''}
+                ${remarks ? `<div><strong>備考:</strong> ${remarks}</div>` : ''}
+            `;
+
+            confirmModal.classList.add('active');
+        });
+
+        btnModalCancel.addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+        });
+
+        // =========================================================
+        // 予約送信処理 (POST to GAS)
+        // =========================================================
+        btnModalSubmit.addEventListener('click', async () => {
+            confirmModal.classList.remove('active');
+            btnOpenConfirmModal.disabled = true;
+            btnOpenConfirmModal.innerHTML = '<span class="spinner" style="width: 20px; height: 20px; margin: 0; border-width: 2px;"></span> 送信中...';
+
+            const name = document.getElementById('inputName').value.trim();
+            const furigana = document.getElementById('inputFurigana').value.trim();
+            const email = document.getElementById('inputEmail').value.trim();
+            const phone = document.getElementById('inputPhone').value.trim();
+            const cast = document.getElementById('inputCast').value;
+            const remarks = document.getElementById('inputRemarks').value.trim();
+            const totalPriceText = `¥${(selectedTicketType.price * ticketCount).toLocaleString()}`;
+
+            const submitData = {
+                name: name,
+                furigana: furigana,
+                email: email,
+                phone: phone,
+                date: selectedSchedule.datetime,
+                ticketType: selectedTicketType.name,
+                count: ticketCount,
+                totalPrice: totalPriceText,
+                cast: cast,
+                remarks: remarks
+            };
+
+            try {
+                const response = await fetch(GAS_ENDPOINT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: JSON.stringify(submitData)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // 完了画面の描画
+                    document.getElementById('successResId').textContent = result.reservationId || 'HT-' + Date.now().toString().slice(-8);
+                    document.getElementById('successName').textContent = `${name} 様`;
+                    document.getElementById('successDate').textContent = selectedSchedule.datetime;
+                    document.getElementById('successTicketInfo').textContent = `${selectedTicketType.name} × ${ticketCount}枚`;
+                    document.getElementById('successTotal').textContent = totalPriceText;
+                    document.getElementById('successEmail').textContent = email;
+
+                    showView('success');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showError(result.message || '予約送信中にエラーが発生しました。お手数ですが再度お試しください。');
+                }
+            } catch (err) {
+                console.error('送信エラー:', err);
+                showError('通信エラーが発生しました。ネットワーク環境をご確認の上、再度お試しください。');
+            } finally {
+                btnOpenConfirmModal.disabled = false;
+                btnOpenConfirmModal.innerHTML = '<span>予約内容を確認する</span><span>→</span>';
+            }
+        });
+
+        // 別の予約を行うボタン
+        document.getElementById('btnBookAnother').addEventListener('click', () => {
+            document.getElementById('reservationForm').reset();
+            renderActiveView();
+            showView('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ページロード時初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTicketData();
+        });
+    </script>
+</body>
+
+</html>
