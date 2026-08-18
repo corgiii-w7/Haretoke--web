@@ -1430,32 +1430,87 @@
         const errorBanner = document.getElementById('errorBanner');
 
         // =========================================================================
-        // 初期化: データ取得
+        // 初期化: データ取得 (キャッシュ無効化 & JSONPフォールバック対応)
         // =========================================================================
+        function fetchJsonp(url) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'gas_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+                const timer = setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        if (script.parentNode) script.remove();
+                        reject(new Error('JSONP timeout'));
+                    }
+                }, 8000);
+
+                window[callbackName] = function (data) {
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    if (script.parentNode) script.remove();
+                    resolve(data);
+                };
+
+                const script = document.createElement('script');
+                const sep = url.includes('?') ? '&' : '?';
+                script.src = `${url}${sep}callback=${callbackName}&t=${Date.now()}`;
+                script.onerror = (e) => {
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    if (script.parentNode) script.remove();
+                    reject(new Error('JSONP script load error'));
+                };
+                document.body.appendChild(script);
+            });
+        }
+
         async function fetchTicketData() {
             showView('loading');
             hideError();
 
+            const cacheBusterUrl = `${GAS_ENDPOINT_URL}${GAS_ENDPOINT_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+            let fetched = false;
+
+            // 1. 通常の fetch で取得を試行
             try {
-                // GASからデータ取得 (doGet)
-                const response = await fetch(GAS_ENDPOINT_URL, {
+                const response = await fetch(cacheBusterUrl, {
                     method: 'GET',
-                    headers: { 'Accept': 'application/json' }
+                    cache: 'no-store'
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.ok) {
+                    const text = await response.text();
+                    try {
+                        const result = JSON.parse(text);
+                        if (result && result.status === 'success' && result.data) {
+                            appData = result.data;
+                            fetched = true;
+                            console.log('✅ Googleスプレッドシートから最新データを取得しました:', appData);
+                        }
+                    } catch (jsonErr) {
+                        console.warn('GASの返却内容がJSONではありませんでした（doGetが未デプロイの可能性があります）:', text);
+                    }
                 }
+            } catch (fetchErr) {
+                console.warn('fetchでの取得に失敗、JSONPで再試行します:', fetchErr);
+            }
 
-                const result = await response.json();
-                if (result && result.status === 'success' && result.data) {
-                    appData = result.data;
-                } else {
-                    console.warn('GASレスポンスが空または不正形式のためフォールバックを使用します', result);
-                    appData = FALLBACK_DATA;
+            // 2. fetchが失敗した場合は JSONP で再試行
+            if (!fetched) {
+                try {
+                    const result = await fetchJsonp(GAS_ENDPOINT_URL);
+                    if (result && result.status === 'success' && result.data) {
+                        appData = result.data;
+                        fetched = true;
+                        console.log('✅ JSONP経由でGoogleスプレッドシートから最新データを取得しました:', appData);
+                    }
+                } catch (jsonpErr) {
+                    console.warn('JSONPでの取得も失敗しました:', jsonpErr);
                 }
-            } catch (err) {
-                console.warn('GASデータ取得失敗、フォールバックデータを使用します:', err);
+            }
+
+            // 3. すべて失敗した場合はフォールバックデータを使用
+            if (!fetched) {
+                console.warn('⚠️ GASからデータを取得できなかったため、初期フォールバックデータを使用します。GASの「新しいデプロイ」が正しく行われているかご確認ください。');
                 appData = FALLBACK_DATA;
             }
 

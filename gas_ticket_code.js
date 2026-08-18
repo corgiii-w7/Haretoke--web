@@ -5,15 +5,16 @@
  * 
  * 【使い方】
  * 1. Googleスプレッドシートを作成し、「拡張機能」>「Apps Script」を開きます。
- * 2. このコードをすべて貼り付けて保存します。
+ * 2. このコードをすべて貼り付けて保存（Cmd+S / Ctrl+S）します。
  * 3. ツールバーの関数選択で「initialSetup」を選び「実行」をクリックします。
  *    （初回のみ権限の承認を求められます。「詳細」>「...に移動」で許可してください）
  *    → 必要なシート（設定、日程、券種、予約一覧）と初期データが自動生成されます！
  * 4. 右上の「デプロイ」>「新しいデプロイ」をクリックします。
  *    - 種類の選択：ウェブアプリ
- *    - 次のユーザーとして実行：自分
+ *    - 次のユーザーとして実行：自分 (your-account@gmail.com)
  *    - アクセスできるユーザー：全員 (Anyone)
- * 5. 発行された「ウェブアプリURL」を ticket.html の endpointUrl に設定します。
+ *    ※コードを更新した場合は、必ず「デプロイを管理」>「鉛筆アイコン（編集）」>「新バージョン」を選んで再デプロイしてください。
+ * 5. 発行された「ウェブアプリURL」を ticket.html の GAS_ENDPOINT_URL に設定します。
  */
 
 // ==========================================
@@ -32,7 +33,7 @@ function initialSetup() {
     settingSheet.appendRow(['会場名', '〇〇劇場', '会場名（例：JOY JOY THEATER、〇〇ホール等）']);
     settingSheet.appendRow(['会場住所・アクセス', '東京都〇〇区...（〇〇駅 徒歩5分）', 'アクセス情報']);
     settingSheet.appendRow(['販売ステータス', '自動', '「自動」「販売中」「予約開始前」「販売停止/終了」のいずれか']);
-    settingSheet.appendRow(['販売開始日時', '2026-09-01 12:00', '共通の販売開始日時 (YYYY-MM-DD HH:mm 形式)']);
+    settingSheet.appendRow(['販売開始日時', '2026-09-01 12:00', '全公演回共通の予約開始日時 (YYYY-MM-DD HH:mm 形式)']);
     settingSheet.appendRow(['公演説明・あらすじ', '次回公演に向けて鋭意稽古中です！団員一同、劇場でお待ちしております。', '公演のあらすじや概要']);
     settingSheet.appendRow(['注意事項・備考', '・開場は各回開演の30分前です。\n・未就学児のご入場はご遠慮いただいております。\n・当日受付にてご予約名をお伝えいただき、代金をご精算ください。', 'チケットに関する注意事項']);
     settingSheet.appendRow(['自動返信メール件名', '【劇団ハレトケ】チケットご予約完了のお知らせ', '予約者へ自動送信するメールの件名']);
@@ -132,7 +133,7 @@ function doGet(e) {
     if (settingSheet) {
       const settingValues = settingSheet.getDataRange().getValues();
       for (let i = 1; i < settingValues.length; i++) {
-        const key = String(settingValues[i][0]).trim();
+        const key = String(settingValues[i][0] || '').trim();
         const val = settingValues[i][1];
         if (key) {
           settings[key] = val;
@@ -148,28 +149,26 @@ function doGet(e) {
     if (scheduleSheet) {
       const schValues = scheduleSheet.getDataRange().getValues();
       for (let i = 1; i < schValues.length; i++) {
-        const datetime = String(schValues[i][0]).trim();
+        const datetime = String(schValues[i][0] || '').trim();
         let status = String(schValues[i][1] || '受付中').trim();
-        let salesEndDateStr = schValues[i][2] ? String(schValues[i][2]).trim() : '';
+        const rawEndDate = schValues[i][2];
+        const slotEndDate = parseDateValue(rawEndDate);
         const note = String(schValues[i][3] || '').trim();
 
         if (datetime) {
           // 公演ごとの販売終了日時の判定
-          if (salesEndDateStr) {
-            const slotEndDate = new Date(salesEndDateStr);
-            if (!isNaN(slotEndDate.getTime()) && now > slotEndDate) {
-              status = '受付終了';
-            }
+          if (slotEndDate && now.getTime() > slotEndDate.getTime()) {
+            status = '受付終了';
           }
 
-          if (status !== '完売' && status !== '受付終了') {
+          if (status !== '完売' && status !== '受付終了' && status !== '販売終了') {
             availableScheduleCount++;
           }
 
           schedules.push({
             datetime: datetime,
             status: status,
-            salesEndDate: salesEndDateStr,
+            salesEndDate: slotEndDate ? formatDate(slotEndDate) : (rawEndDate ? String(rawEndDate).trim() : ''),
             note: note
           });
         }
@@ -182,7 +181,7 @@ function doGet(e) {
     if (ticketSheet) {
       const tValues = ticketSheet.getDataRange().getValues();
       for (let i = 1; i < tValues.length; i++) {
-        const name = String(tValues[i][0]).trim();
+        const name = String(tValues[i][0] || '').trim();
         const price = Number(tValues[i][1]) || 0;
         const description = String(tValues[i][2] || '').trim();
         if (name) {
@@ -192,21 +191,21 @@ function doGet(e) {
     }
 
     // 販売ステータスの自動判定
-    const mode = settings['販売ステータス'] || '自動';
+    const mode = String(settings['販売ステータス'] || '自動').trim();
     let currentStatus = 'closed'; // 'active' (販売中), 'scheduled' (予約開始前), 'closed' (売出なし/終了)
 
-    const startDateStr = settings['販売開始日時'];
-    const startDate = startDateStr ? new Date(startDateStr) : null;
+    const rawStartDate = settings['販売開始日時'];
+    const startDate = parseDateValue(rawStartDate);
 
-    if (mode === '販売中') {
+    if (mode === '販売中' || mode === '受付中') {
       currentStatus = 'active';
     } else if (mode === '予約開始前') {
       currentStatus = 'scheduled';
-    } else if (mode === '販売停止/終了' || mode === '売出なし') {
+    } else if (mode === '販売停止/終了' || mode === '売出なし' || mode === '受付停止') {
       currentStatus = 'closed';
     } else {
       // 「自動」判定
-      if (startDate && !isNaN(startDate.getTime()) && now < startDate) {
+      if (startDate && now.getTime() < startDate.getTime()) {
         currentStatus = 'scheduled';
       } else if (schedules.length === 0 || availableScheduleCount === 0) {
         currentStatus = 'closed'; // 有効な日程がすべて受付終了または完売
@@ -219,19 +218,28 @@ function doGet(e) {
       status: 'success',
       data: {
         salesStatus: currentStatus, // 'active' | 'scheduled' | 'closed'
-        title: settings['公演名'] || '劇団ハレトケ 公演',
-        subtitle: settings['サブタイトル'] || '',
-        venue: settings['会場名'] || '',
-        venueAccess: settings['会場住所・アクセス'] || '',
-        salesStartDate: settings['販売開始日時'] ? formatDate(new Date(settings['販売開始日時'])) : '',
-        description: settings['公演説明・あらすじ'] || '',
-        notes: settings['注意事項・備考'] || '',
+        title: settings['公演名'] ? String(settings['公演名']) : '劇団ハレトケ 公演',
+        subtitle: settings['サブタイトル'] ? String(settings['サブタイトル']) : '',
+        venue: settings['会場名'] ? String(settings['会場名']) : '',
+        venueAccess: settings['会場住所・アクセス'] ? String(settings['会場住所・アクセス']) : '',
+        salesStartDate: startDate ? formatDate(startDate) : (rawStartDate ? String(rawStartDate).trim() : ''),
+        description: settings['公演説明・あらすじ'] ? String(settings['公演説明・あらすじ']) : '',
+        notes: settings['注意事項・備考'] ? String(settings['注意事項・備考']) : '',
         schedules: schedules,
         ticketTypes: ticketTypes
       }
     };
 
-    return ContentService.createTextOutput(JSON.stringify(payload))
+    const jsonString = JSON.stringify(payload);
+    
+    // JSONP callbackサポート
+    const callback = e && e.parameter && e.parameter.callback;
+    if (callback) {
+      return ContentService.createTextOutput(callback + '(' + jsonString + ')')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+
+    return ContentService.createTextOutput(jsonString)
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
@@ -308,13 +316,13 @@ function doPost(e) {
     if (settingSheet) {
       const settingValues = settingSheet.getDataRange().getValues();
       for (let i = 1; i < settingValues.length; i++) {
-        const k = String(settingValues[i][0]).trim();
+        const k = String(settingValues[i][0] || '').trim();
         const v = settingValues[i][1];
-        if (k === '自動返信メール件名' && v) emailSubject = v;
+        if (k === '自動返信メール件名' && v) emailSubject = String(v);
         if (k === '自動返信メール送信' && String(v).trim() === '無効') emailEnabled = false;
-        if (k === '公演名' && v) eventTitle = v;
-        if (k === '会場名' && v) venue = v;
-        if (k === '注意事項・備考' && v) notes = v;
+        if (k === '公演名' && v) eventTitle = String(v);
+        if (k === '会場名' && v) venue = String(v);
+        if (k === '注意事項・備考' && v) notes = String(v);
       }
     }
 
@@ -368,6 +376,21 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify(errorPayload))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// 日時値パーサー（Date型オブジェクトと文字列の両方に対応）
+function parseDateValue(val) {
+  if (!val) return null;
+  if (val instanceof Date) {
+    return isNaN(val.getTime()) ? null : val;
+  }
+  if (typeof val === 'string') {
+    const str = val.trim();
+    if (!str) return null;
+    const d = new Date(str.replace(/\//g, '-'));
+    if (!isNaN(d.getTime())) return d;
+  }
+  return null;
 }
 
 // 日時フォーマット用ヘルパー
