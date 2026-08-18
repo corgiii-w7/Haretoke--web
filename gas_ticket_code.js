@@ -87,7 +87,6 @@ function initialSetup() {
       'お名前',
       'フリガナ',
       'メールアドレス',
-      '電話番号',
       '公演日時',
       '券種',
       '枚数',
@@ -95,19 +94,18 @@ function initialSetup() {
       '知ったきっかけ',
       '備考・メッセージ'
     ]);
-    resSheet.getRange('A1:L1').setBackground('#111111').setFontColor('#ffffff').setFontWeight('bold');
+    resSheet.getRange('A1:K1').setBackground('#111111').setFontColor('#ffffff').setFontWeight('bold');
     resSheet.setColumnWidth(1, 160);
     resSheet.setColumnWidth(2, 140);
     resSheet.setColumnWidth(3, 120);
     resSheet.setColumnWidth(4, 120);
     resSheet.setColumnWidth(5, 200);
-    resSheet.setColumnWidth(6, 130);
-    resSheet.setColumnWidth(7, 200);
-    resSheet.setColumnWidth(8, 120);
-    resSheet.setColumnWidth(9, 80);
-    resSheet.setColumnWidth(10, 100);
-    resSheet.setColumnWidth(11, 150);
-    resSheet.setColumnWidth(12, 220);
+    resSheet.setColumnWidth(6, 200);
+    resSheet.setColumnWidth(7, 120);
+    resSheet.setColumnWidth(8, 80);
+    resSheet.setColumnWidth(9, 100);
+    resSheet.setColumnWidth(10, 150);
+    resSheet.setColumnWidth(11, 220);
   }
 
   // 不要な初期シート「シート1」があれば削除
@@ -281,7 +279,6 @@ function doPost(e) {
     const name = data.name || '';
     const furigana = data.furigana || '';
     const email = data.email || '';
-    const phone = data.phone || '';
     const scheduleDate = data.date || '';
     const ticketType = data.ticketType || '';
     const count = Number(data.count) || 1;
@@ -296,7 +293,6 @@ function doPost(e) {
       name,
       furigana,
       email,
-      phone,
       scheduleDate,
       ticketType,
       count,

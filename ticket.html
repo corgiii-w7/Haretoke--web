@@ -1248,11 +1248,13 @@
                     </div>
 
                     <div>
-                        <label class="form-label" for="inputPhone">
-                            電話番号
+                        <label class="form-label" for="inputEmailConfirm">
+                            メールアドレス（確認用）
                             <span class="required-tag">必須</span>
                         </label>
-                        <input type="tel" id="inputPhone" class="form-input" placeholder="090-1234-5678" required>
+                        <input type="email" id="inputEmailConfirm" class="form-input" placeholder="もう一度入力してください"
+                            required>
+                        <p id="emailMismatchError" style="color: #ef4444; font-size: 0.78rem; margin-top: 4px; font-weight: 600; display: none;">※メールアドレスが一致しません</p>
                     </div>
 
                     <div class="form-group-full">
@@ -1769,6 +1771,31 @@
         }
 
         // =========================================================
+        // メールアドレス一致リアルタイム検証
+        // =========================================================
+        const inputEmail = document.getElementById('inputEmail');
+        const inputEmailConfirm = document.getElementById('inputEmailConfirm');
+        const emailMismatchError = document.getElementById('emailMismatchError');
+
+        function validateEmailMatch() {
+            const email = inputEmail.value.trim();
+            const emailConfirm = inputEmailConfirm.value.trim();
+
+            if (emailConfirm.length > 0 && email !== emailConfirm) {
+                emailMismatchError.style.display = 'block';
+                inputEmailConfirm.style.borderColor = '#ef4444';
+                return false;
+            } else {
+                emailMismatchError.style.display = 'none';
+                inputEmailConfirm.style.borderColor = '';
+                return true;
+            }
+        }
+
+        inputEmail.addEventListener('input', validateEmailMatch);
+        inputEmailConfirm.addEventListener('input', validateEmailMatch);
+
+        // =========================================================
         // モーダルとバリデーション
         // =========================================================
         const confirmModal = document.getElementById('confirmModal');
@@ -1792,7 +1819,7 @@
             const name = document.getElementById('inputName').value.trim();
             const furigana = document.getElementById('inputFurigana').value.trim();
             const email = document.getElementById('inputEmail').value.trim();
-            const phone = document.getElementById('inputPhone').value.trim();
+            const emailConfirm = document.getElementById('inputEmailConfirm').value.trim();
 
             if (!name) {
                 showError('お名前を入力してください。');
@@ -1809,9 +1836,16 @@
                 document.getElementById('inputEmail').focus();
                 return;
             }
-            if (!phone) {
-                showError('電話番号を入力してください。');
-                document.getElementById('inputPhone').focus();
+            if (!emailConfirm) {
+                showError('確認用メールアドレスを入力してください。');
+                document.getElementById('inputEmailConfirm').focus();
+                return;
+            }
+            if (email !== emailConfirm) {
+                showError('メールアドレスが一致しません。');
+                emailMismatchError.style.display = 'block';
+                inputEmailConfirm.style.borderColor = '#ef4444';
+                document.getElementById('inputEmailConfirm').focus();
                 return;
             }
 
@@ -1826,7 +1860,6 @@
                 <hr style="margin: 8px 0; border: none; border-top: 1px solid #e5e7eb;">
                 <div><strong>お名前:</strong> ${name} 様 (${furigana})</div>
                 <div><strong>メールアドレス:</strong> ${email}</div>
-                <div><strong>電話番号:</strong> ${phone}</div>
                 ${source ? `<div><strong>知ったきっかけ:</strong> ${source}</div>` : ''}
                 ${remarks ? `<div><strong>備考:</strong> ${remarks}</div>` : ''}
             `;
@@ -1849,7 +1882,6 @@
             const name = document.getElementById('inputName').value.trim();
             const furigana = document.getElementById('inputFurigana').value.trim();
             const email = document.getElementById('inputEmail').value.trim();
-            const phone = document.getElementById('inputPhone').value.trim();
             const source = document.getElementById('inputSource').value;
             const remarks = document.getElementById('inputRemarks').value.trim();
             const totalPriceText = `¥${(selectedTicketType.price * ticketCount).toLocaleString()}`;
@@ -1858,7 +1890,6 @@
                 name: name,
                 furigana: furigana,
                 email: email,
-                phone: phone,
                 date: selectedSchedule.datetime,
                 ticketType: selectedTicketType.name,
                 count: ticketCount,
