@@ -1372,7 +1372,7 @@
                     imgPlaceholder.style.backgroundColor = "#eee";
                     imgPlaceholder.style.marginBottom = "0.5rem";
                     imgPlaceholder.style.border = "1px solid #ddd";
-                    imgPlaceholder.style.backgroundImage = member.image ? `url('${member.image}')` : "url('gekidan haretoke_logo_icon (1).jpg')";
+                    imgPlaceholder.style.backgroundImage = member.image ? `url('${member.image}')` : "url('icon_user.png')";
                     imgPlaceholder.style.backgroundSize = "cover";
                     imgPlaceholder.style.backgroundPosition = member.photoType === "縦" ? "top center" : "center";
                     
@@ -1386,7 +1386,7 @@
                     
                     const bubbleImg = document.createElement('img');
                     bubbleImg.className = "bubble-img";
-                    bubbleImg.src = member.image || "gekidan haretoke_logo_icon (1).jpg";
+                    bubbleImg.src = member.image || "icon_user.png";
                     bubbleImg.style.objectPosition = member.photoType === "縦" ? "top center" : "center";
 
                     const bName = document.createElement('div');
