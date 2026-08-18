@@ -1313,7 +1313,9 @@
                 <p id="activeNotesContent" style="white-space: pre-line; margin-top: 6px;">
                     ・開場は各回開演の30分前です。<br>
                     ・予約完了後、ご入力いただいたメールアドレスに自動返信メールをお送りいたします。<br>
-                    ・当日は受付にてお名前または予約番号をお伝えください。
+                    ・当日は受付にてお名前または予約番号をお伝えいただき、代金をご精算ください。<br>
+                    ・<strong>予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。</strong><br>
+                    ・<strong>公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。</strong>
                 </p>
             </div>
         </div>
@@ -1354,6 +1356,13 @@
                     <div class="detail-dt">送信先メール</div>
                     <div class="detail-dd" id="successEmail"></div>
                 </div>
+            </div>
+
+            <div style="max-width: 540px; margin: 0 auto 2rem; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.2rem; font-size: 0.83rem; color: #555; text-align: left; line-height: 1.8;">
+                <strong style="color: #222;">【ご案内・注意事項】</strong><br>
+                ・予約時に振り分けられた番号はチケット管理用のものであり、座席を指定するものではございません。<br>
+                ・枚数の変更（例：5枚→4枚への減数等）は、自動返信メール内のキャンセルURLよりいつでもお手続きいただけます。<br>
+                ・公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。
             </div>
 
             <div class="success-actions">
@@ -1409,14 +1418,29 @@
 
                 <!-- キャンセル実行エリア (予約中のみ表示) -->
                 <div id="cancelActionArea" style="text-align: center; max-width: 500px; margin: 0 auto;">
+                    
+                    <!-- 枚数選択ドロップダウン (n枚キャンセル対応) -->
+                    <div id="cancelCountSelectWrapper" style="margin-bottom: 1.5rem; text-align: left; background: #fafafa; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+                        <label for="selectCancelCount" style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: #111;">
+                            キャンセルする枚数を選択
+                        </label>
+                        <select id="selectCancelCount" class="form-select" style="font-weight: 600; font-size: 0.95rem;">
+                            <!-- JSで動的生成 -->
+                        </select>
+                        <p style="font-size: 0.78rem; color: #666; margin-top: 6px;" id="cancelCountHint">
+                            ※ 枚数を減らしたい場合（例：5枚中1枚キャンセル等）はキャンセルする枚数を選択してください。
+                        </p>
+                    </div>
+
                     <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem; color: #991b1b; line-height: 1.7;">
-                        <strong>【ご注意】</strong><br>
-                        ・予約をキャンセルすると取り消すことはできません。<br>
-                        ・キャンセル完了後、ご登録のメールアドレスにキャンセル通知メールをお送りいたします。
+                        <strong>【ご注意事項】</strong><br>
+                        ・予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。<br>
+                        ・<strong>公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。</strong><br>
+                        ・キャンセル完了後、ご登録のメールアドレスに確認メールをお送りいたします。
                     </div>
 
                     <button type="button" id="btnExecuteCancel" style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 14px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>この予約をキャンセルする</span>
+                        <span id="btnExecuteCancelText">キャンセルを実行する</span>
                     </button>
                 </div>
 
@@ -1970,6 +1994,7 @@
                 email: email,
                 date: selectedSchedule.datetime,
                 ticketType: selectedTicketType.name,
+                unitPrice: selectedTicketType.price,
                 count: ticketCount,
                 totalPrice: totalPriceText,
                 source: source,
@@ -2067,29 +2092,61 @@
             document.getElementById('cancelResId').textContent = resData.id;
             document.getElementById('cancelResName').textContent = `${resData.name} 様 (${resData.furigana || ''})`;
             document.getElementById('cancelResDate').textContent = resData.date;
-            document.getElementById('cancelResTicketInfo').textContent = `${resData.ticketType} × ${resData.count}枚`;
-            document.getElementById('cancelResTotal').textContent = resData.totalPrice || '-';
+            
+            let ticketInfoText = `${resData.ticketType} × ${resData.activeCount}枚`;
+            if (resData.cancelledCount > 0) {
+                ticketInfoText += ` (※${resData.cancelledCount}枚キャンセル済 / 当初${resData.totalCount}枚)`;
+            }
+            document.getElementById('cancelResTicketInfo').textContent = ticketInfoText;
+            document.getElementById('cancelResTotal').textContent = resData.activeTotalPrice || '-';
 
             const badgeContainer = document.getElementById('cancelStatusBadgeContainer');
             const actionArea = document.getElementById('cancelActionArea');
             const alreadyCancelledArea = document.getElementById('alreadyCancelledArea');
             const successArea = document.getElementById('cancelSuccessArea');
+            const selectCancelCount = document.getElementById('selectCancelCount');
 
             successArea.style.display = 'none';
 
-            if (resData.status === 'キャンセル済み') {
-                badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">キャンセル済み</span>';
+            if (resData.isFullyCancelled || resData.activeCount === 0) {
+                badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">すべてのチケットがキャンセル済み</span>';
                 actionArea.style.display = 'none';
                 alreadyCancelledArea.style.display = 'block';
             } else {
-                badgeContainer.innerHTML = '<span class="seat-badge badge-available" style="font-size: 0.9rem; padding: 4px 12px;">ご予約中</span>';
+                badgeContainer.innerHTML = `<span class="seat-badge badge-available" style="font-size: 0.9rem; padding: 4px 12px;">ご予約中（有効: ${resData.activeCount}枚）</span>`;
                 actionArea.style.display = 'block';
                 alreadyCancelledArea.style.display = 'none';
+
+                // キャンセル枚数セレクトボックスの選択肢を生成
+                selectCancelCount.innerHTML = '';
+                if (resData.activeCount > 1) {
+                    for (let n = 1; n < resData.activeCount; n++) {
+                        const opt = document.createElement('option');
+                        opt.value = n;
+                        opt.textContent = `${n}枚をキャンセル（残り ${resData.activeCount - n}枚にする）`;
+                        selectCancelCount.appendChild(opt);
+                    }
+                    const optAll = document.createElement('option');
+                    optAll.value = resData.activeCount;
+                    optAll.textContent = `全枚数（${resData.activeCount}枚すべて）を一括キャンセル`;
+                    selectCancelCount.appendChild(optAll);
+                } else {
+                    const optSingle = document.createElement('option');
+                    optSingle.value = 1;
+                    optSingle.textContent = `このチケット（1枚）をキャンセル`;
+                    selectCancelCount.appendChild(optSingle);
+                }
 
                 // キャンセル実行ボタン
                 const btnCancel = document.getElementById('btnExecuteCancel');
                 btnCancel.onclick = async () => {
-                    if (!confirm(`本当にこのご予約（予約番号: ${id}）をキャンセルしますか？`)) {
+                    const cancelCount = parseInt(selectCancelCount.value) || resData.activeCount;
+                    const isAll = (cancelCount === resData.activeCount);
+                    const confirmMsg = isAll 
+                        ? `本当にこのご予約のチケット全${cancelCount}枚をキャンセルしますか？` 
+                        : `本当に ${cancelCount}枚のチケットをキャンセルし、残り ${resData.activeCount - cancelCount}枚に変更しますか？`;
+
+                    if (!confirm(confirmMsg)) {
                         return;
                     }
 
@@ -2100,7 +2157,8 @@
                         const cancelPayload = {
                             action: 'cancel',
                             id: id,
-                            key: key
+                            key: key,
+                            cancelCount: cancelCount
                         };
 
                         const cancelRes = await fetch(GAS_ENDPOINT_URL, {
@@ -2113,7 +2171,15 @@
 
                         if (cancelResult && cancelResult.status === 'success') {
                             actionArea.style.display = 'none';
-                            badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">キャンセル済み</span>';
+                            if (cancelResult.isFullyCancelled) {
+                                badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">キャンセル完了</span>';
+                                successArea.querySelector('h3').textContent = 'すべてのチケットのキャンセルが完了いたしました';
+                                successArea.querySelector('p').innerHTML = 'ご予約の取り消しを承りました。確認メールをお送りしましたのでご確認ください。<br><span style="color:#e11d48; font-size:0.85rem; margin-top:8px; display:inline-block;">※公演時間の変更をご希望の場合は、新しくご希望の日時でチケットをご予約ください。</span>';
+                            } else {
+                                badgeContainer.innerHTML = `<span class="seat-badge badge-available" style="font-size: 0.9rem; padding: 4px 12px;">一部キャンセル完了（残: ${cancelResult.remainingActiveCount}枚）</span>`;
+                                successArea.querySelector('h3').textContent = `${cancelResult.cancelledCount}枚のキャンセルが完了いたしました`;
+                                successArea.querySelector('p').innerHTML = `現在の有効チケット枚数は <strong>${cancelResult.remainingActiveCount}枚（合計金額: ${cancelResult.remainingTotalPrice}）</strong> に変更されました。<br>確認メールをお送りしましたのでご確認ください。`;
+                            }
                             successArea.style.display = 'block';
                         } else {
                             alert(cancelResult.message || 'キャンセル処理中にエラーが発生しました。');
@@ -2123,7 +2189,7 @@
                         alert('通信エラーが発生しました。ネットワーク環境をご確認の上、再度お試しください。');
                     } finally {
                         btnCancel.disabled = false;
-                        btnCancel.innerHTML = '<span>この予約をキャンセルする</span>';
+                        btnCancel.innerHTML = '<span>キャンセルを実行する</span>';
                     }
                 };
             }

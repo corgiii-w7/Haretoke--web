@@ -50,17 +50,19 @@ function initialSetup() {
 【お名前】: {お名前} 様
 【公演日時】: {公演日時}
 【券種】: {券種}
-【枚数】: {枚数}枚
-【合計金額】: {合計金額}
+【予約枚数】: {枚数}枚
+【合計金額】: {合計金額} (当日受付精算)
 【会場】: {会場名}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
-【ご来場の案内・注意事項】
+【ご案内・注意事項】
+※予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。
+※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。
 {注意事項}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
-■ ご予約のキャンセルについて
-万が一ご都合が悪くなった場合は、以下のURLよりいつでもキャンセルのお手続きが可能です。
+■ ご予約のキャンセル・枚数変更について
+枚数の変更（例：5枚から4枚に減らす等）やキャンセルは、以下のURLよりいつでもお手続きいただけます。
 {キャンセルURL}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -71,18 +73,25 @@ function initialSetup() {
 https://theatrical.net-menber.com/
 ━━━━━━━━━━━━━━━━━━━━━━━━`, '予約完了メールのテンプレート（{タグ}が自動置換されます）']);
 
-    settingSheet.appendRow(['キャンセル通知メール件名', '【劇団ハレトケ】チケットご予約キャンセル完了のお知らせ（予約番号: {予約番号}）', 'キャンセル完了時に送信するメール件名']);
+    settingSheet.appendRow(['キャンセル通知メール件名', '【劇団ハレトケ】チケットキャンセル手続き完了のお知らせ（予約番号: {予約番号}）', 'キャンセル完了時に送信するメール件名']);
     settingSheet.appendRow(['キャンセル通知メール本文',
 `{お名前} 様
 
-『{公演名}』のチケットご予約のキャンセル手続きが完了いたしました。
+『{公演名}』のチケットキャンセル手続きを承りました。
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 【予約番号】: {予約番号}
 【公演日時】: {公演日時}
-【券種・枚数】: {券種} × {枚数}枚
-【ステータス】: キャンセル済み
+【券種】: {券種}
+【キャンセル枚数】: {キャンセル枚数}枚
+【現在の有効枚数】: {有効枚数}枚
+【合計金額】: {合計金額}
 ━━━━━━━━━━━━━━━━━━━━━━━━
+
+※予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。
+※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。
+※残りのチケットの確認・キャンセルは以下のURLよりいつでも可能です。
+{キャンセルURL}
 
 またのご来場を団員一同心よりお待ちしております。
 
@@ -129,13 +138,14 @@ https://theatrical.net-menber.com/
     ticketTypeSheet.setColumnWidth(3, 280);
   }
 
-  // ④ 予約一覧シート
+  // ④ 予約一覧シート（1行＝1チケット管理）
   let resSheet = ss.getSheetByName('予約一覧');
   if (!resSheet) {
     resSheet = ss.insertSheet('予約一覧');
     resSheet.appendRow([
       '予約日時',
       '予約番号',
+      'チケット番号',
       'キャンセルキー',
       'ステータス',
       'お名前',
@@ -143,8 +153,7 @@ https://theatrical.net-menber.com/
       'メールアドレス',
       '公演日時',
       '券種',
-      '枚数',
-      '合計金額',
+      '金額(円)',
       '知ったきっかけ',
       '備考・メッセージ',
       'キャンセル日時'
@@ -153,14 +162,14 @@ https://theatrical.net-menber.com/
     resSheet.setColumnWidth(1, 160);
     resSheet.setColumnWidth(2, 140);
     resSheet.setColumnWidth(3, 150);
-    resSheet.setColumnWidth(4, 100);
-    resSheet.setColumnWidth(5, 120);
+    resSheet.setColumnWidth(4, 150);
+    resSheet.setColumnWidth(5, 100);
     resSheet.setColumnWidth(6, 120);
-    resSheet.setColumnWidth(7, 200);
+    resSheet.setColumnWidth(7, 120);
     resSheet.setColumnWidth(8, 200);
-    resSheet.setColumnWidth(9, 120);
-    resSheet.setColumnWidth(10, 80);
-    resSheet.setColumnWidth(11, 100);
+    resSheet.setColumnWidth(9, 200);
+    resSheet.setColumnWidth(10, 120);
+    resSheet.setColumnWidth(11, 90);
     resSheet.setColumnWidth(12, 150);
     resSheet.setColumnWidth(13, 220);
     resSheet.setColumnWidth(14, 160);
@@ -183,7 +192,7 @@ function doGet(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const action = e && e.parameter && e.parameter.action;
 
-    // --- A. 予約照会（キャンセル画面用） ---
+    // --- A. 予約照会（キャンセル画面用：複数枚チケット情報） ---
     if (action === 'getReservation') {
       const targetId = String(e.parameter.id || '').trim();
       const targetKey = String(e.parameter.key || '').trim();
@@ -201,45 +210,74 @@ function doGet(e) {
       }
 
       const resValues = resSheet.getDataRange().getValues();
-      let foundRes = null;
+      const matchedTickets = [];
+      let customerName = '';
+      let customerFurigana = '';
+      let customerEmail = '';
+      let scheduleDate = '';
+      let ticketType = '';
+      let unitPrice = 0;
+      let source = '';
+      let remarks = '';
 
       for (let i = 1; i < resValues.length; i++) {
         const rowId = String(resValues[i][1] || '').trim();
-        const rowKey = String(resValues[i][2] || '').trim();
+        const rowKey = String(resValues[i][3] || '').trim();
 
         if (rowId === targetId && rowKey === targetKey) {
-          foundRes = {
-            id: rowId,
-            status: String(resValues[i][3] || '予約完了').trim(),
-            name: String(resValues[i][4] || ''),
-            furigana: String(resValues[i][5] || ''),
-            email: String(resValues[i][6] || ''),
-            date: String(resValues[i][7] || ''),
-            ticketType: String(resValues[i][8] || ''),
-            count: Number(resValues[i][9]) || 1,
-            totalPrice: String(resValues[i][10] || ''),
-            source: String(resValues[i][11] || ''),
-            remarks: String(resValues[i][12] || '')
-          };
-          break;
+          customerName = String(resValues[i][5] || '');
+          customerFurigana = String(resValues[i][6] || '');
+          customerEmail = String(resValues[i][7] || '');
+          scheduleDate = String(resValues[i][8] || '');
+          ticketType = String(resValues[i][9] || '');
+          unitPrice = Number(resValues[i][10]) || 0;
+          source = String(resValues[i][11] || '');
+          remarks = String(resValues[i][12] || '');
+
+          matchedTickets.push({
+            ticketNumber: String(resValues[i][2] || ''),
+            status: String(resValues[i][4] || '有効').trim(),
+            cancelTime: String(resValues[i][13] || '')
+          });
         }
       }
 
-      if (!foundRes) {
+      if (matchedTickets.length === 0) {
         return sendJsonResponse({
           status: 'error',
           message: 'ご指定の予約情報が見つからないか、認証キーが一致しません。'
         }, e);
       }
 
-      // 公演名を取得
+      const activeTickets = matchedTickets.filter(t => t.status === '有効');
+      const cancelledTickets = matchedTickets.filter(t => t.status === 'キャンセル済み');
+
       const settings = readSettings(ss);
-      foundRes.eventTitle = settings['公演名'] || '劇団ハレトケ 公演';
-      foundRes.venue = settings['会場名'] || '';
+
+      const reservationData = {
+        id: targetId,
+        key: targetKey,
+        name: customerName,
+        furigana: customerFurigana,
+        email: customerEmail,
+        date: scheduleDate,
+        ticketType: ticketType,
+        unitPrice: unitPrice,
+        totalCount: matchedTickets.length,
+        activeCount: activeTickets.length,
+        cancelledCount: cancelledTickets.length,
+        activeTotalPrice: `¥${(activeTickets.length * unitPrice).toLocaleString()}`,
+        isFullyCancelled: activeTickets.length === 0,
+        tickets: matchedTickets,
+        source: source,
+        remarks: remarks,
+        eventTitle: settings['公演名'] || '劇団ハレトケ 公演',
+        venue: settings['会場名'] || ''
+      };
 
       return sendJsonResponse({
         status: 'success',
-        reservation: foundRes
+        reservation: reservationData
       }, e);
     }
 
@@ -345,7 +383,7 @@ function doGet(e) {
 }
 
 // ==========================================
-// 3. POSTリクエスト処理 (予約受付 & キャンセル処理)
+// 3. POSTリクエスト処理 (予約受付 & n枚キャンセル処理)
 // ==========================================
 function doPost(e) {
   try {
@@ -371,82 +409,98 @@ function doPost(e) {
     const emailEnabled = String(settings['自動返信メール送信'] || '有効').trim() !== '無効';
 
     // =========================================================
-    // A. 予約キャンセル実行 (action: 'cancel')
+    // A. 予約キャンセル実行 (action: 'cancel', n枚キャンセル対応)
     // =========================================================
     if (data.action === 'cancel') {
       const targetId = String(data.id || '').trim();
       const targetKey = String(data.key || '').trim();
+      // キャンセル枚数（指定がない場合は全有効枚数）
+      let cancelCountRequested = Number(data.cancelCount) || 0;
 
       if (!targetId || !targetKey) {
         return sendJsonResponse({ status: 'error', message: '予約番号またはキャンセルキーが不足しています。' }, e);
       }
 
       const resValues = resSheet.getDataRange().getValues();
-      let targetRowIndex = -1;
+      const activeRowIndexes = [];
       let resData = null;
 
       for (let i = 1; i < resValues.length; i++) {
         const rowId = String(resValues[i][1] || '').trim();
-        const rowKey = String(resValues[i][2] || '').trim();
+        const rowKey = String(resValues[i][3] || '').trim();
+        const rowStatus = String(resValues[i][4] || '').trim();
 
         if (rowId === targetId && rowKey === targetKey) {
-          targetRowIndex = i + 1; // 1-indexed sheet row
-          resData = {
-            id: rowId,
-            status: String(resValues[i][3] || ''),
-            name: String(resValues[i][4] || ''),
-            email: String(resValues[i][6] || ''),
-            date: String(resValues[i][7] || ''),
-            ticketType: String(resValues[i][8] || ''),
-            count: resValues[i][9],
-            totalPrice: resValues[i][10]
-          };
-          break;
+          if (!resData) {
+            resData = {
+              id: rowId,
+              name: String(resValues[i][5] || ''),
+              email: String(resValues[i][7] || ''),
+              date: String(resValues[i][8] || ''),
+              ticketType: String(resValues[i][9] || ''),
+              unitPrice: Number(resValues[i][10]) || 0
+            };
+          }
+
+          if (rowStatus === '有効') {
+            activeRowIndexes.push(i + 1); // 1-indexed sheet row
+          }
         }
       }
 
-      if (targetRowIndex === -1 || !resData) {
+      if (!resData) {
         return sendJsonResponse({ status: 'error', message: '該当する予約が見つかりませんでした。' }, e);
       }
 
-      if (resData.status === 'キャンセル済み') {
-        return sendJsonResponse({ status: 'already_cancelled', message: 'この予約は既にキャンセルされています。' }, e);
+      if (activeRowIndexes.length === 0) {
+        return sendJsonResponse({ status: 'already_cancelled', message: 'この予約のチケットはすべて既にキャンセルされています。' }, e);
       }
 
-      // ステータスをキャンセル済みに更新 (Column 4: ステータス, Column 14: キャンセル日時)
+      // キャンセル枚数の決定（指定が0または有効数以上の場合は全有効枚数）
+      let actualCancelCount = cancelCountRequested;
+      if (actualCancelCount <= 0 || actualCancelCount > activeRowIndexes.length) {
+        actualCancelCount = activeRowIndexes.length;
+      }
+
+      // 後ろのチケットから順に actualCancelCount 枚をキャンセル
       const cancelTimeStr = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss');
-      resSheet.getRange(targetRowIndex, 4).setValue('キャンセル済み');
-      resSheet.getRange(targetRowIndex, 14).setValue(cancelTimeStr);
+      for (let k = 0; k < actualCancelCount; k++) {
+        const targetRow = activeRowIndexes[activeRowIndexes.length - 1 - k];
+        resSheet.getRange(targetRow, 5).setValue('キャンセル済み'); // Column 5: ステータス
+        resSheet.getRange(targetRow, 14).setValue(cancelTimeStr);  // Column 14: キャンセル日時
+      }
+
+      const remainingActiveCount = activeRowIndexes.length - actualCancelCount;
+      const remainingTotalPrice = `¥${(remainingActiveCount * resData.unitPrice).toLocaleString()}`;
+
+      // キャンセルURL
+      let siteUrl = String(settings['チケットページURL'] || 'https://minayamano.github.io/Haretoke--web/ticket.html').trim();
+      const sep = siteUrl.includes('?') ? '&' : '?';
+      const cancelUrl = `${siteUrl}${sep}action=cancel&id=${encodeURIComponent(targetId)}&key=${encodeURIComponent(targetKey)}`;
 
       // キャンセル完了メールの送信
       if (emailEnabled && resData.email && resData.email.includes('@')) {
-        let cancelSubject = settings['キャンセル通知メール件名'] || '【劇団ハレトケ】チケットご予約キャンセル完了のお知らせ（予約番号: {予約番号}）';
-        let cancelBody = settings['キャンセル通知メール本文'] || `{お名前} 様\n\n『{公演名}』のチケットご予約のキャンセル手続きが完了いたしました。\n\n【予約番号】: {予約番号}\n【公演日時】: {公演日時}\n【券種・枚数】: {券種} × {枚数}枚\n【ステータス】: キャンセル済み\n\nまたのご来場を団員一同心よりお待ちしております。`;
+        let cancelSubject = settings['キャンセル通知メール件名'] || '【劇団ハレトケ】チケットキャンセル手続き完了のお知らせ（予約番号: {予約番号}）';
+        let cancelBody = settings['キャンセル通知メール本文'] || `{お名前} 様\n\n『{公演名}』のチケットキャンセル手続きを承りました。\n\n【予約番号】: {予約番号}\n【公演日時】: {公演日時}\n【券種】: {券種}\n【キャンセル枚数】: {キャンセル枚数}枚\n【現在の有効枚数】: {有効枚数}枚\n【合計金額】: {合計金額}\n\n※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。\n※予約時に振り分けられる番号は、チケット管理のものであり、座席を指定するものではございません。\n\n{キャンセルURL}`;
 
-        // プレースホルダー置換
-        cancelSubject = replacePlaceholders(cancelSubject, {
+        const placeholders = {
           お名前: resData.name,
           予約番号: resData.id,
+          キャンセルキー: targetKey,
+          キャンセルURL: cancelUrl,
           公演名: eventTitle,
           公演日時: resData.date,
           券種: resData.ticketType,
-          枚数: resData.count,
-          合計金額: resData.totalPrice,
+          キャンセル枚数: actualCancelCount,
+          有効枚数: remainingActiveCount,
+          枚数: remainingActiveCount,
+          合計金額: remainingTotalPrice,
           会場名: venue,
           注意事項: notes
-        });
+        };
 
-        cancelBody = replacePlaceholders(cancelBody, {
-          お名前: resData.name,
-          予約番号: resData.id,
-          公演名: eventTitle,
-          公演日時: resData.date,
-          券種: resData.ticketType,
-          枚数: resData.count,
-          合計金額: resData.totalPrice,
-          会場名: venue,
-          注意事項: notes
-        });
+        cancelSubject = replacePlaceholders(cancelSubject, placeholders);
+        cancelBody = replacePlaceholders(cancelBody, placeholders);
 
         try {
           GmailApp.sendEmail(resData.email, cancelSubject, cancelBody, {
@@ -459,14 +513,17 @@ function doPost(e) {
 
       return sendJsonResponse({
         status: 'success',
-        message: '予約のキャンセルが完了いたしました。'
+        cancelledCount: actualCancelCount,
+        remainingActiveCount: remainingActiveCount,
+        remainingTotalPrice: remainingTotalPrice,
+        isFullyCancelled: remainingActiveCount === 0,
+        message: `${actualCancelCount}枚のチケットキャンセルが完了いたしました。`
       }, e);
     }
 
     // =========================================================
-    // B. 新規チケット予約受付
+    // B. 新規チケット予約受付 (1枚につき1行作成)
     // =========================================================
-    // 一意の予約番号とキャンセルキーを自動生成
     const dateCode = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMdd');
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const reservationId = `HT-${dateCode}-${randomCode}`;
@@ -478,38 +535,42 @@ function doPost(e) {
     const email = String(data.email || '').trim();
     const scheduleDate = String(data.date || '').trim();
     const ticketType = String(data.ticketType || '').trim();
-    const count = Number(data.count) || 1;
-    const totalPrice = String(data.totalPrice || '').trim();
+    const count = Math.max(1, Number(data.count) || 1);
+    const unitPrice = Number(data.unitPrice) || 0;
+    const totalPriceText = data.totalPrice || `¥${(count * unitPrice).toLocaleString()}`;
     const source = String(data.source || data.hearing || '').trim();
     const remarks = String(data.remarks || '').trim();
 
-    // キャンセルURLの生成
+    // キャンセルURL
     let siteUrl = String(settings['チケットページURL'] || 'https://minayamano.github.io/Haretoke--web/ticket.html').trim();
     const sep = siteUrl.includes('?') ? '&' : '?';
     const cancelUrl = `${siteUrl}${sep}action=cancel&id=${encodeURIComponent(reservationId)}&key=${encodeURIComponent(cancelKey)}`;
 
-    // スプレッドシートに追記
-    resSheet.appendRow([
-      reservationTime,
-      reservationId,
-      cancelKey,
-      '予約完了',
-      name,
-      furigana,
-      email,
-      scheduleDate,
-      ticketType,
-      count,
-      totalPrice,
-      source,
-      remarks,
-      '' // キャンセル日時は空
-    ]);
+    // 予約枚数分、各チケットを1行ずつスプレッドシートに追加
+    for (let c = 1; c <= count; c++) {
+      const ticketNumber = `${reservationId}-${c}`;
+      resSheet.appendRow([
+        reservationTime,
+        reservationId,
+        ticketNumber,
+        cancelKey,
+        '有効',
+        name,
+        furigana,
+        email,
+        scheduleDate,
+        ticketType,
+        unitPrice,
+        source,
+        remarks,
+        ''
+      ]);
+    }
 
-    // 自動返信メールの送信（スプレッドシートのテンプレートを使用）
+    // 自動返信メールの送信
     if (emailEnabled && email && email.includes('@')) {
       let emailSubject = settings['自動返信メール件名'] || '【劇団ハレトケ】チケットご予約完了のお知らせ（予約番号: {予約番号}）';
-      let emailBody = settings['自動返信メール本文'] || `{お名前} 様\n\nこの度は『{公演名}』のチケットをご予約いただき、誠にありがとうございます。\n\n【予約番号】: {予約番号}\n【公演日時】: {公演日時}\n【券種】: {券種} × {枚数}枚\n【合計金額】: {合計金額}\n\n■ キャンセルURL:\n{キャンセルURL}`;
+      let emailBody = settings['自動返信メール本文'] || `{お名前} 様\n\nこの度は『{公演名}』のチケットをご予約いただき、誠にありがとうございます。\n\n【予約番号】: {予約番号}\n【公演日時】: {公演日時}\n【券種】: {券種}\n【枚数】: {枚数}枚\n【合計金額】: {合計金額}\n\n※予約時に振り分けられる番号は、チケット管理のものであり、座席を指定するものではございません。\n※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。\n\n■ キャンセル・枚数変更URL:\n{キャンセルURL}`;
 
       const placeholders = {
         お名前: name,
@@ -521,7 +582,7 @@ function doPost(e) {
         公演日時: scheduleDate,
         券種: ticketType,
         枚数: count,
-        合計金額: totalPrice,
+        合計金額: totalPriceText,
         知ったきっかけ: source,
         会場名: venue,
         注意事項: notes,
@@ -545,6 +606,7 @@ function doPost(e) {
       reservationId: reservationId,
       cancelKey: cancelKey,
       cancelUrl: cancelUrl,
+      count: count,
       message: '予約が正常に完了しました'
     }, e);
 
