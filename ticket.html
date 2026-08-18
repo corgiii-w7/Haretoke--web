@@ -1362,6 +1362,82 @@
             </div>
         </div>
 
+        <!-- =========================================================
+             5. ステータス: 予約キャンセル画面 (CANCEL VIEW)
+             ========================================================= -->
+        <div id="cancelView" class="status-card" style="display: none;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎟️</div>
+                <h2 style="font-size: 1.4rem; font-weight: 700; color: #111; margin-bottom: 0.5rem;">ご予約内容の確認・キャンセル</h2>
+                <p style="font-size: 0.9rem; color: #666;" id="cancelViewHeaderDesc">以下の予約情報を確認して、キャンセル手続きを行えます。</p>
+            </div>
+
+            <!-- キャンセル照会中ローディング -->
+            <div id="cancelLoading" style="text-align: center; padding: 2rem 0; display: none;">
+                <div class="spinner"></div>
+                <p style="color: #666; font-size: 0.9rem;">予約情報を照会しています...</p>
+            </div>
+
+            <!-- キャンセル情報表示エリア -->
+            <div id="cancelContent" style="display: none;">
+                <div id="cancelStatusBadgeContainer" style="text-align: center; margin-bottom: 1.5rem;">
+                    <!-- JSでステータスバッジ挿入 -->
+                </div>
+
+                <div class="success-details-table" style="max-width: 540px; margin-bottom: 2rem;">
+                    <div class="detail-row">
+                        <div class="detail-dt">予約番号</div>
+                        <div class="detail-dd" id="cancelResId" style="font-family: 'Outfit', monospace; font-weight: bold;"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-dt">お名前</div>
+                        <div class="detail-dd" id="cancelResName"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-dt">公演日時</div>
+                        <div class="detail-dd" id="cancelResDate"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-dt">券種・枚数</div>
+                        <div class="detail-dd" id="cancelResTicketInfo"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-dt">合計金額</div>
+                        <div class="detail-dd" id="cancelResTotal"></div>
+                    </div>
+                </div>
+
+                <!-- キャンセル実行エリア (予約中のみ表示) -->
+                <div id="cancelActionArea" style="text-align: center; max-width: 500px; margin: 0 auto;">
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem; color: #991b1b; line-height: 1.7;">
+                        <strong>【ご注意】</strong><br>
+                        ・予約をキャンセルすると取り消すことはできません。<br>
+                        ・キャンセル完了後、ご登録のメールアドレスにキャンセル通知メールをお送りいたします。
+                    </div>
+
+                    <button type="button" id="btnExecuteCancel" style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 14px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>この予約をキャンセルする</span>
+                    </button>
+                </div>
+
+                <!-- すでにキャンセル済みの場合のメッセージ -->
+                <div id="alreadyCancelledArea" style="text-align: center; display: none;">
+                    <p style="color: #666; font-size: 0.95rem; margin-bottom: 1.5rem;">この予約はすでにキャンセル処理が完了しております。</p>
+                    <a href="index.html" class="btn-primary">TOPページへ戻る</a>
+                </div>
+
+                <!-- キャンセル完了画面 -->
+                <div id="cancelSuccessArea" style="text-align: center; display: none;">
+                    <div style="width: 56px; height: 56px; background: #10b981; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1rem;">✓</div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.5rem;">キャンセルが完了いたしました</h3>
+                    <p style="font-size: 0.9rem; color: #555; margin-bottom: 2rem;">
+                        ご予約の取り消しを承りました。確認メールをお送りしましたのでご確認ください。
+                    </p>
+                    <a href="index.html" class="btn-primary">TOPページへ戻る</a>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- 確認モーダル -->
@@ -1429,6 +1505,7 @@
         const scheduledView = document.getElementById('scheduledView');
         const activeView = document.getElementById('activeView');
         const successView = document.getElementById('successView');
+        const cancelView = document.getElementById('cancelView');
         const errorBanner = document.getElementById('errorBanner');
 
         // =========================================================================
@@ -1555,6 +1632,7 @@
             scheduledView.style.display = viewName === 'scheduled' ? 'block' : 'none';
             activeView.style.display = viewName === 'active' ? 'block' : 'none';
             successView.style.display = viewName === 'success' ? 'block' : 'none';
+            cancelView.style.display = viewName === 'cancel' ? 'block' : 'none';
         }
 
         function showError(msg) {
@@ -1940,9 +2018,129 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
+        // =========================================================
+        // キャンセル処理フロー (action=cancel)
+        // =========================================================
+        async function handleCancelView(id, key) {
+            showView('cancel');
+            document.getElementById('cancelLoading').style.display = 'block';
+            document.getElementById('cancelContent').style.display = 'none';
+            hideError();
+
+            const queryUrl = `${GAS_ENDPOINT_URL}${GAS_ENDPOINT_URL.includes('?') ? '&' : '?'}action=getReservation&id=${encodeURIComponent(id)}&key=${encodeURIComponent(key)}&t=${Date.now()}`;
+
+            let resData = null;
+
+            try {
+                const response = await fetch(queryUrl, { method: 'GET', cache: 'no-store' });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result && result.status === 'success' && result.reservation) {
+                        resData = result.reservation;
+                    }
+                }
+            } catch (fetchErr) {
+                console.warn('fetchでの予約照会に失敗、JSONPで試行します:', fetchErr);
+            }
+
+            if (!resData) {
+                try {
+                    const jsonpUrl = `${GAS_ENDPOINT_URL}${GAS_ENDPOINT_URL.includes('?') ? '&' : '?'}action=getReservation&id=${encodeURIComponent(id)}&key=${encodeURIComponent(key)}`;
+                    const result = await fetchJsonp(jsonpUrl);
+                    if (result && result.status === 'success' && result.reservation) {
+                        resData = result.reservation;
+                    }
+                } catch (jsonpErr) {
+                    console.warn('JSONPでの予約照会も失敗しました:', jsonpErr);
+                }
+            }
+
+            document.getElementById('cancelLoading').style.display = 'none';
+
+            if (!resData) {
+                showError('ご指定の予約情報が見つからないか、URLが無効です。メールに記載されたリンクをご確認ください。');
+                return;
+            }
+
+            // 予約情報を画面にセット
+            document.getElementById('cancelContent').style.display = 'block';
+            document.getElementById('cancelResId').textContent = resData.id;
+            document.getElementById('cancelResName').textContent = `${resData.name} 様 (${resData.furigana || ''})`;
+            document.getElementById('cancelResDate').textContent = resData.date;
+            document.getElementById('cancelResTicketInfo').textContent = `${resData.ticketType} × ${resData.count}枚`;
+            document.getElementById('cancelResTotal').textContent = resData.totalPrice || '-';
+
+            const badgeContainer = document.getElementById('cancelStatusBadgeContainer');
+            const actionArea = document.getElementById('cancelActionArea');
+            const alreadyCancelledArea = document.getElementById('alreadyCancelledArea');
+            const successArea = document.getElementById('cancelSuccessArea');
+
+            successArea.style.display = 'none';
+
+            if (resData.status === 'キャンセル済み') {
+                badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">キャンセル済み</span>';
+                actionArea.style.display = 'none';
+                alreadyCancelledArea.style.display = 'block';
+            } else {
+                badgeContainer.innerHTML = '<span class="seat-badge badge-available" style="font-size: 0.9rem; padding: 4px 12px;">ご予約中</span>';
+                actionArea.style.display = 'block';
+                alreadyCancelledArea.style.display = 'none';
+
+                // キャンセル実行ボタン
+                const btnCancel = document.getElementById('btnExecuteCancel');
+                btnCancel.onclick = async () => {
+                    if (!confirm(`本当にこのご予約（予約番号: ${id}）をキャンセルしますか？`)) {
+                        return;
+                    }
+
+                    btnCancel.disabled = true;
+                    btnCancel.innerHTML = '<span class="spinner" style="width: 18px; height: 18px; margin: 0; border-width: 2px;"></span> キャンセル処理中...';
+
+                    try {
+                        const cancelPayload = {
+                            action: 'cancel',
+                            id: id,
+                            key: key
+                        };
+
+                        const cancelRes = await fetch(GAS_ENDPOINT_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify(cancelPayload)
+                        });
+
+                        const cancelResult = await cancelRes.json();
+
+                        if (cancelResult && cancelResult.status === 'success') {
+                            actionArea.style.display = 'none';
+                            badgeContainer.innerHTML = '<span class="seat-badge badge-soldout" style="font-size: 0.9rem; padding: 4px 12px;">キャンセル済み</span>';
+                            successArea.style.display = 'block';
+                        } else {
+                            alert(cancelResult.message || 'キャンセル処理中にエラーが発生しました。');
+                        }
+                    } catch (err) {
+                        console.error('キャンセルエラー:', err);
+                        alert('通信エラーが発生しました。ネットワーク環境をご確認の上、再度お試しください。');
+                    } finally {
+                        btnCancel.disabled = false;
+                        btnCancel.innerHTML = '<span>この予約をキャンセルする</span>';
+                    }
+                };
+            }
+        }
+
         // ページロード時初期化
         document.addEventListener('DOMContentLoaded', () => {
-            fetchTicketData();
+            const urlParams = new URLSearchParams(window.location.search);
+            const actionParam = urlParams.get('action');
+            const idParam = urlParams.get('id');
+            const keyParam = urlParams.get('key');
+
+            if (actionParam === 'cancel' && idParam && keyParam) {
+                handleCancelView(idParam, keyParam);
+            } else {
+                fetchTicketData();
+            }
         });
     </script>
 </body>
