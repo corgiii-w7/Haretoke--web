@@ -1578,6 +1578,35 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // 英語の日時文字列（例: Sat Sep 26 2026...）を日本語表記に整形
+        function formatJapaneseDateString(str) {
+            if (!str) return '';
+            const trimmed = String(str).trim();
+            if (trimmed.includes('GMT') || trimmed.includes('Standard Time') || trimmed.includes('日本標準時') || /^[A-Za-z]{3}\s+[A-Za-z]{3}/.test(trimmed)) {
+                const d = new Date(trimmed);
+                if (!isNaN(d.getTime())) {
+                    const year = d.getFullYear();
+                    const month = d.getMonth() + 1;
+                    const date = d.getDate();
+                    const hours = ('0' + d.getHours()).slice(-2);
+                    const minutes = ('0' + d.getMinutes()).slice(-2);
+                    const days = ['日', '月', '火', '水', '木', '金', '土'];
+                    return `${year}年${month}月${date}日(${days[d.getDay()]}) ${hours}:${minutes}`;
+                }
+            }
+            return trimmed;
+        }
+
+        // 備考欄に生の日時文字列が入っていた場合のクリーンアップ
+        function cleanScheduleNote(note) {
+            if (!note) return '';
+            const str = String(note).trim();
+            if (str.includes('GMT') || str.includes('日本標準時') || str.includes('Standard Time')) {
+                return '';
+            }
+            return str;
+        }
+
         // =========================================================================
         // 初期化: データ取得 (キャッシュ無効化 & JSONPフォールバック対応)
         // =========================================================================
@@ -1743,7 +1772,9 @@
                 ul.style.padding = '0';
                 appData.schedules.forEach(s => {
                     const li = document.createElement('li');
-                    li.textContent = `・${s.datetime} ${s.note ? '(' + s.note + ')' : ''}`;
+                    const dt = formatJapaneseDateString(s.datetime);
+                    const note = cleanScheduleNote(s.note);
+                    li.textContent = `・${dt} ${note ? '(' + note + ')' : ''}`;
                     ul.appendChild(li);
                 });
                 datesList.appendChild(ul);
@@ -1815,12 +1846,15 @@
                 if (status === '完売') badgeClass = 'badge-soldout';
                 if (status === '受付終了') badgeClass = 'badge-closed';
 
+                const dtDisplay = formatJapaneseDateString(sch.datetime);
+                const noteDisplay = cleanScheduleNote(sch.note);
+
                 pill.innerHTML = `
                     <div class="date-pill-header">
-                        <span class="date-pill-time">${sch.datetime}</span>
+                        <span class="date-pill-time">${dtDisplay}</span>
                         <span class="seat-badge ${badgeClass}">${status}</span>
                     </div>
-                    ${sch.note ? `<div class="date-pill-note">${sch.note}</div>` : ''}
+                    ${noteDisplay ? `<div class="date-pill-note">${noteDisplay}</div>` : ''}
                 `;
 
                 if (!isUnavailable) {

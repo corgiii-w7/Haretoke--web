@@ -297,29 +297,60 @@ function doGet(e) {
         const headerRow = schValues[0].map(h => String(h || '').trim());
         let dtCol = 0;
         let stCol = 1;
-        let endCol = 2;
-        let noteCol = 3;
+        let endCol = -1;
+        let noteCol = -1;
 
-        // ヘッダー名から列位置を柔軟に特定
+        // ヘッダー名から列位置を厳密に特定（「終了」を優先判定）
         headerRow.forEach((h, idx) => {
-          if (h.includes('公演') || h.includes('日時')) dtCol = idx;
-          else if (h.includes('ステータス') || h.includes('残席')) stCol = idx;
-          else if (h.includes('終了') || h.includes('締切')) endCol = idx;
-          else if (h.includes('開場') || h.includes('備考') || h.includes('注')) noteCol = idx;
+          if (h.includes('終了') || h.includes('締切')) {
+            endCol = idx;
+          } else if (h.includes('公演') || (h.includes('日時') && !h.includes('終了'))) {
+            dtCol = idx;
+          } else if (h.includes('ステータス') || h.includes('残席')) {
+            stCol = idx;
+          } else if (h.includes('開場') || h.includes('備考') || h.includes('注')) {
+            noteCol = idx;
+          }
         });
 
+        // 未設定時のデフォルト列インデックス
+        if (endCol === -1) endCol = 2;
+        if (noteCol === -1) noteCol = 3;
+
         for (let i = 1; i < schValues.length; i++) {
-          const datetime = String(schValues[i][dtCol] || '').trim();
+          let rawDatetime = schValues[i][dtCol];
+          let datetime = '';
+          if (rawDatetime instanceof Date) {
+            datetime = formatDate(rawDatetime);
+          } else {
+            datetime = formatDateString(String(rawDatetime || '').trim());
+          }
+
           let status = String(schValues[i][stCol] || '受付中').trim();
           
-          let rawEndDate = schValues[i][endCol];
-          let note = String(schValues[i][noteCol] || '').trim();
+          let valEnd = schValues[i][endCol];
+          let valNote = schValues[i][noteCol];
 
-          // 備考と販売終了日時の値が逆に入っている場合の自動判定
-          let slotEndDate = parseDateValue(rawEndDate);
-          if (!slotEndDate && parseDateValue(schValues[i][noteCol])) {
-            slotEndDate = parseDateValue(schValues[i][noteCol]);
-            note = String(rawEndDate || '').trim();
+          let slotEndDate = null;
+          let note = '';
+
+          // どちらが日付でどちらが備考かをスマートに判定
+          if (parseDateValue(valEnd)) {
+            slotEndDate = parseDateValue(valEnd);
+            note = (valNote instanceof Date) ? formatDate(valNote) : String(valNote || '').trim();
+          } else if (parseDateValue(valNote)) {
+            slotEndDate = parseDateValue(valNote);
+            note = (valEnd instanceof Date) ? formatDate(valEnd) : String(valEnd || '').trim();
+          } else {
+            note = String(valNote || valEnd || '').trim();
+          }
+
+          // noteに英語の日時文字列が入っていた場合は日本語化または除外
+          if (note.includes('GMT') || note.includes('日本標準時') || note.includes('Standard Time')) {
+            const parsedNoteDate = parseDateValue(note);
+            if (parsedNoteDate) {
+              note = ''; // 販売終了日時と重複している場合はクリア
+            }
           }
 
           if (datetime) {
@@ -334,7 +365,7 @@ function doGet(e) {
             schedules.push({
               datetime: datetime,
               status: status,
-              salesEndDate: slotEndDate ? formatDate(slotEndDate) : (rawEndDate ? String(rawEndDate).trim() : ''),
+              salesEndDate: slotEndDate ? formatDate(slotEndDate) : (valEnd ? formatDateString(String(valEnd).trim()) : ''),
               note: note
             });
           }
@@ -698,20 +729,44 @@ function parseDateValue(val) {
   if (typeof val === 'string') {
     const str = val.trim();
     if (!str) return null;
+    // YYYY/MM/DD や YYYY-MM-DD
     const d = new Date(str.replace(/\//g, '-'));
     if (!isNaN(d.getTime())) return d;
+    // JSのtoString()形式（例: Sat Sep 26 2026...）
+    const d2 = new Date(str);
+    if (!isNaN(d2.getTime())) return d2;
   }
   return null;
 }
 
-// 日時フォーマット用ヘルパー
+// 日時フォーマット用ヘルパー（日本語表記）
 function formatDate(d) {
-  if (!d || isNaN(d.getTime())) return '';
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const date = d.getDate();
-  const hours = ('0' + d.getHours()).slice(-2);
-  const minutes = ('0' + d.getMinutes()).slice(-2);
-  const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
-  return `${year}年${month}月${date}日(${dayOfWeek}) ${hours}:${minutes}`;
+  if (!d) return '';
+  let dateObj = d;
+  if (typeof d === 'string') {
+    dateObj = parseDateValue(d);
+    if (!dateObj) return d;
+  }
+  if (dateObj instanceof Date && !isNaN(dateObj.getTime())) {
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth() + 1;
+    const date = dateObj.getDate();
+    const hours = ('0' + dateObj.getHours()).slice(-2);
+    const minutes = ('0' + dateObj.getMinutes()).slice(-2);
+    const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][dateObj.getDay()];
+    return `${year}年${month}月${date}日(${dayOfWeek}) ${hours}:${minutes}`;
+  }
+  return String(d);
+}
+
+// 文字列が英語日時だった場合の日本語フォーマット
+function formatDateString(str) {
+  if (!str) return '';
+  if (str.includes('GMT') || str.includes('日本標準時') || str.includes('Standard Time') || /^[A-Za-z]{3}\s+[A-Za-z]{3}/.test(str)) {
+    const parsed = parseDateValue(str);
+    if (parsed) {
+      return formatDate(parsed);
+    }
+  }
+  return str;
 }
