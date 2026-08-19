@@ -91,7 +91,7 @@ https://theatrical.net-menber.com/
 
 ※予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。
 ※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。
-※残りのチケットの確認・キャンセルは以下のURLよりいつでも可能です。
+※残りのチケットの確認・変更・キャンセルは以下のURLよりいつでも可能です。
 {キャンセルURL}
 
 またのご来場を団員一同心よりお待ちしております。
@@ -100,6 +100,33 @@ https://theatrical.net-menber.com/
 劇団ハレトケ 公式サイト
 https://theatrical.net-menber.com/
 ━━━━━━━━━━━━━━━━━━━━━━━━`, 'キャンセル完了メールのテンプレート']);
+
+    settingSheet.appendRow(['チケット追加通知メール件名', '【劇団ハレトケ】チケット追加予約完了のお知らせ（予約番号: {予約番号}）', 'チケット追加時に送信するメール件名']);
+    settingSheet.appendRow(['チケット追加通知メール本文',
+`{お名前} 様
+
+『{公演名}』のチケット追加予約を承りました。
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+【予約番号】: {予約番号}
+【公演日時】: {公演日時}
+【券種】: {券種}
+【追加枚数】: +{追加枚数}枚
+【現在の有効枚数】: {有効枚数}枚
+【合計金額】: {合計金額} (当日受付精算)
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+※予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。
+※公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。
+※枚数の確認・変更・キャンセルは以下のURLよりいつでも可能です。
+{キャンセルURL}
+
+当日、劇場にてお会いできることを団員一同心より楽しみにしております！
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+劇団ハレトケ 公式サイト
+https://theatrical.net-menber.com/
+━━━━━━━━━━━━━━━━━━━━━━━━`, 'チケット追加完了メールのテンプレート']);
 
     // ヘッダースタイル
     settingSheet.getRange('A1:C1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
@@ -253,6 +280,28 @@ function doGet(e) {
       const activeTickets = matchedTickets.filter(t => t.status === '有効');
       const cancelledTickets = matchedTickets.filter(t => t.status === 'キャンセル済み');
 
+      // 日程シートで対象公演回の現在の受付状況をチェック
+      let isScheduleAvailable = true;
+      const scheduleSheet = ss.getSheetByName('日程');
+      if (scheduleSheet) {
+        const schValues = scheduleSheet.getDataRange().getValues();
+        const nowTime = new Date().getTime();
+        for (let i = 1; i < schValues.length; i++) {
+          const rowDt = String(schValues[i][0] || '').trim();
+          const rowSt = String(schValues[i][1] || '').trim();
+          const rowEnd = parseDateValue(schValues[i][2]) || parseDateValue(schValues[i][3]);
+          if (rowDt && scheduleDate && (scheduleDate.includes(rowDt) || rowDt.includes(scheduleDate))) {
+            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了') {
+              isScheduleAvailable = false;
+            }
+            if (rowEnd && nowTime > rowEnd.getTime()) {
+              isScheduleAvailable = false;
+            }
+            break;
+          }
+        }
+      }
+
       const settings = readSettings(ss);
 
       const reservationData = {
@@ -269,11 +318,14 @@ function doGet(e) {
         cancelledCount: cancelledTickets.length,
         activeTotalPrice: `¥${(activeTickets.length * unitPrice).toLocaleString()}`,
         isFullyCancelled: activeTickets.length === 0,
+        isScheduleAvailableForAddition: isScheduleAvailable,
+        maxAllowedCount: 5,
         tickets: matchedTickets,
         source: source,
         remarks: remarks,
         eventTitle: settings['公演名'] || '劇団ハレトケ 公演',
-        venue: settings['会場名'] || ''
+        venue: settings['会場名'] || '',
+        venueUrl: settings['会場URL'] || settings['会場詳細URL'] || ''
       };
 
       return sendJsonResponse({
@@ -575,6 +627,157 @@ function doPost(e) {
         remainingTotalPrice: remainingTotalPrice,
         isFullyCancelled: remainingActiveCount === 0,
         message: `${actualCancelCount}枚のチケットキャンセルが完了いたしました。`
+      }, e);
+    }
+
+    // =========================================================
+    // B. チケット追加予約実行 (action: 'addTickets')
+    // =========================================================
+    if (data.action === 'addTickets') {
+      const targetId = String(data.id || '').trim();
+      const targetKey = String(data.key || '').trim();
+      const addCountRequested = Math.max(1, Number(data.addCount) || 1);
+
+      if (!targetId || !targetKey) {
+        return sendJsonResponse({ status: 'error', message: '予約番号またはキャンセルキーが不足しています。' }, e);
+      }
+
+      const resValues = resSheet.getDataRange().getValues();
+      let customerData = null;
+      let highestSeq = 0;
+      let activeCount = 0;
+
+      for (let i = 1; i < resValues.length; i++) {
+        const rowId = String(resValues[i][1] || '').trim();
+        const rowKey = String(resValues[i][3] || '').trim();
+        const rowTicketNumber = String(resValues[i][2] || '').trim();
+        const rowStatus = String(resValues[i][4] || '').trim();
+
+        if (rowId === targetId && rowKey === targetKey) {
+          if (!customerData) {
+            customerData = {
+              id: rowId,
+              name: String(resValues[i][5] || ''),
+              furigana: String(resValues[i][6] || ''),
+              email: String(resValues[i][7] || ''),
+              date: String(resValues[i][8] || ''),
+              ticketType: String(resValues[i][9] || ''),
+              unitPrice: Number(resValues[i][10]) || 0,
+              source: String(resValues[i][11] || ''),
+              remarks: String(resValues[i][12] || '')
+            };
+          }
+
+          if (rowStatus === '有効') {
+            activeCount++;
+          }
+
+          const parts = rowTicketNumber.split('-');
+          const seq = parseInt(parts[parts.length - 1], 10);
+          if (!isNaN(seq) && seq > highestSeq) {
+            highestSeq = seq;
+          }
+        }
+      }
+
+      if (!customerData) {
+        return sendJsonResponse({ status: 'error', message: '該当する予約が見つかりませんでした。' }, e);
+      }
+
+      if (activeCount + addCountRequested > 5) {
+        return sendJsonResponse({ status: 'error', message: `1回のご予約上限枚数（5枚）を超えるため追加できません（現在有効: ${activeCount}枚）。` }, e);
+      }
+
+      // 公演回の販売可否チェック
+      const scheduleSheet = ss.getSheetByName('日程');
+      if (scheduleSheet) {
+        const schValues = scheduleSheet.getDataRange().getValues();
+        const nowTime = now.getTime();
+        for (let i = 1; i < schValues.length; i++) {
+          const rowDt = String(schValues[i][0] || '').trim();
+          const rowSt = String(schValues[i][1] || '').trim();
+          const rowEnd = parseDateValue(schValues[i][2]) || parseDateValue(schValues[i][3]);
+          if (rowDt && customerData.date && (customerData.date.includes(rowDt) || rowDt.includes(customerData.date))) {
+            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了' || (rowEnd && nowTime > rowEnd.getTime())) {
+              return sendJsonResponse({ status: 'error', message: '申し訳ございません。この公演回は受付終了（または満席）のため、チケットを追加できません。' }, e);
+            }
+            break;
+          }
+        }
+      }
+
+      // チケットを追加追記
+      const reservationTime = Utilities.formatDate(now, 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss');
+      for (let k = 1; k <= addCountRequested; k++) {
+        const ticketNumber = `${targetId}-${highestSeq + k}`;
+        resSheet.appendRow([
+          reservationTime,
+          targetId,
+          ticketNumber,
+          targetKey,
+          '有効',
+          customerData.name,
+          customerData.furigana,
+          customerData.email,
+          customerData.date,
+          customerData.ticketType,
+          customerData.unitPrice,
+          customerData.source,
+          customerData.remarks,
+          ''
+        ]);
+      }
+
+      const newActiveCount = activeCount + addCountRequested;
+      const newTotalPrice = `¥${(newActiveCount * customerData.unitPrice).toLocaleString()}`;
+
+      // キャンセルURL
+      let siteUrl = String(settings['チケットページURL'] || 'https://corgiii-w7.github.io/Haretoke--web/ticket.html').trim();
+      const sep = siteUrl.includes('?') ? '&' : '?';
+      const cancelUrl = `${siteUrl}${sep}action=cancel&id=${encodeURIComponent(targetId)}&key=${encodeURIComponent(targetKey)}`;
+
+      // チケット追加完了メールの送信
+      if (emailEnabled && customerData.email && customerData.email.includes('@')) {
+        let addSubject = settings['チケット追加通知メール件名'] || '【劇団ハレトケ】チケット追加予約完了のお知らせ（予約番号: {予約番号}）';
+        let addBody = settings['チケット追加通知メール本文'] || `{お名前} 様\n\n『{公演名}』のチケット追加予約を承りました。\n\n【予約番号】: {予約番号}\n【公演日時】: {公演日時}\n【券種】: {券種}\n【追加枚数】: +{追加枚数}枚\n【現在の有効枚数】: {有効枚数}枚\n【合計金額】: {合計金額} (当日受付精算)\n\n※予約時に振り分けられる番号は、チケット管理のものであり、座席を指定するものではございません。\n※枚数の確認・変更・キャンセルは以下のURLよりいつでも可能です。\n{キャンセルURL}`;
+
+        const placeholders = {
+          お名前: customerData.name,
+          フリガナ: customerData.furigana,
+          予約番号: targetId,
+          キャンセルキー: targetKey,
+          キャンセルURL: cancelUrl,
+          公演名: eventTitle,
+          公演日時: customerData.date,
+          券種: customerData.ticketType,
+          追加枚数: addCountRequested,
+          有効枚数: newActiveCount,
+          枚数: newActiveCount,
+          合計金額: newTotalPrice,
+          会場名: venue,
+          会場URL: venueUrl,
+          注意事項: notes,
+          備考: customerData.remarks
+        };
+
+        addSubject = replacePlaceholders(addSubject, placeholders);
+        addBody = replacePlaceholders(addBody, placeholders);
+
+        try {
+          GmailApp.sendEmail(customerData.email, addSubject, addBody, {
+            name: '劇団ハレトケ チケット窓口'
+          });
+        } catch (mailErr) {
+          Logger.log('チケット追加メール送信エラー: ' + mailErr);
+        }
+      }
+
+      return sendJsonResponse({
+        status: 'success',
+        addedCount: addCountRequested,
+        newActiveCount: newActiveCount,
+        newTotalPrice: newTotalPrice,
+        message: `${addCountRequested}枚のチケット追加予約が完了いたしました。`
       }, e);
     }
 

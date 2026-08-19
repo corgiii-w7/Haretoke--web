@@ -1444,37 +1444,61 @@
                     </div>
                 </div>
 
-                <!-- キャンセル実行エリア (予約中のみ表示) -->
-                <div id="cancelActionArea" style="text-align: center; max-width: 500px; margin: 0 auto;">
+                <!-- 操作エリア (予約中のみ表示) -->
+                <div id="cancelActionArea" style="max-width: 540px; margin: 0 auto;">
 
-                    <!-- 枚数選択ドロップダウン (n枚キャンセル対応) -->
-                    <div id="cancelCountSelectWrapper"
-                        style="margin-bottom: 1.5rem; text-align: left; background: #fafafa; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
-                        <label for="selectCancelCount"
-                            style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: #111;">
-                            キャンセルする枚数を選択
-                        </label>
-                        <select id="selectCancelCount" class="form-select"
-                            style="font-weight: 600; font-size: 0.95rem;">
-                            <!-- JSで動的生成 -->
-                        </select>
-                        <p style="font-size: 0.78rem; color: #666; margin-top: 6px;" id="cancelCountHint">
-                            ※ 枚数を減らしたい場合（例：5枚中1枚キャンセル等）はキャンセルする枚数を選択してください。
-                        </p>
+                    <!-- A. チケット追加エリア -->
+                    <div id="addTicketsSection" style="margin-bottom: 2rem; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1.5rem; text-align: left;">
+                        <h4 style="font-size: 1rem; font-weight: 700; color: #166534; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px;">
+                            <span>➕</span> チケットを追加予約する
+                        </h4>
+                        <div id="addTicketsAvailableWrapper">
+                            <label for="selectAddCount" style="display: block; font-size: 0.85rem; color: #374151; font-weight: 600; margin-bottom: 6px;">
+                                追加する枚数
+                            </label>
+                            <select id="selectAddCount" class="form-select" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
+                                <!-- JSで動的生成 -->
+                            </select>
+                            <p style="font-size: 0.78rem; color: #15803d; margin-bottom: 1rem;" id="addTicketsHint">
+                                ※ 1回のご予約につき最大5枚まで追加いただけます。
+                            </p>
+                            <button type="button" id="btnExecuteAddTickets" style="width: 100%; background: #16a34a; color: #fff; border: none; border-radius: 8px; padding: 12px 18px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <span>チケットを追加する</span>
+                            </button>
+                        </div>
+                        <div id="addTicketsUnavailableMessage" style="display: none; font-size: 0.85rem; color: #6b7280; line-height: 1.6;">
+                            <!-- 満席または上限時のメッセージ -->
+                        </div>
                     </div>
 
-                    <div
-                        style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem; color: #991b1b; line-height: 1.7;">
-                        <strong>【ご注意事項】</strong><br>
-                        ・予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。<br>
-                        ・<strong>公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。</strong><br>
-                        ・キャンセル完了後、ご登録のメールアドレスに確認メールをお送りいたします。
+                    <!-- B. キャンセル・減数エリア -->
+                    <div id="cancelTicketsSection" style="background: #fafafa; border: 1.5px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: left;">
+                        <h4 style="font-size: 1rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px;">
+                            <span>➖</span> チケットを減らす / キャンセルする
+                        </h4>
+                        
+                        <div id="cancelCountSelectWrapper" style="margin-bottom: 1rem;">
+                            <label for="selectCancelCount" style="display: block; font-size: 0.85rem; color: #374151; font-weight: 600; margin-bottom: 6px;">
+                                キャンセルする枚数
+                            </label>
+                            <select id="selectCancelCount" class="form-select" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
+                                <!-- JSで動的生成 -->
+                            </select>
+                            <p style="font-size: 0.78rem; color: #666;" id="cancelCountHint">
+                                ※ 一部のみキャンセルして枚数を減らすことができます（例：3枚中1枚キャンセル等）。
+                            </p>
+                        </div>
+
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; font-size: 0.82rem; color: #991b1b; line-height: 1.7;">
+                            ・予約番号はチケット管理用のものであり、座席を指定するものではございません。<br>
+                            ・公演時間の変更は、一度キャンセルいただき新しくご予約ください。
+                        </div>
+
+                        <button type="button" id="btnExecuteCancel" style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 12px 18px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span id="btnExecuteCancelText">キャンセルを実行する</span>
+                        </button>
                     </div>
 
-                    <button type="button" id="btnExecuteCancel"
-                        style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 14px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span id="btnExecuteCancelText">キャンセルを実行する</span>
-                    </button>
                 </div>
 
                 <!-- すでにキャンセル済みの場合のメッセージ -->
@@ -2214,7 +2238,85 @@
                 actionArea.style.display = 'block';
                 alreadyCancelledArea.style.display = 'none';
 
-                // キャンセル枚数セレクトボックスの選択肢を生成
+                // 1. チケット追加セクションの生成
+                const addWrapper = document.getElementById('addTicketsAvailableWrapper');
+                const addMsg = document.getElementById('addTicketsUnavailableMessage');
+                const selectAddCount = document.getElementById('selectAddCount');
+                const btnAddTickets = document.getElementById('btnExecuteAddTickets');
+
+                const maxAllowed = 5;
+                const canAddMax = Math.max(0, maxAllowed - resData.activeCount);
+
+                if (resData.isScheduleAvailableForAddition === false) {
+                    addWrapper.style.display = 'none';
+                    addMsg.style.display = 'block';
+                    addMsg.textContent = '※この公演回は受付終了（または満席）のため、チケットの追加はできません。';
+                } else if (canAddMax === 0) {
+                    addWrapper.style.display = 'none';
+                    addMsg.style.display = 'block';
+                    addMsg.textContent = `※すでに1回のご予約上限枚数（${maxAllowed}枚）に達しているため、追加はできません。`;
+                } else {
+                    addWrapper.style.display = 'block';
+                    addMsg.style.display = 'none';
+                    selectAddCount.innerHTML = '';
+                    for (let a = 1; a <= canAddMax; a++) {
+                        const opt = document.createElement('option');
+                        opt.value = a;
+                        const addedTotal = resData.activeCount + a;
+                        const addedPrice = (addedTotal * (resData.unitPrice || 0)).toLocaleString();
+                        opt.textContent = `+${a}枚 追加する（合計 ${addedTotal}枚 / ¥${addedPrice}）`;
+                        selectAddCount.appendChild(opt);
+                    }
+
+                    // チケット追加実行ボタン
+                    btnAddTickets.onclick = async () => {
+                        const addCount = parseInt(selectAddCount.value, 10) || 1;
+                        const newTotal = resData.activeCount + addCount;
+                        const newPriceText = `¥${(newTotal * (resData.unitPrice || 0)).toLocaleString()}`;
+
+                        if (!confirm(`チケットを +${addCount}枚 追加し、合計 ${newTotal}枚（合計金額: ${newPriceText}）に変更しますか？`)) {
+                            return;
+                        }
+
+                        btnAddTickets.disabled = true;
+                        btnAddTickets.innerHTML = '<span class="spinner" style="width: 18px; height: 18px; margin: 0; border-width: 2px;"></span> 追加処理中...';
+
+                        try {
+                            const addPayload = {
+                                action: 'addTickets',
+                                id: id,
+                                key: key,
+                                addCount: addCount
+                            };
+
+                            const addRes = await fetch(GAS_ENDPOINT_URL, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'text/plain' },
+                                body: JSON.stringify(addPayload)
+                            });
+
+                            const addResult = await addRes.json();
+
+                            if (addResult && addResult.status === 'success') {
+                                actionArea.style.display = 'none';
+                                badgeContainer.innerHTML = `<span class="seat-badge badge-available" style="font-size: 0.9rem; padding: 4px 12px;">追加完了（有効: ${addResult.newActiveCount}枚）</span>`;
+                                successArea.querySelector('h3').textContent = `${addResult.addedCount}枚のチケット追加が完了いたしました`;
+                                successArea.querySelector('p').innerHTML = `現在の有効チケット枚数は <strong>${addResult.newActiveCount}枚（合計金額: ${addResult.newTotalPrice}）</strong> に変更されました。<br>確認メールをお送りしましたのでご確認ください。`;
+                                successArea.style.display = 'block';
+                            } else {
+                                alert(addResult.message || 'チケット追加処理中にエラーが発生しました。');
+                            }
+                        } catch (err) {
+                            console.error('追加エラー:', err);
+                            alert('通信エラーが発生しました。ネットワーク環境をご確認の上、再度お試しください。');
+                        } finally {
+                            btnAddTickets.disabled = false;
+                            btnAddTickets.innerHTML = '<span>チケットを追加する</span>';
+                        }
+                    };
+                }
+
+                // 2. キャンセル枚数セレクトボックスの生成
                 selectCancelCount.innerHTML = '';
                 if (resData.activeCount > 1) {
                     for (let n = 1; n < resData.activeCount; n++) {
