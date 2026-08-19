@@ -31,6 +31,7 @@ function initialSetup() {
     settingSheet.appendRow(['公演名', '劇団ハレトケ 2026年 秋公演', 'Webページの見出しに表示される公演名']);
     settingSheet.appendRow(['サブタイトル', '〜いま、ここ、こそ、パラダイス〜', '公演のキャッチコピーやサブタイトル']);
     settingSheet.appendRow(['会場名', '〇〇劇場', '会場名（例：JOY JOY THEATER、〇〇ホール等）']);
+    settingSheet.appendRow(['会場URL', 'https://example.com/venue', '会場の公式サイト・Googleマップ等のURL']);
     settingSheet.appendRow(['会場住所・アクセス', '東京都〇〇区...（〇〇駅 徒歩5分）', 'アクセス情報']);
     settingSheet.appendRow(['チケットページURL', 'https://minayamano.github.io/Haretoke--web/ticket.html', 'キャンセル用URL生成に使用するWebページのURL']);
     settingSheet.appendRow(['販売ステータス', '自動', '「自動」「販売中」「予約開始前」「販売停止/終了」のいずれか']);
@@ -386,6 +387,7 @@ function doGet(e) {
         title: settings['公演名'] ? String(settings['公演名']) : '劇団ハレトケ 公演',
         subtitle: settings['サブタイトル'] ? String(settings['サブタイトル']) : '',
         venue: settings['会場名'] ? String(settings['会場名']) : '',
+        venueUrl: settings['会場URL'] ? String(settings['会場URL']) : (settings['会場詳細URL'] ? String(settings['会場詳細URL']) : (settings['会場詳細'] ? String(settings['会場詳細']) : '')),
         venueAccess: settings['会場住所・アクセス'] ? String(settings['会場住所・アクセス']) : '',
         salesStartDate: startDate ? formatDate(startDate) : (rawStartDate ? String(rawStartDate).trim() : ''),
         description: settings['公演説明・あらすじ'] ? String(settings['公演説明・あらすじ']) : '',
@@ -428,6 +430,7 @@ function doPost(e) {
     const settings = readSettings(ss);
     const eventTitle = settings['公演名'] || '劇団ハレトケ 公演';
     const venue = settings['会場名'] || '';
+    const venueUrl = settings['会場URL'] || settings['会場詳細URL'] || settings['会場詳細'] || '';
     const notes = settings['注意事項・備考'] || '';
     const emailEnabled = String(settings['自動返信メール送信'] || '有効').trim() !== '無効';
 
@@ -608,6 +611,7 @@ function doPost(e) {
         合計金額: totalPriceText,
         知ったきっかけ: source,
         会場名: venue,
+        会場URL: venueUrl,
         注意事項: notes,
         備考: remarks
       };

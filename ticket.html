@@ -504,6 +504,30 @@
             color: #991b1b;
         }
 
+        .venue-url-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #111111;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            vertical-align: middle;
+        }
+
+        .venue-url-link:hover {
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
+            text-decoration: none;
+        }
+
         .date-pill-note {
             font-size: 0.8rem;
             color: #6b7280;
@@ -1544,6 +1568,16 @@
         const cancelView = document.getElementById('cancelView');
         const errorBanner = document.getElementById('errorBanner');
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // =========================================================================
         // 初期化: データ取得 (キャッシュ無効化 & JSONPフォールバック対応)
         // =========================================================================
@@ -1688,7 +1722,16 @@
             document.getElementById('scheduledStartTimeDisplay').textContent = appData.salesStartDate || '近日公開';
             document.getElementById('scheduledEventTitle').textContent = appData.title || '次回公演';
             document.getElementById('scheduledEventSubtitle').textContent = appData.subtitle || '';
-            document.getElementById('scheduledVenue').textContent = appData.venue || '未定';
+            
+            // 会場表示（会場名とURLリンクを並べて表示）
+            const scheduledVenueEl = document.getElementById('scheduledVenue');
+            const venueName = appData.venue || '未定';
+            if (appData.venueUrl) {
+                scheduledVenueEl.innerHTML = `<span>${escapeHtml(venueName)}</span> <a href="${escapeHtml(appData.venueUrl)}" target="_blank" rel="noopener noreferrer" class="venue-url-link">会場詳細 ↗</a>`;
+            } else {
+                scheduledVenueEl.textContent = venueName;
+            }
+
             document.getElementById('scheduledDescription').textContent = appData.description || '公演の詳細は決まり次第お知らせいたします。';
 
             // 日程リスト
@@ -1731,9 +1774,17 @@
         // =========================================================================
         function renderActiveView() {
             document.getElementById('activeEventTitle').textContent = appData.title || '劇団ハレトケ 公演';
-            document.getElementById('activeVenue').textContent = `📍 会場: ${appData.venue || '〇〇劇場'}`;
+            const activeVenueEl = document.getElementById('activeVenue');
+            const venueName = appData.venue || '〇〇劇場';
+            if (appData.venueUrl) {
+                activeVenueEl.innerHTML = `📍 会場: <strong>${escapeHtml(venueName)}</strong> <a href="${escapeHtml(appData.venueUrl)}" target="_blank" rel="noopener noreferrer" class="venue-url-link">会場詳細 ↗</a>`;
+            } else {
+                activeVenueEl.innerHTML = `📍 会場: <strong>${escapeHtml(venueName)}</strong>`;
+            }
             if (appData.venueAccess) {
                 document.getElementById('activeVenueAccess').textContent = `(${appData.venueAccess})`;
+            } else {
+                document.getElementById('activeVenueAccess').textContent = '';
             }
             if (appData.notes) {
                 document.getElementById('activeNotesContent').textContent = appData.notes;
