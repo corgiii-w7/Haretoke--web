@@ -33,7 +33,7 @@ function initialSetup() {
     settingSheet.appendRow(['会場名', '〇〇劇場', '会場名（例：JOY JOY THEATER、〇〇ホール等）']);
     settingSheet.appendRow(['会場URL', 'https://example.com/venue', '会場の公式サイト・Googleマップ等のURL']);
     settingSheet.appendRow(['会場住所・アクセス', '東京都〇〇区...（〇〇駅 徒歩5分）', 'アクセス情報']);
-    settingSheet.appendRow(['チケットページURL', 'https://minayamano.github.io/Haretoke--web/ticket.html', 'キャンセル用URL生成に使用するWebページのURL']);
+    settingSheet.appendRow(['チケットページURL', 'https://corgiii-w7.github.io/Haretoke--web/ticket.html', 'キャンセル用URL生成に使用するWebページのURL']);
     settingSheet.appendRow(['販売ステータス', '自動', '「自動」「販売中」「予約開始前」「販売停止/終了」のいずれか']);
     settingSheet.appendRow(['販売開始日時', '2026-09-01 12:00', '全公演回共通の予約開始日時 (YYYY-MM-DD HH:mm 形式)']);
     settingSheet.appendRow(['公演説明・あらすじ', '次回公演に向けて鋭意稽古中です！団員一同、劇場でお待ちしております。', '公演のあらすじや概要']);
@@ -531,7 +531,7 @@ function doPost(e) {
       const remainingTotalPrice = `¥${(remainingActiveCount * resData.unitPrice).toLocaleString()}`;
 
       // キャンセルURL
-      let siteUrl = String(settings['チケットページURL'] || 'https://minayamano.github.io/Haretoke--web/ticket.html').trim();
+      let siteUrl = String(settings['チケットページURL'] || 'https://corgiii-w7.github.io/Haretoke--web/ticket.html').trim();
       const sep = siteUrl.includes('?') ? '&' : '?';
       const cancelUrl = `${siteUrl}${sep}action=cancel&id=${encodeURIComponent(targetId)}&key=${encodeURIComponent(targetKey)}`;
 
@@ -599,7 +599,7 @@ function doPost(e) {
     const remarks = String(data.remarks || '').trim();
 
     // キャンセルURL
-    let siteUrl = String(settings['チケットページURL'] || 'https://minayamano.github.io/Haretoke--web/ticket.html').trim();
+    let siteUrl = String(settings['チケットページURL'] || 'https://corgiii-w7.github.io/Haretoke--web/ticket.html').trim();
     const sep = siteUrl.includes('?') ? '&' : '?';
     const cancelUrl = `${siteUrl}${sep}action=cancel&id=${encodeURIComponent(reservationId)}&key=${encodeURIComponent(cancelKey)}`;
 
