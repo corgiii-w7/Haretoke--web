@@ -292,28 +292,51 @@ function doGet(e) {
 
     if (scheduleSheet) {
       const schValues = scheduleSheet.getDataRange().getValues();
-      for (let i = 1; i < schValues.length; i++) {
-        const datetime = String(schValues[i][0] || '').trim();
-        let status = String(schValues[i][1] || '受付中').trim();
-        const rawEndDate = schValues[i][2];
-        const slotEndDate = parseDateValue(rawEndDate);
-        const note = String(schValues[i][3] || '').trim();
+      if (schValues.length > 1) {
+        const headerRow = schValues[0].map(h => String(h || '').trim());
+        let dtCol = 0;
+        let stCol = 1;
+        let endCol = 2;
+        let noteCol = 3;
 
-        if (datetime) {
-          if (slotEndDate && now.getTime() > slotEndDate.getTime()) {
-            status = '受付終了';
+        // ヘッダー名から列位置を柔軟に特定
+        headerRow.forEach((h, idx) => {
+          if (h.includes('公演') || h.includes('日時')) dtCol = idx;
+          else if (h.includes('ステータス') || h.includes('残席')) stCol = idx;
+          else if (h.includes('終了') || h.includes('締切')) endCol = idx;
+          else if (h.includes('開場') || h.includes('備考') || h.includes('注')) noteCol = idx;
+        });
+
+        for (let i = 1; i < schValues.length; i++) {
+          const datetime = String(schValues[i][dtCol] || '').trim();
+          let status = String(schValues[i][stCol] || '受付中').trim();
+          
+          let rawEndDate = schValues[i][endCol];
+          let note = String(schValues[i][noteCol] || '').trim();
+
+          // 備考と販売終了日時の値が逆に入っている場合の自動判定
+          let slotEndDate = parseDateValue(rawEndDate);
+          if (!slotEndDate && parseDateValue(schValues[i][noteCol])) {
+            slotEndDate = parseDateValue(schValues[i][noteCol]);
+            note = String(rawEndDate || '').trim();
           }
 
-          if (status !== '完売' && status !== '受付終了' && status !== '販売終了') {
-            availableScheduleCount++;
-          }
+          if (datetime) {
+            if (slotEndDate && now.getTime() > slotEndDate.getTime()) {
+              status = '受付終了';
+            }
 
-          schedules.push({
-            datetime: datetime,
-            status: status,
-            salesEndDate: slotEndDate ? formatDate(slotEndDate) : (rawEndDate ? String(rawEndDate).trim() : ''),
-            note: note
-          });
+            if (status !== '完売' && status !== '受付終了' && status !== '販売終了') {
+              availableScheduleCount++;
+            }
+
+            schedules.push({
+              datetime: datetime,
+              status: status,
+              salesEndDate: slotEndDate ? formatDate(slotEndDate) : (rawEndDate ? String(rawEndDate).trim() : ''),
+              note: note
+            });
+          }
         }
       }
     }
