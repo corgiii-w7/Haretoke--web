@@ -1254,7 +1254,9 @@
                         </label>
                         <input type="email" id="inputEmailConfirm" class="form-input" placeholder="もう一度入力してください"
                             required>
-                        <p id="emailMismatchError" style="color: #ef4444; font-size: 0.78rem; margin-top: 4px; font-weight: 600; display: none;">※メールアドレスが一致しません</p>
+                        <p id="emailMismatchError"
+                            style="color: #ef4444; font-size: 0.78rem; margin-top: 4px; font-weight: 600; display: none;">
+                            ※メールアドレスが一致しません</p>
                     </div>
 
                     <div class="form-group-full">
@@ -1358,7 +1360,8 @@
                 </div>
             </div>
 
-            <div style="max-width: 540px; margin: 0 auto 2rem; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.2rem; font-size: 0.83rem; color: #555; text-align: left; line-height: 1.8;">
+            <div
+                style="max-width: 540px; margin: 0 auto 2rem; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.2rem; font-size: 0.83rem; color: #555; text-align: left; line-height: 1.8;">
                 <strong style="color: #222;">【ご案内・注意事項】</strong><br>
                 ・予約時に振り分けられた番号はチケット管理用のものであり、座席を指定するものではございません。<br>
                 ・枚数の変更（例：5枚→4枚への減数等）は、自動返信メール内のキャンセルURLよりいつでもお手続きいただけます。<br>
@@ -1396,7 +1399,8 @@
                 <div class="success-details-table" style="max-width: 540px; margin-bottom: 2rem;">
                     <div class="detail-row">
                         <div class="detail-dt">予約番号</div>
-                        <div class="detail-dd" id="cancelResId" style="font-family: 'Outfit', monospace; font-weight: bold;"></div>
+                        <div class="detail-dd" id="cancelResId"
+                            style="font-family: 'Outfit', monospace; font-weight: bold;"></div>
                     </div>
                     <div class="detail-row">
                         <div class="detail-dt">お名前</div>
@@ -1418,13 +1422,16 @@
 
                 <!-- キャンセル実行エリア (予約中のみ表示) -->
                 <div id="cancelActionArea" style="text-align: center; max-width: 500px; margin: 0 auto;">
-                    
+
                     <!-- 枚数選択ドロップダウン (n枚キャンセル対応) -->
-                    <div id="cancelCountSelectWrapper" style="margin-bottom: 1.5rem; text-align: left; background: #fafafa; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
-                        <label for="selectCancelCount" style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: #111;">
+                    <div id="cancelCountSelectWrapper"
+                        style="margin-bottom: 1.5rem; text-align: left; background: #fafafa; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+                        <label for="selectCancelCount"
+                            style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: #111;">
                             キャンセルする枚数を選択
                         </label>
-                        <select id="selectCancelCount" class="form-select" style="font-weight: 600; font-size: 0.95rem;">
+                        <select id="selectCancelCount" class="form-select"
+                            style="font-weight: 600; font-size: 0.95rem;">
                             <!-- JSで動的生成 -->
                         </select>
                         <p style="font-size: 0.78rem; color: #666; margin-top: 6px;" id="cancelCountHint">
@@ -1432,14 +1439,16 @@
                         </p>
                     </div>
 
-                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem; color: #991b1b; line-height: 1.7;">
+                    <div
+                        style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem; color: #991b1b; line-height: 1.7;">
                         <strong>【ご注意事項】</strong><br>
                         ・予約時に振り分けられる番号は、チケット管理のものであり、それによって座席を指定するものではございません。<br>
                         ・<strong>公演時間の変更をご希望の場合は、一度チケットをキャンセルいただき、新しくご希望のチケットをご予約ください。</strong><br>
                         ・キャンセル完了後、ご登録のメールアドレスに確認メールをお送りいたします。
                     </div>
 
-                    <button type="button" id="btnExecuteCancel" style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 14px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button type="button" id="btnExecuteCancel"
+                        style="width: 100%; background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 14px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <span id="btnExecuteCancelText">キャンセルを実行する</span>
                     </button>
                 </div>
@@ -1452,8 +1461,11 @@
 
                 <!-- キャンセル完了画面 -->
                 <div id="cancelSuccessArea" style="text-align: center; display: none;">
-                    <div style="width: 56px; height: 56px; background: #10b981; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1rem;">✓</div>
-                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.5rem;">キャンセルが完了いたしました</h3>
+                    <div
+                        style="width: 56px; height: 56px; background: #10b981; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1rem;">
+                        ✓</div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.5rem;">キャンセルが完了いたしました
+                    </h3>
                     <p style="font-size: 0.9rem; color: #555; margin-bottom: 2rem;">
                         ご予約の取り消しを承りました。確認メールをお送りしましたのでご確認ください。
                     </p>
@@ -2092,7 +2104,7 @@
             document.getElementById('cancelResId').textContent = resData.id;
             document.getElementById('cancelResName').textContent = `${resData.name} 様 (${resData.furigana || ''})`;
             document.getElementById('cancelResDate').textContent = resData.date;
-            
+
             let ticketInfoText = `${resData.ticketType} × ${resData.activeCount}枚`;
             if (resData.cancelledCount > 0) {
                 ticketInfoText += ` (※${resData.cancelledCount}枚キャンセル済 / 当初${resData.totalCount}枚)`;
@@ -2142,8 +2154,8 @@
                 btnCancel.onclick = async () => {
                     const cancelCount = parseInt(selectCancelCount.value) || resData.activeCount;
                     const isAll = (cancelCount === resData.activeCount);
-                    const confirmMsg = isAll 
-                        ? `本当にこのご予約のチケット全${cancelCount}枚をキャンセルしますか？` 
+                    const confirmMsg = isAll
+                        ? `本当にこのご予約のチケット全${cancelCount}枚をキャンセルしますか？`
                         : `本当に ${cancelCount}枚のチケットをキャンセルし、残り ${resData.activeCount - cancelCount}枚に変更しますか？`;
 
                     if (!confirm(confirmMsg)) {
