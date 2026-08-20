@@ -456,6 +456,40 @@
             display: block;
         }
 
+        /* ⬇︎⬇︎ 2カラム（テキスト＋メディア）レイアウト ⬇︎⬇︎ */
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            gap: 2.5rem;
+            align-items: flex-start;
+            margin-top: 1.5rem;
+        }
+
+        .text-box {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .text-box p {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+            color: #222;
+        }
+
+        .text-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .text-box ul li {
+            margin-bottom: 0.5rem;
+        }
+
         /* ⬇︎⬇︎ 画像・メディア設定 ⬇︎⬇︎ */
         .media-box {
             position: relative;
@@ -1211,26 +1245,60 @@
         /* スマホ向けメディアクエリ */
         @media (max-width: 768px) {
             html {
-                font-size: 12.5px; /* 全体的な文字サイズをさらに小さく調整 */
+                font-size: 15px; /* スマホで読みやすく、かつ圧迫感のない黄金比サイズ（15px） */
             }
             .sidebar {
                 display: none !important; /* スマホではサイドバーを完全に非表示にして白背景を全画面に */
             }
             .content {
-                padding: 20px 15px; /* 左右の余白を少し広めに確保 */
+                padding: 24px 18px; /* 左右の余白をすっきり確保 */
+            }
+            section {
+                padding: 3rem 0.5rem; /* セクション余白の最適化 */
+            }
+            #about {
+                padding: 3.5rem 0.5rem;
+            }
+            .about-catchphrase {
+                font-size: 0.92rem; /* スマホで綺麗に収まり、しっかり読めるサイズ */
+                letter-spacing: 1px;
+                padding: 0.6rem 0.8rem;
+                line-height: 1.5;
+            }
+            .flex-container {
+                flex-direction: column-reverse; /* スマホではポスターを上、テキストを下にして見やすく */
+                gap: 1.8rem;
+                align-items: center;
+            }
+            .text-box {
+                width: 100%;
+            }
+            .single-poster,
+            .slideshow-wrapper {
+                max-width: 280px; /* スマホで画像が大きすぎて文字を圧迫しないよう調整 */
             }
             #members-grid {
-                grid-template-columns: repeat(3, 1fr); /* スマホでは3列に戻す */
-                gap: 2rem 0.5rem; /* スマホでは左右の隙間を少し詰める */
+                grid-template-columns: repeat(3, 1fr); /* スマホでは3列 */
+                gap: 2rem 0.5rem;
             }
             
             /* スマホでの吹き出し画面外はみ出し防止 */
             .member-bubble {
-                width: 220px; /* スマホ画面に収まりやすい幅へ縮小 */
-                padding: 0.8rem;
+                width: 240px; /* スマホ画面に収まりつつテキストが読みやすい幅 */
+                padding: 0.9rem;
             }
             .bubble-img {
-                height: 160px; /* 画像も少し小さく */
+                height: 150px;
+            }
+            .bubble-name {
+                font-size: 1.1rem;
+            }
+            .bubble-role {
+                font-size: 0.82rem;
+            }
+            .bubble-exp {
+                font-size: 0.82rem;
+                line-height: 1.6;
             }
             /* 左端（1列目）のアイテム */
             .member-item:nth-child(3n+1) .member-bubble {
@@ -1239,7 +1307,7 @@
             }
             .member-item:nth-child(3n+1) .member-bubble::after,
             .member-item:nth-child(3n+1) .member-bubble::before {
-                left: 45px; /* 矢印（尻尾）を左側へ寄せる */
+                left: 45px;
                 margin-left: 0;
             }
             /* 右端（3列目）のアイテム */
@@ -1251,28 +1319,23 @@
             .member-item:nth-child(3n) .member-bubble::after,
             .member-item:nth-child(3n) .member-bubble::before {
                 left: auto;
-                right: 35px; /* 矢印（尻尾）を右側へ寄せる */
+                right: 35px;
                 margin-left: 0;
             }
-            .about-catchphrase {
-                font-size: 0.85rem; /* スマホで確実に1行に収まるように調整 */
-                letter-spacing: 0px;
-                padding: 0.5rem 0.5rem;
-            }
             #sns-container {
-                gap: 0; /* スマホではflex: 1で均等配置されるのでgapは不要 */
+                gap: 0;
                 justify-content: space-evenly;
             }
             .sns-icon {
-                width: 50px; /* アイコンを小さく */
-                height: 50px;
-                font-size: 1.2rem;
+                width: 56px;
+                height: 56px;
+                font-size: 1.3rem;
             }
             .sns-id-text {
-                font-size: 0.65rem; /* ID文字を小さく */
+                font-size: 0.78rem; /* 小さすぎず読みやすいID文字サイズ */
             }
             #hamburger-btn {
-                display: flex !important; /* スマホでは右上のハンバーガーメニューを復活 */
+                display: flex !important; /* スマホでは右上のハンバーガーメニューを表示 */
             }
         }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
@@ -1459,10 +1522,10 @@
             </section>
 
             <section id="contact" style="padding-top: 5rem;">
-                <div id="contact-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 1rem; line-height: 1.8;">
+                <div id="contact-desc" style="font-size: 0.9rem; color: #555; margin-bottom: 1rem; line-height: 1.8;">
                     <!-- JSで生成 -->
                 </div>
-                <div style="font-size: 0.85rem; margin-bottom: 2rem;">
+                <div style="font-size: 0.9rem; margin-bottom: 2rem;">
                     👉 <a id="contact-form" href="#" target="_blank" style="color: #111; text-decoration: underline;"></a>
                 </div>
 
@@ -1477,7 +1540,7 @@
                 <div style="text-align: left; margin-bottom: 2rem;">
                     <img id="recruitment-poster" src="Recruitment.jpg" alt="団員募集" style="max-width: 100%; width: 400px; border-radius: 4px;">
                 </div>
-                <div id="recruitment-text" style="font-size: 0.85rem; line-height: 1.8;">
+                <div id="recruitment-text" style="font-size: 0.9rem; line-height: 1.8;">
                     <!-- JSで生成 -->
                 </div>
             </section>
@@ -1764,7 +1827,7 @@
                 siteData.about.logoParagraphs.forEach(p => {
                     const pTag = document.createElement('p');
                     pTag.style.textAlign = "left";
-                    pTag.style.fontSize = "0.85rem";
+                    pTag.style.fontSize = "0.9rem";
                     pTag.style.marginBottom = "1.5rem";
                     pTag.style.lineHeight = "1.8";
                     pTag.innerHTML = p.replace(/\n/g, '<br>');
