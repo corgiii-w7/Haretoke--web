@@ -25,7 +25,7 @@ const siteData = {
   },
   "members": {
     "title": "「劇団ハレトケ」",
-    "countText": "団員 〇〇名 (2026/05現在)",
+    "countText": "団員 28名 (2026/08現在)",
     "membersList": [
       { "name": "ごっちゃん" },
       { "name": "みなや" },
