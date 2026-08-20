@@ -1307,15 +1307,9 @@
 
             <!-- Sidebar Bottom Info -->
             <div style="text-align: center; color: #fff;">
-                <div style="margin-bottom: 2rem;">
-                    <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" 
-                        autoplay muted loop playsinline
-                        style="width: 100%; max-width: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                    </video>
+                <div id="menu-topics">
+                    <!-- JSで動的生成 -->
                 </div>
-
-                <p style="font-weight: bold; letter-spacing: 2px; margin-bottom:0.5rem;">TOPICS</p>
-                <p style="font-size: 0.85rem; color: #ccc;">「第六回公演」今秋決定！</p>
                 
                 <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.9rem; align-items: center;">
                     <p style="font-weight: bold; letter-spacing: 2px; margin-bottom: 0.2rem;">OFFICIAL SNS</p>
@@ -1407,18 +1401,11 @@
                 <a href="#contact">CONTACT</a>
             </nav>
             <div class="sidebar-bottom">
-                <!-- サイドバー用ティザー動画 -->
-                <div style="margin-bottom: 2rem; padding: 0 1rem;">
-                    <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" 
-                        autoplay muted loop playsinline controls
-                        style="width: 100%; max-width: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                    </video>
+                <div id="sidebar-topics">
+                    <!-- JSで動的生成 -->
                 </div>
-
-                <p style="font-weight: bold; letter-spacing: 2px;">TOPICS</p>
-                <p style="font-size: 0.85rem; color: #ccc;">「第六回公演」今秋決定！</p>
-                <br><br>
-                <p style="font-weight: bold; letter-spacing: 2px; margin-bottom: 0.8rem;">OFFICIAL SNS</p>
+                <div style="margin-top: 2rem;">
+                    <p style="font-weight: bold; letter-spacing: 2px; margin-bottom: 0.8rem;">OFFICIAL SNS</p>
                 <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem; padding-left: 0.5rem;">
                     <a href="https://x.com/haretokemusical?s=21&t=mtbf5MTQ_Et1zKMI2koXbw" target="_blank" style="color:#ccc; text-decoration:none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;">
                         <span style="display:inline-block; width: 18px; height: 18px; background: #fff; color: #000; border-radius: 50%; text-align: center; line-height: 18px; font-weight: bold; font-size: 11px;">X</span>
@@ -2055,6 +2042,9 @@
                 });
             }
 
+            // ▼ TOPICS 描画 ▼
+            renderTopics();
+
             // Contact
             document.getElementById('contact-desc').innerText = siteData.contact.description1;
             const formLink = document.getElementById('contact-form');
@@ -2201,8 +2191,97 @@
             });
         }
 
+        // ▼ TOPICS描画関数 ▼
+        function renderTopics() {
+            const sidebarContainer = document.getElementById('sidebar-topics');
+            const menuContainer = document.getElementById('menu-topics');
+
+            const renderTo = (container) => {
+                if (!container) return;
+                container.innerHTML = '';
+
+                const topics = siteData.topics;
+                if (!topics || (!topics.media && !topics.comment)) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                container.style.display = 'block';
+                
+                // メディア（動画 または 画像）
+                if (topics.media && topics.media.trim()) {
+                    const m = topics.media.trim();
+                    const mediaWrap = document.createElement('div');
+                    mediaWrap.style.marginBottom = '1.2rem';
+                    mediaWrap.style.padding = '0 0.5rem';
+
+                    const isVideo = m.includes('.mp4') || m.includes('.mov') || m.includes('.webm') || m.includes('youtube.com') || m.includes('youtu.be');
+                    
+                    if (isVideo) {
+                        let ytId = null;
+                        if (m.includes("youtube.com/watch?v=")) ytId = m.split("v=")[1].split("&")[0];
+                        else if (m.includes("youtu.be/")) ytId = m.split("youtu.be/")[1].split("?")[0];
+                        else if (m.includes("youtube.com/embed/")) ytId = m.split("embed/")[1].split("?")[0];
+
+                        if (ytId) {
+                            mediaWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" style="width: 100%; max-width: 200px; aspect-ratio: 16/9; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: none;" allowfullscreen></iframe>`;
+                        } else {
+                            mediaWrap.innerHTML = `<video src="${m}" autoplay muted loop playsinline controls style="width: 100%; max-width: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></video>`;
+                        }
+                    } else {
+                        // 画像
+                        const img = document.createElement('img');
+                        img.src = convertDriveUrl(m);
+                        img.alt = "TOPICS";
+                        img.style.width = '100%';
+                        img.style.maxWidth = '200px';
+                        img.style.borderRadius = '4px';
+                        img.style.boxShadow = '0 4px 10px rgba(0,0,0,0.5)';
+                        img.style.objectFit = 'cover';
+                        img.style.cursor = 'pointer';
+                        img.title = "クリックで拡大表示";
+                        img.addEventListener('click', () => openImageModal(convertDriveUrl(m)));
+                        mediaWrap.appendChild(img);
+                    }
+                    container.appendChild(mediaWrap);
+                }
+
+                // コメント（テキスト）
+                if (topics.comment && topics.comment.trim()) {
+                    const titleP = document.createElement('p');
+                    titleP.style.fontWeight = 'bold';
+                    titleP.style.letterSpacing = '2px';
+                    titleP.style.marginBottom = '0.4rem';
+                    titleP.innerText = 'TOPICS';
+                    container.appendChild(titleP);
+
+                    const commentP = document.createElement('p');
+                    commentP.style.fontSize = '0.85rem';
+                    commentP.style.color = '#ccc';
+                    commentP.style.lineHeight = '1.6';
+                    commentP.innerHTML = topics.comment.replace(/\n/g, '<br>');
+
+                    if (topics.link && topics.link.trim()) {
+                        const a = document.createElement('a');
+                        a.href = topics.link.trim();
+                        a.style.color = '#ccc';
+                        a.style.textDecoration = 'none';
+                        if (topics.link.startsWith('http')) a.target = '_blank';
+                        a.appendChild(commentP);
+                        container.appendChild(a);
+                    } else {
+                        container.appendChild(commentP);
+                    }
+                }
+            };
+
+            renderTo(sidebarContainer);
+            renderTo(menuContainer);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const perfSheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
+            const topicSheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&sheet=TOPICS";
             const memberSheetUrl = "https://docs.google.com/spreadsheets/d/1OiRvK_Um0RVv09KXLU-jj1EVIrUNTmPO1pgUv-cETsE/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
 
             const fetchJSON = (url) => fetch(url)
@@ -2214,8 +2293,9 @@
 
             Promise.all([
                 fetchJSON(perfSheetUrl).catch(err => { console.error("Perf fetch error:", err); return null; }),
+                fetchJSON(topicSheetUrl).catch(err => { console.log("Topic sheet fetch (optional):", err); return null; }),
                 fetchJSON(memberSheetUrl).catch(err => { console.error("Member fetch error:", err); return null; })
-            ]).then(([perfData, memberData]) => {
+            ]).then(([perfData, topicData, memberData]) => {
                 
                 // 1. 公演情報の反映
                 if (perfData && perfData.table && perfData.table.rows) {
@@ -2294,7 +2374,38 @@
                     }
                 }
 
-                // 2. メンバー情報の反映
+                // 2. TOPICS 情報の反映（TOPICSシートまたは公演情報シートの列から）
+                if (topicData && topicData.table && topicData.table.rows && topicData.table.rows.length > 0) {
+                    const tRows = topicData.table.rows;
+                    const tHeaders = topicData.table.cols;
+                    const getTColIdx = (keyword) => tHeaders.findIndex(c => c && c.label && c.label.includes(keyword));
+
+                    const mediaIdx = getTColIdx("メディア") !== -1 ? getTColIdx("メディア") : (getTColIdx("ファイル名") !== -1 ? getTColIdx("ファイル名") : (getTColIdx("動画") !== -1 ? getTColIdx("動画") : getTColIdx("画像")));
+                    const commentIdx = getTColIdx("コメント") !== -1 ? getTColIdx("コメント") : (getTColIdx("テキスト") !== -1 ? getTColIdx("テキスト") : getTColIdx("内容"));
+                    const linkIdx = getTColIdx("リンク") !== -1 ? getTColIdx("リンク") : getTColIdx("URL");
+                    const activeIdx = getTColIdx("表示") !== -1 ? getTColIdx("表示") : (getTColIdx("有効") !== -1 ? getTColIdx("有効") : getTColIdx("Now"));
+
+                    // 有効フラグがある行、なければ1行目
+                    let selectedRow = tRows[0];
+                    if (activeIdx !== -1) {
+                        const found = tRows.find(r => r.c && r.c[activeIdx] && (r.c[activeIdx].v == 1 || r.c[activeIdx].v == "1" || r.c[activeIdx].v == "有効"));
+                        if (found) selectedRow = found;
+                    }
+
+                    if (selectedRow && selectedRow.c) {
+                        const mVal = (mediaIdx !== -1 && selectedRow.c[mediaIdx] && selectedRow.c[mediaIdx].v) ? String(selectedRow.c[mediaIdx].v).trim() : "";
+                        const cVal = (commentIdx !== -1 && selectedRow.c[commentIdx] && selectedRow.c[commentIdx].v) ? String(selectedRow.c[commentIdx].v).trim() : "";
+                        const lVal = (linkIdx !== -1 && selectedRow.c[linkIdx] && selectedRow.c[linkIdx].v) ? String(selectedRow.c[linkIdx].v).trim() : "";
+
+                        siteData.topics = {
+                            media: mVal,
+                            comment: cVal,
+                            link: lVal
+                        };
+                    }
+                }
+
+                // 3. メンバー情報の反映
                 if (memberData && memberData.table && memberData.table.rows) {
                     const rows = memberData.table.rows;
                     const headers = memberData.table.cols;

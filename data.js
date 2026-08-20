@@ -2,6 +2,11 @@ const siteData = {
   "header": {
     "catchphrase": "〜いま、ここ、こそ、パラダイス〜"
   },
+  "topics": {
+    "media": "パラレルドリーム・ランデブー_SNS_movie.mp4",
+    "comment": "「第六回公演」今秋決定！",
+    "link": "#performance"
+  },
   "about": {
     "title": "「劇団ハレトケ」とは",
     "catchphrase": "〜いま、ここ、こそ、パラダイス〜",
