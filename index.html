@@ -1591,17 +1591,19 @@
 
         // スライドショー要素生成
         function createSlideshowElement(images, altTitle = "公演画像") {
-            if (!images || images.length === 0) return null;
+            if (!images || !Array.isArray(images)) return null;
+            const validImages = images.filter(img => img && typeof img === 'string' && img.trim().length > 0);
+            if (validImages.length === 0) return null;
 
             // 1枚のみの場合は単一ポスター
-            if (images.length === 1) {
+            if (validImages.length === 1) {
                 const img = document.createElement('img');
                 img.className = 'single-poster';
-                img.src = images[0];
-                attachImgFallback(img, images[0]);
+                img.src = validImages[0];
+                attachImgFallback(img, validImages[0]);
                 img.alt = altTitle;
                 img.title = "クリックで拡大表示";
-                img.addEventListener('click', () => openImageModal(images[0]));
+                img.addEventListener('click', () => openImageModal(validImages[0]));
                 return img;
             }
 
@@ -1923,9 +1925,9 @@
                 const flexDiv = document.createElement('div');
                 flexDiv.className = 'flex-container';
 
-                const stageImages = siteData.stage.images && siteData.stage.images.length > 0 
+                const stageImages = (siteData.stage.images && siteData.stage.images.length > 0 
                     ? siteData.stage.images 
-                    : (siteData.stage.image ? [siteData.stage.image] : []);
+                    : (siteData.stage.image ? [siteData.stage.image] : [])).filter(Boolean);
                 const mediaEl = createSlideshowElement(stageImages, siteData.stage.subtitle || "次回公演ポスター");
 
                 const textBox = document.createElement('div');
@@ -2049,16 +2051,18 @@
                     }
                     if (ul.children.length > 0) textBox.appendChild(ul);
 
-                    const perfImages = perf.images && perf.images.length > 0 
+                    const perfImages = (perf.images && perf.images.length > 0 
                         ? perf.images 
-                        : (perf.image ? [perf.image] : []);
+                        : (perf.image ? [perf.image] : [])).filter(Boolean);
                     const mediaEl = createSlideshowElement(perfImages, `${perf.title}ポスター`);
+                    const videoEl = perf.video ? createVideoElement(perf.video) : null;
 
                     div.appendChild(textBox);
-                    if (mediaEl) {
+                    if (mediaEl || videoEl) {
                         const mediaBox = document.createElement('div');
                         mediaBox.className = 'media-box';
-                        mediaBox.appendChild(mediaEl);
+                        if (videoEl) mediaBox.appendChild(videoEl);
+                        if (mediaEl) mediaBox.appendChild(mediaEl);
                         div.appendChild(mediaBox);
                     } else {
                         textBox.style.flex = '1 1 100%';
@@ -2393,7 +2397,8 @@
                                 venue: venue,
                                 note: note,
                                 images: images,
-                                image: images.length > 0 ? images[0] : "gekidan haretoke_logo_icon (1).jpg"
+                                video: videoRaw,
+                                image: images.length > 0 ? images[0] : ""
                             };
                             siteData.memory.performances.unshift(perf);
                         }
