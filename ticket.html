@@ -1852,6 +1852,9 @@
 
             (appData.schedules || []).forEach((sch, idx) => {
                 let status = sch.status || '受付中';
+                if (sch.remainingSeats !== null && sch.remainingSeats !== undefined && sch.remainingSeats <= 0) {
+                    status = '受付終了';
+                }
 
                 // クライアント側でも公演ごとの販売終了日時を判定
                 if (sch.salesEndDate) {
@@ -1861,14 +1864,20 @@
                     }
                 }
 
-                const isUnavailable = (status === '完売' || status === '受付終了');
+                const isUnavailable = (status === '完売' || status === '受付終了' || status === '販売停止');
                 const pill = document.createElement('div');
                 pill.className = `date-pill ${isUnavailable ? 'soldout' : ''}`;
 
                 let badgeClass = 'badge-available';
-                if (status === '残りわずか') badgeClass = 'badge-few';
+                let statusLabel = status;
+                if (status === '残りわずか') {
+                    badgeClass = 'badge-few';
+                    if (sch.remainingSeats !== null && sch.remainingSeats !== undefined) {
+                        statusLabel = `残りわずか (残${sch.remainingSeats}席)`;
+                    }
+                }
                 if (status === '完売') badgeClass = 'badge-soldout';
-                if (status === '受付終了') badgeClass = 'badge-closed';
+                if (status === '受付終了' || status === '販売停止') badgeClass = 'badge-closed';
 
                 const dtDisplay = formatJapaneseDateString(sch.datetime);
                 const noteDisplay = cleanScheduleNote(sch.note);
@@ -1876,7 +1885,7 @@
                 pill.innerHTML = `
                     <div class="date-pill-header">
                         <span class="date-pill-time">${dtDisplay}</span>
-                        <span class="seat-badge ${badgeClass}">${status}</span>
+                        <span class="seat-badge ${badgeClass}">${statusLabel}</span>
                     </div>
                     ${noteDisplay ? `<div class="date-pill-note">${noteDisplay}</div>` : ''}
                 `;
@@ -1887,6 +1896,7 @@
                         pill.classList.add('selected');
                         selectedSchedule = sch;
                         document.getElementById('selectedDateInput').value = sch.datetime;
+                        updateCountDisplay();
                         updateSummary();
                     });
 
@@ -1942,6 +1952,13 @@
             updateSummary();
         }
 
+        function getMaxAllowedCount() {
+            if (selectedSchedule && selectedSchedule.remainingSeats !== null && selectedSchedule.remainingSeats !== undefined) {
+                return Math.max(1, Math.min(5, selectedSchedule.remainingSeats));
+            }
+            return 5;
+        }
+
         // 枚数変更ボタン
         const btnMinus = document.getElementById('btnCountMinus');
         const btnPlus = document.getElementById('btnCountPlus');
@@ -1957,7 +1974,8 @@
         });
 
         btnPlus.addEventListener('click', () => {
-            if (ticketCount < 5) {
+            const maxAllowed = getMaxAllowedCount();
+            if (ticketCount < maxAllowed) {
                 ticketCount++;
                 updateCountDisplay();
                 updateSummary();
@@ -1965,10 +1983,37 @@
         });
 
         function updateCountDisplay() {
+            const maxAllowed = getMaxAllowedCount();
+            if (ticketCount > maxAllowed) {
+                ticketCount = maxAllowed;
+            }
             countDisplay.textContent = ticketCount;
             ticketCountInput.value = ticketCount;
             btnMinus.disabled = ticketCount <= 1;
-            btnPlus.disabled = ticketCount >= 5;
+            btnPlus.disabled = ticketCount >= maxAllowed;
+
+            // 残席上限時の案内メッセージ
+            let countNoticeEl = document.getElementById('ticketCountNotice');
+            if (!countNoticeEl && countDisplay) {
+                countNoticeEl = document.createElement('p');
+                countNoticeEl.id = 'ticketCountNotice';
+                countNoticeEl.style.fontSize = '0.8rem';
+                countNoticeEl.style.color = '#e11d48';
+                countNoticeEl.style.marginTop = '6px';
+                if (countDisplay.closest('.form-group')) {
+                    countDisplay.closest('.form-group').appendChild(countNoticeEl);
+                }
+            }
+
+            if (countNoticeEl) {
+                if (selectedSchedule && selectedSchedule.remainingSeats !== null && selectedSchedule.remainingSeats <= 5 && selectedSchedule.remainingSeats > 0) {
+                    countNoticeEl.textContent = `※この公演回は残り ${selectedSchedule.remainingSeats}席のため、最大 ${maxAllowed}枚までご選択いただけます。`;
+                    countNoticeEl.style.display = 'block';
+                } else {
+                    countNoticeEl.textContent = '';
+                    countNoticeEl.style.display = 'none';
+                }
+            }
         }
 
         // 料金サマリー更新
@@ -2245,16 +2290,22 @@
                 const btnAddTickets = document.getElementById('btnExecuteAddTickets');
 
                 const maxAllowed = 5;
-                const canAddMax = Math.max(0, maxAllowed - resData.activeCount);
+                const canAddByQuota = Math.max(0, maxAllowed - resData.activeCount);
+                let canAddMax = canAddByQuota;
+                if (resData.remainingSeats !== null && resData.remainingSeats !== undefined) {
+                    canAddMax = Math.min(canAddByQuota, resData.remainingSeats);
+                }
 
-                if (resData.isScheduleAvailableForAddition === false) {
+                if (resData.isScheduleAvailableForAddition === false || canAddMax <= 0) {
                     addWrapper.style.display = 'none';
                     addMsg.style.display = 'block';
-                    addMsg.textContent = '※この公演回は受付終了（または満席）のため、チケットの追加はできません。';
-                } else if (canAddMax === 0) {
-                    addWrapper.style.display = 'none';
-                    addMsg.style.display = 'block';
-                    addMsg.textContent = `※すでに1回のご予約上限枚数（${maxAllowed}枚）に達しているため、追加はできません。`;
+                    if (resData.remainingSeats !== null && resData.remainingSeats <= 0) {
+                        addMsg.textContent = '※この公演回は満席のため、チケットの追加はできません。';
+                    } else if (canAddByQuota === 0) {
+                        addMsg.textContent = `※すでに1回のご予約上限枚数（${maxAllowed}枚）に達しているため、追加はできません。`;
+                    } else {
+                        addMsg.textContent = '※この公演回は受付終了のため、チケットの追加はできません。';
+                    }
                 } else {
                     addWrapper.style.display = 'block';
                     addMsg.style.display = 'none';
@@ -2266,6 +2317,15 @@
                         const addedPrice = (addedTotal * (resData.unitPrice || 0)).toLocaleString();
                         opt.textContent = `+${a}枚 追加する（合計 ${addedTotal}枚 / ¥${addedPrice}）`;
                         selectAddCount.appendChild(opt);
+                    }
+
+                    const addHintEl = document.getElementById('addTicketsHint');
+                    if (addHintEl) {
+                        if (resData.remainingSeats !== null && resData.remainingSeats !== undefined) {
+                            addHintEl.textContent = `※この公演回の残り座席数: ${resData.remainingSeats}席（1回のご予約につき最大${maxAllowed}枚まで）`;
+                        } else {
+                            addHintEl.textContent = `※ 1回のご予約につき最大${maxAllowed}枚まで追加いただけます。`;
+                        }
                     }
 
                     // チケット追加実行ボタン

@@ -128,6 +128,9 @@ https://theatrical.net-menber.com/
 https://theatrical.net-menber.com/
 ━━━━━━━━━━━━━━━━━━━━━━━━`, 'チケット追加完了メールのテンプレート']);
 
+    settingSheet.appendRow(['残りわずか判定割合(%)', 20, '残席がこの割合（%）以下になったら「残りわずか」表示にします（例：20）']);
+    settingSheet.appendRow(['残りわずか判定枚数', 5, '残席がこの枚数以下になったら「残りわずか」表示にします（例：5）']);
+
     // ヘッダースタイル
     settingSheet.getRange('A1:C1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
     settingSheet.setColumnWidth(1, 180);
@@ -135,20 +138,21 @@ https://theatrical.net-menber.com/
     settingSheet.setColumnWidth(3, 300);
   }
 
-  // ② 日程シート（公演時間ごとの販売終了日時を設定可能）
+  // ② 日程シート（定員・上限枚数を設定可能）
   let scheduleSheet = ss.getSheetByName('日程');
   if (!scheduleSheet) {
     scheduleSheet = ss.insertSheet('日程');
-    scheduleSheet.appendRow(['公演日時', '残席ステータス', '販売終了日時', '備考/開場時間']);
-    scheduleSheet.appendRow(['2026年10月24日(土) 14:00', '受付中', '2026-10-24 12:00', '開場 13:30']);
-    scheduleSheet.appendRow(['2026年10月24日(土) 18:30', '受付中', '2026-10-24 16:30', '開場 18:00']);
-    scheduleSheet.appendRow(['2026年10月25日(日) 13:00', '残りわずか', '2026-10-25 11:00', '開場 12:30']);
+    scheduleSheet.appendRow(['公演日時', '残席ステータス', '定員/上限枚数', '販売終了日時', '備考/開場時間']);
+    scheduleSheet.appendRow(['2026年10月24日(土) 14:00', '自動', 40, '2026-10-24 12:00', '開場 13:30']);
+    scheduleSheet.appendRow(['2026年10月24日(土) 18:30', '自動', 40, '2026-10-24 16:30', '開場 18:00']);
+    scheduleSheet.appendRow(['2026年10月25日(日) 13:00', '自動', 40, '2026-10-25 11:00', '開場 12:30']);
     
-    scheduleSheet.getRange('A1:D1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
+    scheduleSheet.getRange('A1:E1').setBackground('#222222').setFontColor('#ffffff').setFontWeight('bold');
     scheduleSheet.setColumnWidth(1, 240);
     scheduleSheet.setColumnWidth(2, 120);
-    scheduleSheet.setColumnWidth(3, 160);
-    scheduleSheet.setColumnWidth(4, 200);
+    scheduleSheet.setColumnWidth(3, 120);
+    scheduleSheet.setColumnWidth(4, 160);
+    scheduleSheet.setColumnWidth(5, 200);
   }
 
   // ③ 券種シート
@@ -280,18 +284,41 @@ function doGet(e) {
       const activeTickets = matchedTickets.filter(t => t.status === '有効');
       const cancelledTickets = matchedTickets.filter(t => t.status === 'キャンセル済み');
 
-      // 日程シートで対象公演回の現在の受付状況をチェック
+      // 日程シートで対象公演回の現在の受付状況・残席数をチェック
       let isScheduleAvailable = true;
+      let remainingSeatsForAddition = null;
       const scheduleSheet = ss.getSheetByName('日程');
       if (scheduleSheet) {
         const schValues = scheduleSheet.getDataRange().getValues();
         const nowTime = new Date().getTime();
+        const headerRow = schValues[0].map(h => String(h || '').trim());
+        let dtCol = 0, stCol = 1, capCol = -1, endCol = -1, noteCol = -1;
+        headerRow.forEach((h, idx) => {
+          if (h.includes('定員') || h.includes('上限') || h.includes('席数') || h.includes('capacity') || h.includes('キャパ')) capCol = idx;
+          else if (h.includes('終了') || h.includes('締切')) endCol = idx;
+          else if (h.includes('公演') || (h.includes('日時') && !h.includes('終了'))) dtCol = idx;
+          else if (h.includes('ステータス') || h.includes('残席')) stCol = idx;
+          else if (h.includes('開場') || h.includes('備考')) noteCol = idx;
+        });
+
+        const bookedCounts = getBookedCounts(ss);
+
         for (let i = 1; i < schValues.length; i++) {
-          const rowDt = String(schValues[i][0] || '').trim();
-          const rowSt = String(schValues[i][1] || '').trim();
-          const rowEnd = parseDateValue(schValues[i][2]) || parseDateValue(schValues[i][3]);
-          if (rowDt && scheduleDate && (scheduleDate.includes(rowDt) || rowDt.includes(scheduleDate))) {
-            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了') {
+          const rowDt = (schValues[i][dtCol] instanceof Date) ? formatDate(schValues[i][dtCol]) : String(schValues[i][dtCol] || '').trim();
+          if (rowDt && scheduleDate && isSameSchedule(rowDt, scheduleDate)) {
+            const rowSt = String(schValues[i][stCol] || '受付中').trim();
+            const rowEnd = parseDateValue(schValues[i][endCol]) || parseDateValue(schValues[i][noteCol]);
+            const rowCap = (capCol !== -1) ? (parseInt(schValues[i][capCol], 10) || 0) : 0;
+
+            if (rowCap > 0) {
+              const booked = getBookedCountForSchedule(rowDt, bookedCounts);
+              remainingSeatsForAddition = Math.max(0, rowCap - booked);
+              if (remainingSeatsForAddition <= 0) {
+                isScheduleAvailable = false;
+              }
+            }
+
+            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了' || rowSt === '販売停止') {
               isScheduleAvailable = false;
             }
             if (rowEnd && nowTime > rowEnd.getTime()) {
@@ -319,6 +346,7 @@ function doGet(e) {
         activeTotalPrice: `¥${(activeTickets.length * unitPrice).toLocaleString()}`,
         isFullyCancelled: activeTickets.length === 0,
         isScheduleAvailableForAddition: isScheduleAvailable,
+        remainingSeats: remainingSeatsForAddition,
         maxAllowedCount: 5,
         tickets: matchedTickets,
         source: source,
@@ -349,16 +377,19 @@ function doGet(e) {
         const headerRow = schValues[0].map(h => String(h || '').trim());
         let dtCol = 0;
         let stCol = 1;
+        let capCol = -1;
         let endCol = -1;
         let noteCol = -1;
 
-        // ヘッダー名から列位置を厳密に特定（「終了」を優先判定）
+        // ヘッダー名から列位置を厳密に特定
         headerRow.forEach((h, idx) => {
-          if (h.includes('終了') || h.includes('締切')) {
+          if (h.includes('定員') || h.includes('上限') || h.includes('席数') || h.includes('capacity') || h.includes('キャパ')) {
+            capCol = idx;
+          } else if (h.includes('終了') || h.includes('締切')) {
             endCol = idx;
           } else if (h.includes('公演') || (h.includes('日時') && !h.includes('終了'))) {
             dtCol = idx;
-          } else if (h.includes('ステータス') || h.includes('残席')) {
+          } else if (h.includes('ステータス') || h.includes('残席') || h.includes('状況')) {
             stCol = idx;
           } else if (h.includes('開場') || h.includes('備考') || h.includes('注')) {
             noteCol = idx;
@@ -366,8 +397,13 @@ function doGet(e) {
         });
 
         // 未設定時のデフォルト列インデックス
-        if (endCol === -1) endCol = 2;
-        if (noteCol === -1) noteCol = 3;
+        if (endCol === -1) endCol = (headerRow.length > 3) ? 3 : 2;
+        if (noteCol === -1) noteCol = (headerRow.length > 4) ? 4 : (headerRow.length > 3 ? 3 : 2);
+
+        // 予約一覧シートから有効予約数を集計
+        const bookedCounts = getBookedCounts(ss);
+        const fewPercent = Number(settings['残りわずか判定割合(%)'] || 20) / 100;
+        const fewCountMin = Number(settings['残りわずか判定枚数'] || 5);
 
         for (let i = 1; i < schValues.length; i++) {
           let rawDatetime = schValues[i][dtCol];
@@ -378,7 +414,10 @@ function doGet(e) {
             datetime = formatDateString(String(rawDatetime || '').trim());
           }
 
-          let status = String(schValues[i][stCol] || '受付中').trim();
+          let status = String(schValues[i][stCol] || '自動').trim();
+          if (status === '' || status === '自動') {
+            status = '受付中';
+          }
           
           let valEnd = schValues[i][endCol];
           let valNote = schValues[i][noteCol];
@@ -397,11 +436,34 @@ function doGet(e) {
             note = String(valNote || valEnd || '').trim();
           }
 
-          // noteに英語の日時文字列が入っていた場合は日本語化または除外
+          // noteに英語の日時文字列が入っていた場合は除外
           if (note.includes('GMT') || note.includes('日本標準時') || note.includes('Standard Time')) {
-            const parsedNoteDate = parseDateValue(note);
-            if (parsedNoteDate) {
-              note = ''; // 販売終了日時と重複している場合はクリア
+            note = '';
+          }
+
+          // 定員・上限枚数の取得と残席計算
+          let capacity = 0;
+          if (capCol !== -1) {
+            capacity = parseInt(schValues[i][capCol], 10) || 0;
+          }
+
+          let bookedCount = 0;
+          let remainingSeats = null;
+
+          if (capacity > 0) {
+            bookedCount = getBookedCountForSchedule(datetime, bookedCounts);
+            remainingSeats = Math.max(0, capacity - bookedCount);
+
+            // 残席ステータスの自動制御（手動で販売停止/完売が指定されていない場合）
+            if (status !== '販売停止' && status !== '販売中止' && status !== '完売') {
+              const fewThreshold = Math.max(fewCountMin, Math.round(capacity * fewPercent));
+              if (remainingSeats <= 0) {
+                status = '受付終了';
+              } else if (remainingSeats <= fewThreshold) {
+                status = '残りわずか';
+              } else {
+                status = '受付中';
+              }
             }
           }
 
@@ -410,13 +472,16 @@ function doGet(e) {
               status = '受付終了';
             }
 
-            if (status !== '完売' && status !== '受付終了' && status !== '販売終了') {
+            if (status !== '完売' && status !== '受付終了' && status !== '販売終了' && status !== '販売停止') {
               availableScheduleCount++;
             }
 
             schedules.push({
               datetime: datetime,
               status: status,
+              capacity: capacity > 0 ? capacity : null,
+              bookedCount: capacity > 0 ? bookedCount : null,
+              remainingSeats: capacity > 0 ? remainingSeats : null,
               salesEndDate: slotEndDate ? formatDate(slotEndDate) : (valEnd ? formatDateString(String(valEnd).trim()) : ''),
               note: note
             });
@@ -688,18 +753,40 @@ function doPost(e) {
         return sendJsonResponse({ status: 'error', message: `1回のご予約上限枚数（5枚）を超えるため追加できません（現在有効: ${activeCount}枚）。` }, e);
       }
 
-      // 公演回の販売可否チェック
+      // 公演回の販売可否および残席チェック
       const scheduleSheet = ss.getSheetByName('日程');
       if (scheduleSheet) {
         const schValues = scheduleSheet.getDataRange().getValues();
         const nowTime = now.getTime();
+        const headerRow = schValues[0].map(h => String(h || '').trim());
+        let dtCol = 0, stCol = 1, capCol = -1, endCol = -1, noteCol = -1;
+        headerRow.forEach((h, idx) => {
+          if (h.includes('定員') || h.includes('上限') || h.includes('席数') || h.includes('capacity') || h.includes('キャパ')) capCol = idx;
+          else if (h.includes('終了') || h.includes('締切')) endCol = idx;
+          else if (h.includes('公演') || (h.includes('日時') && !h.includes('終了'))) dtCol = idx;
+          else if (h.includes('ステータス') || h.includes('残席')) stCol = idx;
+          else if (h.includes('開場') || h.includes('備考')) noteCol = idx;
+        });
+
+        const bookedCounts = getBookedCounts(ss);
+
         for (let i = 1; i < schValues.length; i++) {
-          const rowDt = String(schValues[i][0] || '').trim();
-          const rowSt = String(schValues[i][1] || '').trim();
-          const rowEnd = parseDateValue(schValues[i][2]) || parseDateValue(schValues[i][3]);
-          if (rowDt && customerData.date && (customerData.date.includes(rowDt) || rowDt.includes(customerData.date))) {
-            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了' || (rowEnd && nowTime > rowEnd.getTime())) {
+          const rowDt = (schValues[i][dtCol] instanceof Date) ? formatDate(schValues[i][dtCol]) : String(schValues[i][dtCol] || '').trim();
+          if (rowDt && customerData.date && isSameSchedule(rowDt, customerData.date)) {
+            const rowSt = String(schValues[i][stCol] || '受付中').trim();
+            const rowEnd = parseDateValue(schValues[i][endCol]) || parseDateValue(schValues[i][noteCol]);
+            const rowCap = (capCol !== -1) ? (parseInt(schValues[i][capCol], 10) || 0) : 0;
+
+            if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了' || rowSt === '販売停止' || (rowEnd && nowTime > rowEnd.getTime())) {
               return sendJsonResponse({ status: 'error', message: '申し訳ございません。この公演回は受付終了（または満席）のため、チケットを追加できません。' }, e);
+            }
+
+            if (rowCap > 0) {
+              const booked = getBookedCountForSchedule(rowDt, bookedCounts);
+              const remaining = Math.max(0, rowCap - booked);
+              if (addCountRequested > remaining) {
+                return sendJsonResponse({ status: 'error', message: `申し訳ございません。残席数が不足しております（現在の残り座席数: ${remaining}席）。` }, e);
+              }
             }
             break;
           }
@@ -800,6 +887,46 @@ function doPost(e) {
     const totalPriceText = data.totalPrice || `¥${(count * unitPrice).toLocaleString()}`;
     const source = String(data.source || data.hearing || '').trim();
     const remarks = String(data.remarks || '').trim();
+
+    // 新規予約時の公演残席・定員チェック
+    const scheduleSheet = ss.getSheetByName('日程');
+    if (scheduleSheet) {
+      const schValues = scheduleSheet.getDataRange().getValues();
+      const nowTime = now.getTime();
+      const headerRow = schValues[0].map(h => String(h || '').trim());
+      let dtCol = 0, stCol = 1, capCol = -1, endCol = -1, noteCol = -1;
+      headerRow.forEach((h, idx) => {
+        if (h.includes('定員') || h.includes('上限') || h.includes('席数') || h.includes('capacity') || h.includes('キャパ')) capCol = idx;
+        else if (h.includes('終了') || h.includes('締切')) endCol = idx;
+        else if (h.includes('公演') || (h.includes('日時') && !h.includes('終了'))) dtCol = idx;
+        else if (h.includes('ステータス') || h.includes('残席')) stCol = idx;
+        else if (h.includes('開場') || h.includes('備考')) noteCol = idx;
+      });
+
+      const bookedCounts = getBookedCounts(ss);
+
+      for (let i = 1; i < schValues.length; i++) {
+        const rowDt = (schValues[i][dtCol] instanceof Date) ? formatDate(schValues[i][dtCol]) : String(schValues[i][dtCol] || '').trim();
+        if (rowDt && scheduleDate && isSameSchedule(rowDt, scheduleDate)) {
+          const rowSt = String(schValues[i][stCol] || '受付中').trim();
+          const rowEnd = parseDateValue(schValues[i][endCol]) || parseDateValue(schValues[i][noteCol]);
+          const rowCap = (capCol !== -1) ? (parseInt(schValues[i][capCol], 10) || 0) : 0;
+
+          if (rowSt === '完売' || rowSt === '受付終了' || rowSt === '販売終了' || rowSt === '販売停止' || (rowEnd && nowTime > rowEnd.getTime())) {
+            return sendJsonResponse({ status: 'error', message: '申し訳ございません。この公演回は受付終了（または満席）のためご予約いただけません。' }, e);
+          }
+
+          if (rowCap > 0) {
+            const booked = getBookedCountForSchedule(rowDt, bookedCounts);
+            const remaining = Math.max(0, rowCap - booked);
+            if (count > remaining) {
+              return sendJsonResponse({ status: 'error', message: `申し訳ございません。残席数が不足しております（現在の残り座席数: ${remaining}席）。枚数を変更して再度お試しください。` }, e);
+            }
+          }
+          break;
+        }
+      }
+    }
 
     // キャンセルURL
     let siteUrl = String(settings['チケットページURL'] || 'https://corgiii-w7.github.io/Haretoke--web/ticket.html').trim();
@@ -972,4 +1099,48 @@ function formatDateString(str) {
     }
   }
   return str;
+}
+
+// 日時のマッチング比較（表記揺れやDate型に対応）
+function isSameSchedule(dateStrA, dateStrB) {
+  if (!dateStrA || !dateStrB) return false;
+  const strA = String(dateStrA).replace(/開演/g, '').replace(/[\s・\(\)（）]/g, '').trim();
+  const strB = String(dateStrB).replace(/開演/g, '').replace(/[\s・\(\)（）]/g, '').trim();
+  if (strA === strB || strA.includes(strB) || strB.includes(strA)) {
+    return true;
+  }
+  const dateA = parseDateValue(dateStrA);
+  const dateB = parseDateValue(dateStrB);
+  if (dateA && dateB && dateA.getTime() === dateB.getTime()) {
+    return true;
+  }
+  return false;
+}
+
+// 予約一覧シートから公演ごとの有効予約枚数を集計
+function getBookedCounts(ss) {
+  const counts = {};
+  const resSheet = ss.getSheetByName('予約一覧');
+  if (!resSheet) return counts;
+  
+  const values = resSheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    const status = String(values[i][4] || '').trim();
+    const date = String(values[i][8] || '').trim();
+    if (status === '有効' && date) {
+      counts[date] = (counts[date] || 0) + 1;
+    }
+  }
+  return counts;
+}
+
+// 特定の公演日時の予約枚数を取得
+function getBookedCountForSchedule(datetime, bookedCounts) {
+  let total = 0;
+  for (const dateKey in bookedCounts) {
+    if (isSameSchedule(datetime, dateKey)) {
+      total += bookedCounts[dateKey];
+    }
+  }
+  return total;
 }
