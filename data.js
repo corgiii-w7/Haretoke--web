@@ -42,7 +42,7 @@ const siteData = {
     "date": "",
     "venue": "JOY JOY THEATER (JOY JOY STATION内)",
     "note": "",
-    "video": "パラレルドリーム・ランデブー_SNS_movie.mp4",
+    "video": "",
     "images": [
       "パラレルドリーム・ランデブー_logokv_0726.jpg",
       "パラレルドリーム・ランデブー_introduction.webp",

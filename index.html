@@ -2259,20 +2259,6 @@
 
                         if (isNow) {
                             nowFound = true;
-                            // 第6回公演などのフォールバック画像や動画の配慮
-                            let finalImages = images;
-                            let finalVideo = videoRaw;
-                            if (finalImages.length === 0 && noStr.includes("6")) {
-                                finalImages = [
-                                    "パラレルドリーム・ランデブー_logokv_0726.jpg",
-                                    "パラレルドリーム・ランデブー_introduction.webp",
-                                    "パラレルドリーム・ランデブー_cast.webp"
-                                ];
-                            }
-                            if (!finalVideo && noStr.includes("6")) {
-                                finalVideo = "パラレルドリーム・ランデブー_SNS_movie.mp4";
-                            }
-
                             siteData.stage = {
                                 title: "STAGE",
                                 subtitle: noStr + (title ? (noStr ? "「" + title + "」" : title) : ""),
@@ -2281,9 +2267,9 @@
                                 date: date,
                                 venue: venue,
                                 note: note,
-                                images: finalImages,
-                                video: finalVideo,
-                                ticketUrl: ticketRaw || (noStr.includes("6") ? "ticket.html" : ""),
+                                images: images,
+                                video: videoRaw,
+                                ticketUrl: ticketRaw,
                                 ticketComment: ""
                             };
                         } else {
