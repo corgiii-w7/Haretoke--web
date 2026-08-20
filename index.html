@@ -1497,7 +1497,7 @@
     <!-- データを読み込む -->
     <script src="data.js"></script>
     <script>
-        // Google Drive URL変換
+        // Google Drive URL変換 & Unicode正規化
         function convertDriveUrl(url) {
             if (!url) return "";
             url = url.trim();
@@ -1508,14 +1508,32 @@
                 const id = url.split("/d/")[1].split("/")[0];
                 return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200";
             }
+            // Mac特有のNFD（濁点分解形式）を標準的なNFCに正規化
+            if (typeof url.normalize === 'function') {
+                url = url.normalize('NFC');
+            }
             return url;
+        }
+
+        // 画像エラー時のNFC/NFD自動切替フォールバック
+        function attachImgFallback(img, rawSrc) {
+            if (!img || !rawSrc || rawSrc.startsWith('http')) return;
+            let tried = false;
+            img.onerror = () => {
+                if (!tried) {
+                    tried = true;
+                    const nfd = rawSrc.normalize ? rawSrc.normalize('NFD') : rawSrc;
+                    const nfc = rawSrc.normalize ? rawSrc.normalize('NFC') : rawSrc;
+                    img.src = (img.src === nfc || img.src.includes(encodeURIComponent(nfc))) ? nfd : nfc;
+                }
+            };
         }
 
         // 複数画像文字列のパース（カンマ、改行、読点区切り）
         function parseImageUrls(raw) {
             if (!raw) return [];
             if (Array.isArray(raw)) return raw.map(convertDriveUrl).filter(Boolean);
-            return raw.split(/[\n,、]+/)
+            return String(raw).split(/[\n,、]+/)
                 .map(s => s.trim())
                 .filter(s => s.length > 0)
                 .map(convertDriveUrl);
@@ -1527,6 +1545,7 @@
             const modalImg = document.getElementById('image-modal-img');
             if (!modal || !modalImg) return;
             modalImg.src = src;
+            attachImgFallback(modalImg, src);
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -1541,8 +1560,9 @@
         // 動画要素生成
         function createVideoElement(videoSrc) {
             if (!videoSrc) return null;
-            const v = videoSrc.trim();
+            let v = String(videoSrc).trim();
             if (!v) return null;
+            if (typeof v.normalize === 'function') v = v.normalize('NFC');
 
             const wrapper = document.createElement('div');
             wrapper.className = 'stage-video-wrapper';
@@ -1559,7 +1579,12 @@
             if (youtubeId) {
                 wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
             } else {
-                wrapper.innerHTML = `<video src="${v}" controls playsinline>お使いのブラウザは動画の再生に対応していません。</video>`;
+                const vid = document.createElement('video');
+                vid.src = v;
+                vid.controls = true;
+                vid.playsInline = true;
+                vid.innerText = "お使いのブラウザは動画の再生に対応していません。";
+                wrapper.appendChild(vid);
             }
             return wrapper;
         }
@@ -1573,6 +1598,7 @@
                 const img = document.createElement('img');
                 img.className = 'single-poster';
                 img.src = images[0];
+                attachImgFallback(img, images[0]);
                 img.alt = altTitle;
                 img.title = "クリックで拡大表示";
                 img.addEventListener('click', () => openImageModal(images[0]));
@@ -1596,6 +1622,7 @@
                 slide.className = `slideshow-slide ${idx === 0 ? 'active' : ''}`;
                 const img = document.createElement('img');
                 img.src = imgSrc;
+                attachImgFallback(img, imgSrc);
                 img.alt = `${altTitle} (${idx + 1}/${totalSlides})`;
                 img.title = "クリックで拡大表示";
                 img.addEventListener('click', (e) => {
@@ -2231,7 +2258,9 @@
                     } else {
                         // 画像
                         const img = document.createElement('img');
-                        img.src = convertDriveUrl(m);
+                        const imgSrc = convertDriveUrl(m);
+                        img.src = imgSrc;
+                        attachImgFallback(img, imgSrc);
                         img.alt = "TOPICS";
                         img.style.width = '100%';
                         img.style.maxWidth = '200px';
@@ -2240,7 +2269,7 @@
                         img.style.objectFit = 'cover';
                         img.style.cursor = 'pointer';
                         img.title = "クリックで拡大表示";
-                        img.addEventListener('click', () => openImageModal(convertDriveUrl(m)));
+                        img.addEventListener('click', () => openImageModal(imgSrc));
                         mediaWrap.appendChild(img);
                     }
                     container.appendChild(mediaWrap);
