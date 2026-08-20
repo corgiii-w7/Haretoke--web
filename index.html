@@ -2374,29 +2374,65 @@
                     }
                 }
 
-                // 2. TOPICS 情報の反映（TOPICSシートまたは公演情報シートの列から）
+                // 2. TOPICS 情報の反映（縦持ち Key-Value 形式 ＆ 横持ち形式 両対応）
                 if (topicData && topicData.table && topicData.table.rows && topicData.table.rows.length > 0) {
                     const tRows = topicData.table.rows;
-                    const tHeaders = topicData.table.cols;
-                    const getTColIdx = (keyword) => tHeaders.findIndex(c => c && c.label && c.label.includes(keyword));
+                    let mVal = "";
+                    let cVal = "";
+                    let lVal = "";
+                    let displayVal = "";
+                    let isVertical = false;
 
-                    const mediaIdx = getTColIdx("メディア") !== -1 ? getTColIdx("メディア") : (getTColIdx("ファイル名") !== -1 ? getTColIdx("ファイル名") : (getTColIdx("動画") !== -1 ? getTColIdx("動画") : getTColIdx("画像")));
-                    const commentIdx = getTColIdx("コメント") !== -1 ? getTColIdx("コメント") : (getTColIdx("テキスト") !== -1 ? getTColIdx("テキスト") : getTColIdx("内容"));
-                    const linkIdx = getTColIdx("リンク") !== -1 ? getTColIdx("リンク") : getTColIdx("URL");
-                    const activeIdx = getTColIdx("表示") !== -1 ? getTColIdx("表示") : (getTColIdx("有効") !== -1 ? getTColIdx("有効") : getTColIdx("Now"));
+                    // A. 縦持ち（Key-Value）形式のチェック
+                    tRows.forEach(row => {
+                        const cols = row.c;
+                        if (!cols || cols.length < 2) return;
+                        const key = cols[0] && cols[0].v ? String(cols[0].v).trim() : "";
+                        const val = cols[1] && cols[1].v ? String(cols[1].v).trim() : "";
 
-                    // 有効フラグがある行、なければ1行目
-                    let selectedRow = tRows[0];
-                    if (activeIdx !== -1) {
-                        const found = tRows.find(r => r.c && r.c[activeIdx] && (r.c[activeIdx].v == 1 || r.c[activeIdx].v == "1" || r.c[activeIdx].v == "有効"));
-                        if (found) selectedRow = found;
+                        if (key.includes("メディア") || key.includes("ファイル名") || key.includes("画像") || key.includes("動画") || key.includes("ビジュアル")) {
+                            mVal = val;
+                            isVertical = true;
+                        } else if (key.includes("コメント") || key.includes("テキスト") || key.includes("内容")) {
+                            cVal = val;
+                            isVertical = true;
+                        } else if (key.includes("リンク") || key.includes("URL")) {
+                            lVal = val;
+                            isVertical = true;
+                        } else if (key.includes("表示") || key.includes("有効")) {
+                            displayVal = val;
+                            isVertical = true;
+                        }
+                    });
+
+                    // B. 横持ち形式のフォールバック
+                    if (!isVertical) {
+                        const tHeaders = topicData.table.cols;
+                        const getTColIdx = (keyword) => tHeaders.findIndex(c => c && c.label && c.label.includes(keyword));
+
+                        const mediaIdx = getTColIdx("メディア") !== -1 ? getTColIdx("メディア") : (getTColIdx("ファイル名") !== -1 ? getTColIdx("ファイル名") : (getTColIdx("動画") !== -1 ? getTColIdx("動画") : getTColIdx("画像")));
+                        const commentIdx = getTColIdx("コメント") !== -1 ? getTColIdx("コメント") : (getTColIdx("テキスト") !== -1 ? getTColIdx("テキスト") : getTColIdx("内容"));
+                        const linkIdx = getTColIdx("リンク") !== -1 ? getTColIdx("リンク") : getTColIdx("URL");
+                        const activeIdx = getTColIdx("表示") !== -1 ? getTColIdx("表示") : (getTColIdx("有効") !== -1 ? getTColIdx("有効") : getTColIdx("Now"));
+
+                        let selectedRow = tRows[0];
+                        if (activeIdx !== -1) {
+                            const found = tRows.find(r => r.c && r.c[activeIdx] && (r.c[activeIdx].v == 1 || r.c[activeIdx].v == "1" || r.c[activeIdx].v == "有効"));
+                            if (found) selectedRow = found;
+                        }
+
+                        if (selectedRow && selectedRow.c) {
+                            mVal = (mediaIdx !== -1 && selectedRow.c[mediaIdx] && selectedRow.c[mediaIdx].v) ? String(selectedRow.c[mediaIdx].v).trim() : "";
+                            cVal = (commentIdx !== -1 && selectedRow.c[commentIdx] && selectedRow.c[commentIdx].v) ? String(selectedRow.c[commentIdx].v).trim() : "";
+                            lVal = (linkIdx !== -1 && selectedRow.c[linkIdx] && selectedRow.c[linkIdx].v) ? String(selectedRow.c[linkIdx].v).trim() : "";
+                            displayVal = (activeIdx !== -1 && selectedRow.c[activeIdx] && selectedRow.c[activeIdx].v) ? String(selectedRow.c[activeIdx].v).trim() : "";
+                        }
                     }
 
-                    if (selectedRow && selectedRow.c) {
-                        const mVal = (mediaIdx !== -1 && selectedRow.c[mediaIdx] && selectedRow.c[mediaIdx].v) ? String(selectedRow.c[mediaIdx].v).trim() : "";
-                        const cVal = (commentIdx !== -1 && selectedRow.c[commentIdx] && selectedRow.c[commentIdx].v) ? String(selectedRow.c[commentIdx].v).trim() : "";
-                        const lVal = (linkIdx !== -1 && selectedRow.c[linkIdx] && selectedRow.c[linkIdx].v) ? String(selectedRow.c[linkIdx].v).trim() : "";
-
+                    // 表示フラグが明示的に「0」「無効」「非表示」の場合は非表示
+                    if (displayVal === "0" || displayVal === "無効" || displayVal === "非表示") {
+                        siteData.topics = null;
+                    } else {
                         siteData.topics = {
                             media: mVal,
                             comment: cVal,
