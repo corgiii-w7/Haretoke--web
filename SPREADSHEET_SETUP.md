@@ -166,10 +166,12 @@ const GAS_ENDPOINT_URL = 'ここにコピーしたウェブアプリURLを貼り
 
 ## 🎭 トップページ「公演情報（STAGE & MEMORY）」スプレッドシート管理マニュアル
 
-公式サイト（`index.html`）の「STAGE（次回公演）」および「MEMORY（過去公演）」は、以下のスプレッドシートで直接制御できます。
+公式サイト（`index.html`）の「STAGE（次回公演）」、「MEMORY（過去公演）」、「TOPICS」は、以下の「HP記載内容管理」スプレッドシートで直接制御できます。
 
-- **公演情報スプレッドシートURL**:  
-  `https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/edit?gid=0#gid=0`
+- **HP記載内容管理スプレッドシートURL**:  
+  `https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/edit`
+  - シート1: **`MEMORY・STAGE`** （公演情報）
+  - シート2: **`TOPICS`** （メニューバーの動画/画像と告知テキスト）
 
 ### 📋 列の定義と記入方法
 

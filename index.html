@@ -2280,8 +2280,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const perfSheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
-            const topicSheetUrl = "https://docs.google.com/spreadsheets/d/1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw/gviz/tq?tqx=out:json&sheet=TOPICS";
+            const spreadsheetId = "1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw";
+            const perfSheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent("MEMORY・STAGE")}&headers=1`;
+            const fallbackPerfUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=&gid=0&headers=1`;
+            const topicSheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent("TOPICS")}&headers=0`;
             const memberSheetUrl = "https://docs.google.com/spreadsheets/d/1OiRvK_Um0RVv09KXLU-jj1EVIrUNTmPO1pgUv-cETsE/gviz/tq?tqx=out:json&tq=&gid=0&headers=1";
 
             const fetchJSON = (url) => fetch(url)
@@ -2292,7 +2294,7 @@
                 });
 
             Promise.all([
-                fetchJSON(perfSheetUrl).catch(err => { console.error("Perf fetch error:", err); return null; }),
+                fetchJSON(perfSheetUrl).catch(() => fetchJSON(fallbackPerfUrl)).catch(err => { console.error("Perf fetch error:", err); return null; }),
                 fetchJSON(topicSheetUrl).catch(err => { console.log("Topic sheet fetch (optional):", err); return null; }),
                 fetchJSON(memberSheetUrl).catch(err => { console.error("Member fetch error:", err); return null; })
             ]).then(([perfData, topicData, memberData]) => {
