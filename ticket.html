@@ -528,6 +528,77 @@
             text-decoration: none;
         }
 
+        /* あらすじ・Introduction アコーディオン */
+        .synopsis-accordion {
+            background: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .synopsis-accordion:hover {
+            border-color: #cbd5e1;
+        }
+
+        .synopsis-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 18px;
+            background: #f8fafc;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.93rem;
+            font-weight: 700;
+            color: #1e293b;
+            transition: background 0.2s ease;
+        }
+
+        .synopsis-header:hover {
+            background: #f1f5f9;
+        }
+
+        .synopsis-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .synopsis-icon {
+            font-size: 1.1rem;
+        }
+
+        .synopsis-chevron {
+            font-size: 0.8rem;
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+
+        .synopsis-accordion.open .synopsis-chevron {
+            transform: rotate(180deg);
+        }
+
+        .synopsis-body {
+            display: none;
+            padding: 1.25rem 1.5rem;
+            font-size: 0.92rem;
+            line-height: 1.9;
+            color: #334155;
+            border-top: 1px solid var(--border-color);
+            background: #ffffff;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .synopsis-accordion.open .synopsis-body {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
         .date-pill-note {
             font-size: 0.8rem;
             color: #6b7280;
@@ -1203,6 +1274,20 @@
                 </div>
             </div>
 
+            <!-- 公演紹介・あらすじ アコーディオン -->
+            <div class="synopsis-accordion" id="activeSynopsisAccordion" style="display: none;">
+                <button type="button" class="synopsis-header" id="btnToggleSynopsis" aria-expanded="false">
+                    <div class="synopsis-title-wrap">
+                        <span class="synopsis-icon">📖</span>
+                        <span>公演紹介・あらすじを見る</span>
+                    </div>
+                    <span class="synopsis-chevron">▼</span>
+                </button>
+                <div class="synopsis-body" id="activeSynopsisContent">
+                    <!-- JSで動的挿入 -->
+                </div>
+            </div>
+
             <form id="reservationForm" novalidate>
 
                 <!-- STEP 1: 公演日時選択 -->
@@ -1785,7 +1870,16 @@
                 scheduledVenueEl.textContent = venueName;
             }
 
-            document.getElementById('scheduledDescription').textContent = appData.description || '公演の詳細は決まり次第お知らせいたします。';
+            const schedDesc = document.getElementById('scheduledDescription');
+            if (appData.description) {
+                if (appData.description.includes('<br') || appData.description.includes('<p')) {
+                    schedDesc.innerHTML = appData.description;
+                } else {
+                    schedDesc.textContent = appData.description;
+                }
+            } else {
+                schedDesc.textContent = '公演の詳細は決まり次第お知らせいたします。';
+            }
 
             // 日程リスト
             const datesList = document.getElementById('scheduledDatesList');
@@ -1843,6 +1937,19 @@
             }
             if (appData.notes) {
                 document.getElementById('activeNotesContent').textContent = appData.notes;
+            }
+
+            // 公演説明・あらすじの描画（アコーディオン）
+            const synopsisAccordion = document.getElementById('activeSynopsisAccordion');
+            const synopsisContent = document.getElementById('activeSynopsisContent');
+            if (appData.description) {
+                const descHtml = (appData.description.includes('<br') || appData.description.includes('<p'))
+                    ? appData.description
+                    : escapeHtml(appData.description).replace(/\n/g, '<br>');
+                synopsisContent.innerHTML = descHtml;
+                synopsisAccordion.style.display = 'block';
+            } else {
+                synopsisAccordion.style.display = 'none';
             }
 
             // 日程ピル生成
@@ -1950,6 +2057,16 @@
             ticketCount = 1;
             updateCountDisplay();
             updateSummary();
+        }
+
+        // あらすじアコーディオン開閉
+        const btnToggleSynopsis = document.getElementById('btnToggleSynopsis');
+        const activeSynopsisAccordion = document.getElementById('activeSynopsisAccordion');
+        if (btnToggleSynopsis && activeSynopsisAccordion) {
+            btnToggleSynopsis.addEventListener('click', () => {
+                const isOpen = activeSynopsisAccordion.classList.toggle('open');
+                btnToggleSynopsis.setAttribute('aria-expanded', isOpen);
+            });
         }
 
         function getMaxAllowedCount() {
