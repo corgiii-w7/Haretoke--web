@@ -1546,7 +1546,7 @@
             </section>
 
             <footer>
-                <p>&copy; 2026 劇団ハレトケ. All Rights Reserved.</p>
+                <p>劇団ハレトケ (Gekidan Haretoke)</p>
             </footer>
         </main>
     </div>
@@ -1663,6 +1663,8 @@
                 const img = document.createElement('img');
                 img.className = 'single-poster';
                 img.src = validImages[0];
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 attachImgFallback(img, validImages[0]);
                 img.alt = altTitle;
                 img.title = "クリックで拡大表示";
@@ -1687,6 +1689,8 @@
                 slide.className = `slideshow-slide ${idx === 0 ? 'active' : ''}`;
                 const img = document.createElement('img');
                 img.src = imgSrc;
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 attachImgFallback(img, imgSrc);
                 img.alt = `${altTitle} (${idx + 1}/${totalSlides})`;
                 img.title = "クリックで拡大表示";
@@ -1817,6 +1821,8 @@
             if (siteData.about.logoImage) {
                 const img = document.createElement('img');
                 img.src = siteData.about.logoImage;
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 img.className = 'about-logo';
                 img.alt = '劇団ハレトケ ロゴ';
                 aboutContent.appendChild(img);
@@ -1902,6 +1908,8 @@
                     const bubbleImg = document.createElement('img');
                     bubbleImg.className = "bubble-img";
                     bubbleImg.src = member.image || "icon_user.png";
+                    bubbleImg.loading = 'lazy';
+                    bubbleImg.decoding = 'async';
                     bubbleImg.style.objectPosition = member.photoType === "縦" ? "top center" : "center";
 
                     const bName = document.createElement('div');
@@ -2318,15 +2326,17 @@
                         else if (m.includes("youtube.com/embed/")) ytId = m.split("embed/")[1].split("?")[0];
 
                         if (ytId) {
-                            mediaWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" style="width: 100%; max-width: 200px; aspect-ratio: 16/9; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: none;" allowfullscreen></iframe>`;
+                            mediaWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" style="width: 100%; max-width: 200px; aspect-ratio: 16/9; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: none;" allowfullscreen loading="lazy"></iframe>`;
                         } else {
-                            mediaWrap.innerHTML = `<video src="${m}" autoplay muted loop playsinline controls style="width: 100%; max-width: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></video>`;
+                            mediaWrap.innerHTML = `<video src="${m}" preload="metadata" autoplay muted loop playsinline controls style="width: 100%; max-width: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></video>`;
                         }
                     } else {
                         // 画像
                         const img = document.createElement('img');
                         const imgSrc = convertDriveUrl(m);
                         img.src = imgSrc;
+                        img.loading = 'lazy';
+                        img.decoding = 'async';
                         attachImgFallback(img, imgSrc);
                         img.alt = "TOPICS";
                         img.style.width = '100%';
@@ -2376,6 +2386,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // ローカルの data.js で即座に初期画面を描画（待機時間0秒）
+            renderApp();
+
             const spreadsheetId = "1aCXgFcApogS8QkW3CYGy-aAD2j9VsjcsDgyI_sEZVAw";
             const perfSheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent("MEMORY・STAGE")}&headers=1`;
             const fallbackPerfUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=&gid=0&headers=1`;

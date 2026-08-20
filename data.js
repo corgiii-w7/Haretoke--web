@@ -3,8 +3,8 @@ const siteData = {
     "catchphrase": "〜いま、ここ、こそ、パラダイス〜"
   },
   "topics": {
-    "media": "パラレルドリーム・ランデブー_SNS_movie.mp4",
-    "comment": "「第六回公演」今秋決定！",
+    "media": "",
+    "comment": "",
     "link": "#performance"
   },
   "about": {
@@ -27,11 +27,11 @@ const siteData = {
     "title": "「劇団ハレトケ」",
     "countText": "団員 28名 (2026/08現在)",
     "membersList": [
-      { "name": "ごっちゃん" },
-      { "name": "みなや" },
-      { "name": "がく" },
-      { "name": "監物" },
-      { "name": "いきちゃん" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
+      { "name": "〇〇〇〇〇" },
       { "name": "〇〇〇〇〇" },
       { "name": "〇〇〇〇〇" },
       { "name": "〇〇〇〇〇" },
@@ -44,8 +44,8 @@ const siteData = {
   "stage": {
     "title": "STAGE",
     "subtitle": "第6回公演「パラレルドリーム・ランデブー」",
-    "description": "次回公演に向けて鋭意稽古中です！\nティザー動画もぜひご覧ください。",
-    "staff": "脚本・演出: 秋梨夜風",
+    "description": "",
+    "staff": "",
     "date": "",
     "venue": "JOY JOY THEATER (JOY JOY STATION内)",
     "note": "",
