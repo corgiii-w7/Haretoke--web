@@ -892,23 +892,50 @@
         #hamburger-btn {
             display: none; /* 初期は非表示、スマホで表示 */
             position: fixed;
-            top: 25px;
-            right: 25px;
-            width: 30px;
-            height: 20px;
-            z-index: 10000;
+            top: 18px;
+            right: 18px;
+            width: 46px;
+            height: 46px;
+            z-index: 10002;
             cursor: pointer;
             flex-direction: column;
-            justify-content: space-between;
-            mix-blend-mode: difference; /* 背景色に応じて白黒自動反転！ */
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: rgba(17, 17, 17, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            padding: 0;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+            transition: background 0.3s, transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #hamburger-btn:active {
+            transform: scale(0.92);
         }
 
         #hamburger-btn span {
             display: block;
-            width: 100%;
+            width: 20px;
             height: 2px;
-            background-color: #fff;
-            transition: 0.3s;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+            transform-origin: center;
+        }
+
+        /* メニューオープン時のハンバーガーボタンのアニメーション（×に変形） */
+        #hamburger-btn.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+        #hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        #hamburger-btn.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
         }
 
         #fullscreen-menu {
@@ -917,40 +944,48 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 9999;
-            background: rgba(17, 17, 17, 0.95);
+            height: 100dvh;
+            z-index: 10001;
+            background: rgba(17, 17, 17, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.35s ease, visibility 0.35s;
+            visibility: hidden;
             display: flex;
             flex-direction: column;
             padding: 0 0 60px 0;
             box-sizing: border-box;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         #fullscreen-menu.open {
             opacity: 1;
             pointer-events: auto;
+            visibility: visible;
         }
 
         #menu-close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+            top: 18px;
+            right: 18px;
+            width: 46px;
+            height: 46px;
             cursor: pointer;
-            z-index: 10000;
+            z-index: 10002;
+            display: none; /* hamburger-btn が×に変形するため基本的に不要だが互換性のために残す */
         }
         #menu-close-btn::before, #menu-close-btn::after {
             content: "";
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 35px;
-            height: 1px;
+            width: 24px;
+            height: 2px;
             background-color: #fff;
+            border-radius: 2px;
         }
         #menu-close-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
         #menu-close-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
@@ -2212,85 +2247,6 @@
             recLink.style.marginTop = "1rem";
             recLink.innerHTML = `<a href="${siteData.links.linkUrl}" target="_blank" style="color: #111; text-decoration: underline;">${siteData.links.linkText}</a>`;
             recText.appendChild(recLink);
-
-            // ▼ スクロールによるロゴズームの処理 ▼
-            const scrollContainer = document.getElementById('hero-scroll-container');
-            const logoWrapper = document.querySelector('.logo-wrapper');
-            const catchphrase = document.getElementById('header-catchphrase');
-            const scrollDown = document.querySelector('.scroll-down');
-
-            if (scrollContainer && logoWrapper) {
-                window.addEventListener('scroll', () => {
-                    const rect = scrollContainer.getBoundingClientRect();
-                    const scrollRange = rect.height - window.innerHeight;
-                    let progress = -rect.top / scrollRange;
-                    progress = Math.max(0, Math.min(1, progress));
-
-                    const baseWidth = Math.min(window.innerWidth, 400);
-                    const targetScale = window.innerWidth / baseWidth;
-                    let scale = 1 + (targetScale - 1) * progress;
-
-                    logoWrapper.style.transform = `scale(${scale})`;
-                    
-                    const whiteCircle = document.querySelector('.bg-white-circle');
-                    if (whiteCircle) {
-                        const baseR = 399;
-                        const targetR = 2000;
-                        whiteCircle.setAttribute('r', baseR + (targetR - baseR) * Math.pow(progress, 2));
-                    }
-
-                    const blackMask = document.querySelector('.bg-black-mask');
-                    if (blackMask) {
-                        if (window.innerWidth > 768) {
-                            blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10));
-                        } else {
-                            blackMask.style.opacity = 0;
-                        }
-                    }
-
-                    if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
-                    if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
-                });
-            }
-            
-            // ▼ ハンバーガーメニューのJS処理 ▼
-            const hamburgerBtn = document.getElementById('hamburger-btn');
-            const fullscreenMenu = document.getElementById('fullscreen-menu');
-            const menuCloseBtn = document.getElementById('menu-close-btn');
-            const menuLinks = fullscreenMenu.querySelectorAll('a');
-
-            function toggleMenu() {
-                if (fullscreenMenu.classList.contains('open')) {
-                    fullscreenMenu.classList.remove('open');
-                    document.body.style.overflow = '';
-                } else {
-                    fullscreenMenu.classList.add('open');
-                    document.body.style.overflow = 'hidden';
-                }
-            }
-
-            if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
-            if (menuCloseBtn) menuCloseBtn.addEventListener('click', toggleMenu);
-            
-            menuLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    fullscreenMenu.classList.remove('open');
-                    document.body.style.overflow = '';
-                });
-            });
-
-            // モーダルクローズ処理
-            const modal = document.getElementById('image-modal');
-            const modalClose = document.getElementById('image-modal-close');
-            if (modalClose) modalClose.addEventListener('click', closeImageModal);
-            if (modal) {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) closeImageModal();
-                });
-            }
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeImageModal();
-            });
         }
 
         // ▼ TOPICS描画関数 ▼
@@ -2385,7 +2341,117 @@
             renderTo(menuContainer);
         }
 
+        // ▼ グローバルイベント初期化（1回のみ実行） ▼
+        function initGlobalEvents() {
+            // スクロールによるロゴズームの処理
+            const scrollContainer = document.getElementById('hero-scroll-container');
+            const logoWrapper = document.querySelector('.logo-wrapper');
+            const catchphrase = document.getElementById('header-catchphrase');
+            const scrollDown = document.querySelector('.scroll-down');
+
+            if (scrollContainer && logoWrapper) {
+                window.addEventListener('scroll', () => {
+                    const rect = scrollContainer.getBoundingClientRect();
+                    const scrollRange = rect.height - window.innerHeight;
+                    let progress = -rect.top / scrollRange;
+                    progress = Math.max(0, Math.min(1, progress));
+
+                    const baseWidth = Math.min(window.innerWidth, 400);
+                    const targetScale = window.innerWidth / baseWidth;
+                    let scale = 1 + (targetScale - 1) * progress;
+
+                    logoWrapper.style.transform = `scale(${scale})`;
+                    
+                    const whiteCircle = document.querySelector('.bg-white-circle');
+                    if (whiteCircle) {
+                        const baseR = 399;
+                        const targetR = 2000;
+                        whiteCircle.setAttribute('r', baseR + (targetR - baseR) * Math.pow(progress, 2));
+                    }
+
+                    const blackMask = document.querySelector('.bg-black-mask');
+                    if (blackMask) {
+                        if (window.innerWidth > 768) {
+                            blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10));
+                        } else {
+                            blackMask.style.opacity = 0;
+                        }
+                    }
+
+                    if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
+                    if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
+                });
+            }
+
+            // ハンバーガーメニュー開閉処理
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const fullscreenMenu = document.getElementById('fullscreen-menu');
+            const menuCloseBtn = document.getElementById('menu-close-btn');
+
+            function openMenu() {
+                if (!fullscreenMenu) return;
+                fullscreenMenu.classList.add('open');
+                if (hamburgerBtn) hamburgerBtn.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                if (!fullscreenMenu) return;
+                fullscreenMenu.classList.remove('open');
+                if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            function toggleMenu(e) {
+                if (e) e.stopPropagation();
+                if (fullscreenMenu && fullscreenMenu.classList.contains('open')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            }
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', toggleMenu);
+            }
+            if (menuCloseBtn) {
+                menuCloseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeMenu();
+                });
+            }
+
+            // メニュー内のリンクをクリックした時に自動でメニューを閉じる（イベント委譲）
+            if (fullscreenMenu) {
+                fullscreenMenu.addEventListener('click', (e) => {
+                    const targetLink = e.target.closest('a');
+                    if (targetLink) {
+                        closeMenu();
+                    }
+                });
+            }
+
+            // モーダルクローズ処理
+            const modal = document.getElementById('image-modal');
+            const modalClose = document.getElementById('image-modal-close');
+            if (modalClose) modalClose.addEventListener('click', closeImageModal);
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeImageModal();
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                    closeMenu();
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            // グローバルイベントの初期化（1回のみ実行）
+            initGlobalEvents();
+
             // ローカルの data.js で即座に初期画面を描画（待機時間0秒）
             renderApp();
 
