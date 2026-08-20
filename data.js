@@ -36,14 +36,20 @@ const siteData = {
   },
   "stage": {
     "title": "STAGE",
-    "subtitle": "秋公演企画中！",
+    "subtitle": "第6回公演「パラレルドリーム・ランデブー」",
     "description": "次回公演に向けて鋭意稽古中です！\nティザー動画もぜひご覧ください。",
-    "details": [
-      "脚本・演出: 秋梨夜風",
-      "日程: 2026年10月24日(土) ※予備日: 25日(日)",
-      "会場: 〇〇劇場",
-      "チケット: <a href='ticket.html' style='display: inline-flex; align-items: center; gap: 6px; background: #111; color: #fff; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85rem; margin-top: 4px;'>🎟️ チケット予約・詳細はこちら</a>"
-    ]
+    "staff": "脚本・演出: 秋梨夜風",
+    "date": "",
+    "venue": "JOY JOY THEATER (JOY JOY STATION内)",
+    "note": "",
+    "video": "パラレルドリーム・ランデブー_SNS_movie.mp4",
+    "images": [
+      "パラレルドリーム・ランデブー_logokv_0726.jpg",
+      "パラレルドリーム・ランデブー_introduction.webp",
+      "パラレルドリーム・ランデブー_cast.webp"
+    ],
+    "ticketUrl": "ticket.html",
+    "ticketComment": ""
   },
   "memory": {
     "title": "MEMORY",

@@ -456,25 +456,25 @@
             display: block;
         }
 
-        /* ⬇︎⬇︎ 画像のサイズを統一する設定 ⬇︎⬇︎ */
+        /* ⬇︎⬇︎ 画像・メディア設定 ⬇︎⬇︎ */
+        .media-box {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+        }
+
         .media-box img {
             width: 100%;
             max-width: 320px;
-            /* ポスターが大きくなりすぎないよう最大幅を制限 */
             aspect-ratio: 1 / 1.414;
-            /* ポスターの黄金比（A4やB5サイズ）に強制統一 */
             object-fit: cover;
-            /* 画像が歪まないように、はみ出た部分は綺麗にカット */
             border-radius: 4px;
-            /* 角をほんの少し丸くする */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            /* ポスターに薄い影をつけて立体感を出す */
             margin: 0 auto;
-            /* 中央に配置 */
             display: block;
         }
 
-        /* 動画用の設定は分けて残しておきます */
         .media-box iframe,
         .media-box video {
             max-width: 100%;
@@ -482,6 +482,269 @@
             border-radius: 4px;
         }
 
+        /* ⬇︎⬇︎ スライドショー（カルーセル）設定 ⬇︎⬇︎ */
+        .slideshow-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: #1a1a1a;
+            user-select: none;
+        }
+
+        .slideshow-slides {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1.414;
+            overflow: hidden;
+        }
+
+        .slideshow-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: scale(1.02);
+            cursor: zoom-in;
+        }
+
+        .slideshow-slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .slideshow-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        /* 前後ナビゲーションボタン */
+        .slideshow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+            transition: background 0.2s, transform 0.2s, opacity 0.2s;
+            z-index: 5;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .slideshow-btn:hover {
+            background: rgba(0, 0, 0, 0.85);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slideshow-btn.prev {
+            left: 8px;
+        }
+
+        .slideshow-btn.next {
+            right: 8px;
+        }
+
+        /* インジケータードット */
+        .slideshow-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+        }
+
+        .slideshow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background 0.25s, width 0.25s, border-radius 0.25s;
+        }
+
+        .slideshow-dot.active {
+            background: #fff;
+            width: 16px;
+            border-radius: 4px;
+        }
+
+        /* 枚数カウンターバッジ */
+        .slideshow-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            z-index: 5;
+            letter-spacing: 1px;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 単一画像ポスター */
+        .single-poster {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1 / 1.414;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            display: block;
+            cursor: zoom-in;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .single-poster:hover {
+            transform: scale(1.015);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        /* 動画ラッパー */
+        .stage-video-wrapper {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        .stage-video-wrapper video,
+        .stage-video-wrapper iframe {
+            max-width: 100%;
+            width: 800px;
+            aspect-ratio: 16 / 9;
+            border-radius: 6px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+            border: none;
+            background: #000;
+        }
+
+        /* チケットボタン */
+        .ticket-btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #111;
+            color: #fff !important;
+            padding: 7px 16px;
+            border-radius: 5px;
+            text-decoration: none !important;
+            font-weight: bold;
+            font-size: 0.88rem;
+            margin-top: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .ticket-btn-link:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* チケットコメント（テキスト） */
+        .ticket-comment-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #333;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            border-left: 3px solid #111;
+            font-weight: 500;
+        }
+
+        /* Lightbox 拡大モーダル */
+        .image-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .image-modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-modal-overlay img {
+            max-width: 92vw;
+            max-height: 92vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            cursor: default;
+            transform: scale(0.96);
+            transition: transform 0.25s ease;
+        }
+
+        .image-modal-overlay.open img {
+            transform: scale(1);
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            color: #fff;
+            font-size: 2.2rem;
+            font-weight: 200;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 100000;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0.8;
+            user-select: none;
+        }
+
+        .image-modal-close:hover {
+            transform: scale(1.15);
+            opacity: 1;
+        }
         /* ⬆︎⬆︎ ここまで ⬆︎⬆︎ */
 
         /* ⬇︎⬇︎ aboutの背景画像設定 ⬇︎⬇︎ */
@@ -1194,30 +1457,11 @@
                 </div>
             </section>
 
-            <!-- ▼ STAGEセクション（動画 ＋ 横並びレイアウトに変更） ▼ -->
+            <!-- ▼ STAGEセクション（スプレッドシート連動・動的レイアウト） ▼ -->
             <section id="performance">
-                <h2 id="stage-title"></h2>
-                <h3 id="stage-subtitle" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;"></h3>
-
-                <!-- 中央に動画を配置（MP4ファイルなどを直接使う場合） -->
-                <div style="text-align: center; margin-bottom: 3rem;">
-                    <!-- アップロードした動画の名前↓ -->
-                    <video src="パラレルドリーム・ランデブー_SNS_movie.mp4" controls
-                        style="max-width: 100%; width: 800px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                        お使いのブラウザは動画の再生に対応していません。
-                    </video>
-                </div>
-
-                <!-- 動画の下に説明とポスターを横並びで配置 -->
-                <div class="flex-container">
-                    <div class="text-box">
-                        <p id="stage-desc"></p>
-                        <ul id="stage-details">
-                        </ul>
-                    </div>
-                    <div class="media-box">
-                        <img id="stage-poster" src="" alt="秋公演ポスター">
-                    </div>
+                <h2 id="stage-title">STAGE</h2>
+                <div id="stage-content">
+                    <!-- JSで動的生成 -->
                 </div>
             </section>
 
@@ -1257,23 +1501,214 @@
         </main>
     </div>
 
+    <!-- 画像拡大プレビューモーダル -->
+    <div id="image-modal" class="image-modal-overlay">
+        <span class="image-modal-close" id="image-modal-close">&times;</span>
+        <img id="image-modal-img" src="" alt="拡大画像">
+    </div>
+
     <!-- データを読み込む -->
     <script src="data.js"></script>
     <script>
+        // Google Drive URL変換
+        function convertDriveUrl(url) {
+            if (!url) return "";
+            url = url.trim();
+            if (url.includes("drive.google.com/open?id=")) {
+                const id = url.split("id=")[1].split("&")[0];
+                return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200";
+            } else if (url.includes("drive.google.com/file/d/")) {
+                const id = url.split("/d/")[1].split("/")[0];
+                return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200";
+            }
+            return url;
+        }
+
+        // 複数画像文字列のパース（カンマ、改行、読点区切り）
+        function parseImageUrls(raw) {
+            if (!raw) return [];
+            if (Array.isArray(raw)) return raw.map(convertDriveUrl).filter(Boolean);
+            return raw.split(/[\n,、]+/)
+                .map(s => s.trim())
+                .filter(s => s.length > 0)
+                .map(convertDriveUrl);
+        }
+
+        // Lightbox モーダル
+        function openImageModal(src) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('image-modal-img');
+            if (!modal || !modalImg) return;
+            modalImg.src = src;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            if (!modal) return;
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // 動画要素生成
+        function createVideoElement(videoSrc) {
+            if (!videoSrc) return null;
+            const v = videoSrc.trim();
+            if (!v) return null;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'stage-video-wrapper';
+
+            let youtubeId = null;
+            if (v.includes("youtube.com/watch?v=")) {
+                youtubeId = v.split("v=")[1].split("&")[0];
+            } else if (v.includes("youtu.be/")) {
+                youtubeId = v.split("youtu.be/")[1].split("?")[0];
+            } else if (v.includes("youtube.com/embed/")) {
+                youtubeId = v.split("embed/")[1].split("?")[0];
+            }
+
+            if (youtubeId) {
+                wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            } else {
+                wrapper.innerHTML = `<video src="${v}" controls playsinline>お使いのブラウザは動画の再生に対応していません。</video>`;
+            }
+            return wrapper;
+        }
+
+        // スライドショー要素生成
+        function createSlideshowElement(images, altTitle = "公演画像") {
+            if (!images || images.length === 0) return null;
+
+            // 1枚のみの場合は単一ポスター
+            if (images.length === 1) {
+                const img = document.createElement('img');
+                img.className = 'single-poster';
+                img.src = images[0];
+                img.alt = altTitle;
+                img.title = "クリックで拡大表示";
+                img.addEventListener('click', () => openImageModal(images[0]));
+                return img;
+            }
+
+            // 2枚以上の場合はスライドショー
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slideshow-wrapper';
+
+            const slidesContainer = document.createElement('div');
+            slidesContainer.className = 'slideshow-slides';
+
+            let currentIndex = 0;
+            const totalSlides = images.length;
+            const slideElements = [];
+            const dotElements = [];
+
+            images.forEach((imgSrc, idx) => {
+                const slide = document.createElement('div');
+                slide.className = `slideshow-slide ${idx === 0 ? 'active' : ''}`;
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = `${altTitle} (${idx + 1}/${totalSlides})`;
+                img.title = "クリックで拡大表示";
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openImageModal(imgSrc);
+                });
+                slide.appendChild(img);
+                slidesContainer.appendChild(slide);
+                slideElements.push(slide);
+            });
+
+            wrapper.appendChild(slidesContainer);
+
+            // 前後ボタン
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'slideshow-btn prev';
+            prevBtn.innerHTML = '&#9664;';
+            prevBtn.setAttribute('aria-label', '前へ');
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'slideshow-btn next';
+            nextBtn.innerHTML = '&#9654;';
+            nextBtn.setAttribute('aria-label', '次へ');
+
+            // 枚数バッジ
+            const badge = document.createElement('div');
+            badge.className = 'slideshow-badge';
+            badge.innerText = `1 / ${totalSlides}`;
+
+            // ドット
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'slideshow-dots';
+            images.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `slideshow-dot ${idx === 0 ? 'active' : ''}`;
+                dot.setAttribute('aria-label', `${idx + 1}枚目へ`);
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    goToSlide(idx);
+                });
+                dotsContainer.appendChild(dot);
+                dotElements.push(dot);
+            });
+
+            wrapper.appendChild(prevBtn);
+            wrapper.appendChild(nextBtn);
+            wrapper.appendChild(badge);
+            wrapper.appendChild(dotsContainer);
+
+            function goToSlide(newIdx) {
+                slideElements[currentIndex].classList.remove('active');
+                dotElements[currentIndex].classList.remove('active');
+                currentIndex = (newIdx + totalSlides) % totalSlides;
+                slideElements[currentIndex].classList.add('active');
+                dotElements[currentIndex].classList.add('active');
+                badge.innerText = `${currentIndex + 1} / ${totalSlides}`;
+            }
+
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToSlide(currentIndex - 1);
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToSlide(currentIndex + 1);
+            });
+
+            // タッチスワイプ対応
+            let touchStartX = 0;
+            wrapper.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].clientX;
+            }, { passive: true });
+            wrapper.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                if (touchStartX - touchEndX > 40) {
+                    goToSlide(currentIndex + 1);
+                } else if (touchEndX - touchStartX > 40) {
+                    goToSlide(currentIndex - 1);
+                }
+            }, { passive: true });
+
+            return wrapper;
+        }
+
         function renderApp() {
             // Header
             document.getElementById('header-catchphrase').innerText = siteData.header.catchphrase;
 
             // Nav dropdown
             const navDropdown = document.getElementById('nav-dropdown');
-            // 一度クリアする（再描画のため）
             navDropdown.innerHTML = '';
-            siteData.memory.performances.forEach(perf => {
-                const a = document.createElement('a');
-                a.href = '#' + perf.id;
-                a.innerText = perf.title;
-                navDropdown.appendChild(a);
-            });
+            if (siteData.memory && siteData.memory.performances) {
+                siteData.memory.performances.forEach(perf => {
+                    const a = document.createElement('a');
+                    a.href = '#' + perf.id;
+                    a.innerText = perf.title;
+                    navDropdown.appendChild(a);
+                });
+            }
 
             // About
             document.getElementById('about-title').innerText = siteData.about.title;
@@ -1354,7 +1789,6 @@
                     leadersGrid.appendChild(div);
                 });
             } else {
-                // 団長データがない場合は見出しを非表示にする
                 if(leadersHeading) leadersHeading.style.display = 'none';
                 if(leadersGrid) leadersGrid.style.display = 'none';
                 if(membersHeading) membersHeading.style.display = 'none';
@@ -1412,7 +1846,6 @@
                     div.appendChild(nameSpan);
                     div.appendChild(bubble);
 
-                    // For mobile tap
                     div.addEventListener('click', (e) => {
                         const isActive = div.classList.contains('active');
                         document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
@@ -1425,55 +1858,202 @@
                     membersGrid.appendChild(div);
                 });
 
-                // Click outside to close bubbles
                 document.addEventListener('click', () => {
                     document.querySelectorAll('.member-item').forEach(el => el.classList.remove('active'));
                 });
             }
 
-            // Stage
-            document.getElementById('stage-title').innerText = siteData.stage.title;
-            document.getElementById('stage-subtitle').innerText = siteData.stage.subtitle;
-            document.getElementById('stage-desc').innerHTML = siteData.stage.description.replace(/\n/g, '<br>');
-            
-            const stagePoster = document.getElementById('stage-poster');
-            if(siteData.stage.image) stagePoster.src = siteData.stage.image;
-            
-            const stageDetails = document.getElementById('stage-details');
-            stageDetails.innerHTML = ''; // クリア
-            siteData.stage.details.forEach(detail => {
-                const li = document.createElement('li');
-                li.innerHTML = detail;
-                stageDetails.appendChild(li);
-            });
+            // ▼ STAGE セクション描画 ▼
+            const stageContent = document.getElementById('stage-content');
+            stageContent.innerHTML = '';
 
-            // History
+            const hasStageInfo = siteData.stage && (
+                siteData.stage.subtitle || 
+                (siteData.stage.images && siteData.stage.images.length > 0) || 
+                siteData.stage.image ||
+                siteData.stage.description || 
+                siteData.stage.staff || 
+                siteData.stage.date || 
+                siteData.stage.venue
+            );
+
+            if (!hasStageInfo) {
+                // 公演内容が決まっていない場合
+                const noStageDiv = document.createElement('div');
+                noStageDiv.style.textAlign = 'center';
+                noStageDiv.style.padding = '3rem 1rem';
+                noStageDiv.innerHTML = `
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #333;">次回公演企画中！</h3>
+                    <p style="color: #666; font-size: 0.95rem;">次回公演の情報は決まり次第お知らせいたします。<br>どうぞお楽しみに！</p>
+                `;
+                stageContent.appendChild(noStageDiv);
+            } else {
+                // サブタイトル
+                if (siteData.stage.subtitle) {
+                    const subH3 = document.createElement('h3');
+                    subH3.id = 'stage-subtitle';
+                    subH3.style.textAlign = 'center';
+                    subH3.style.fontSize = '1.5rem';
+                    subH3.style.marginBottom = '2rem';
+                    subH3.innerText = siteData.stage.subtitle;
+                    stageContent.appendChild(subH3);
+                }
+
+                // 動画（指定がある場合のみ）
+                if (siteData.stage.video) {
+                    const videoEl = createVideoElement(siteData.stage.video);
+                    if (videoEl) stageContent.appendChild(videoEl);
+                }
+
+                // 本文 & 画像レイアウト
+                const flexDiv = document.createElement('div');
+                flexDiv.className = 'flex-container';
+
+                const stageImages = siteData.stage.images && siteData.stage.images.length > 0 
+                    ? siteData.stage.images 
+                    : (siteData.stage.image ? [siteData.stage.image] : []);
+                const mediaEl = createSlideshowElement(stageImages, siteData.stage.subtitle || "次回公演ポスター");
+
+                const textBox = document.createElement('div');
+                textBox.className = 'text-box';
+                if (!mediaEl) {
+                    textBox.style.flex = '1 1 100%';
+                    textBox.style.maxWidth = '100%';
+                }
+
+                // あらすじ
+                if (siteData.stage.description && siteData.stage.description.trim()) {
+                    const descP = document.createElement('p');
+                    descP.id = 'stage-desc';
+                    descP.innerHTML = siteData.stage.description.replace(/\n/g, '<br>');
+                    textBox.appendChild(descP);
+                }
+
+                // 詳細リスト（記載がある項目のみ）
+                const detailsUl = document.createElement('ul');
+                detailsUl.id = 'stage-details';
+
+                if (siteData.stage.staff && siteData.stage.staff.trim()) {
+                    const li = document.createElement('li');
+                    li.innerText = siteData.stage.staff.startsWith('脚本') ? siteData.stage.staff : `脚本・演出: ${siteData.stage.staff}`;
+                    detailsUl.appendChild(li);
+                }
+                if (siteData.stage.date && siteData.stage.date.trim()) {
+                    const li = document.createElement('li');
+                    li.innerText = siteData.stage.date.startsWith('日程') ? siteData.stage.date : `日程: ${siteData.stage.date}`;
+                    detailsUl.appendChild(li);
+                }
+                if (siteData.stage.venue && siteData.stage.venue.trim()) {
+                    const li = document.createElement('li');
+                    li.innerText = siteData.stage.venue.startsWith('会場') ? siteData.stage.venue : `会場: ${siteData.stage.venue}`;
+                    detailsUl.appendChild(li);
+                }
+                if (siteData.stage.note && siteData.stage.note.trim()) {
+                    const li = document.createElement('li');
+                    li.innerText = siteData.stage.note;
+                    detailsUl.appendChild(li);
+                }
+
+                // チケット欄（URLならボタン、コメントならテキスト、空なら非表示）
+                const ticketInfo = (siteData.stage.ticketUrl || siteData.stage.ticketComment || "").trim();
+                if (ticketInfo) {
+                    const urlMatch = ticketInfo.match(/(https?:\/\/[^\s\)\"\'\<\>]+|ticket\.html|[a-zA-Z0-9_\-]+\.html)/i);
+                    const li = document.createElement('li');
+                    li.style.marginTop = '0.5rem';
+
+                    if (urlMatch) {
+                        const targetUrl = urlMatch[0];
+                        li.innerHTML = `<a href="${targetUrl}" class="ticket-btn-link" ${targetUrl.startsWith('http') ? 'target="_blank"' : ''}>🎟️ チケット予約・詳細はこちら</a>`;
+                    } else {
+                        li.innerHTML = `チケット: <span class="ticket-comment-tag">${ticketInfo}</span>`;
+                    }
+                    detailsUl.appendChild(li);
+                }
+
+                if (detailsUl.children.length > 0) {
+                    textBox.appendChild(detailsUl);
+                }
+
+                flexDiv.appendChild(textBox);
+
+                if (mediaEl) {
+                    const mediaBox = document.createElement('div');
+                    mediaBox.className = 'media-box';
+                    mediaBox.appendChild(mediaEl);
+                    flexDiv.appendChild(mediaBox);
+                }
+
+                stageContent.appendChild(flexDiv);
+            }
+
+            // ▼ History (MEMORY) セクション描画 ▼
             document.getElementById('history-title').innerText = siteData.memory.title;
             const historyList = document.getElementById('history-list');
             historyList.innerHTML = ''; // クリア
-            siteData.memory.performances.forEach((perf, index) => {
-                const isLast = index === siteData.memory.performances.length - 1;
-                const div = document.createElement('div');
-                div.id = perf.id;
-                div.className = "flex-container";
-                div.style.marginBottom = isLast ? "0" : "5rem";
+            if (siteData.memory && siteData.memory.performances) {
+                siteData.memory.performances.forEach((perf, index) => {
+                    const isLast = index === siteData.memory.performances.length - 1;
+                    const div = document.createElement('div');
+                    div.id = perf.id;
+                    div.className = "flex-container";
+                    div.style.marginBottom = isLast ? "0" : "5rem";
 
-                div.innerHTML = `
-                    <div class="text-box">
-                        <h3 style="margin-top: 0;">${perf.title}</h3>
-                        <p>${perf.description}</p>
-                        <ul>
-                            ${perf.staff ? `<li>${perf.staff}</li>` : ''}
-                            <li>日程: ${perf.date}</li>
-                            <li>会場: ${perf.venue}</li>
-                        </ul>
-                    </div>
-                    <div class="media-box">
-                        <img src="${perf.image}" alt="${perf.title}ポスター">
-                    </div>
-                `;
-                historyList.appendChild(div);
-            });
+                    const textBox = document.createElement('div');
+                    textBox.className = 'text-box';
+
+                    const titleH3 = document.createElement('h3');
+                    titleH3.style.marginTop = "0";
+                    titleH3.innerText = perf.title;
+                    textBox.appendChild(titleH3);
+
+                    if (perf.description && perf.description.trim()) {
+                        const descP = document.createElement('p');
+                        descP.innerHTML = perf.description.replace(/\n/g, '<br>');
+                        textBox.appendChild(descP);
+                    }
+
+                    const ul = document.createElement('ul');
+                    if (perf.staff && perf.staff.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = perf.staff.startsWith('脚本') ? perf.staff : `脚本・演出: ${perf.staff}`;
+                        ul.appendChild(li);
+                    }
+                    if (perf.date && perf.date.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = perf.date.startsWith('日程') ? perf.date : `日程: ${perf.date}`;
+                        ul.appendChild(li);
+                    }
+                    if (perf.venue && perf.venue.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = perf.venue.startsWith('会場') ? perf.venue : `会場: ${perf.venue}`;
+                        ul.appendChild(li);
+                    }
+                    if (perf.note && perf.note.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = perf.note;
+                        ul.appendChild(li);
+                    }
+                    if (ul.children.length > 0) textBox.appendChild(ul);
+
+                    const perfImages = perf.images && perf.images.length > 0 
+                        ? perf.images 
+                        : (perf.image ? [perf.image] : []);
+                    const mediaEl = createSlideshowElement(perfImages, `${perf.title}ポスター`);
+
+                    div.appendChild(textBox);
+                    if (mediaEl) {
+                        const mediaBox = document.createElement('div');
+                        mediaBox.className = 'media-box';
+                        mediaBox.appendChild(mediaEl);
+                        div.appendChild(mediaBox);
+                    } else {
+                        textBox.style.flex = '1 1 100%';
+                        textBox.style.maxWidth = '100%';
+                    }
+
+                    historyList.appendChild(div);
+                });
+            }
 
             // Contact
             document.getElementById('contact-desc').innerText = siteData.contact.description1;
@@ -1523,6 +2103,7 @@
             // Recruitment
             document.getElementById('recruitment-title').innerText = siteData.links.title;
             const recText = document.getElementById('recruitment-text');
+            recText.innerHTML = '';
             
             siteData.links.recruitment.forEach(htmlText => {
                 const p = document.createElement('p');
@@ -1540,7 +2121,6 @@
             recLink.innerHTML = `<a href="${siteData.links.linkUrl}" target="_blank" style="color: #111; text-decoration: underline;">${siteData.links.linkText}</a>`;
             recText.appendChild(recLink);
 
-
             // ▼ スクロールによるロゴズームの処理 ▼
             const scrollContainer = document.getElementById('hero-scroll-container');
             const logoWrapper = document.querySelector('.logo-wrapper');
@@ -1554,37 +2134,28 @@
                     let progress = -rect.top / scrollRange;
                     progress = Math.max(0, Math.min(1, progress));
 
-                    // ロゴが画面幅ぴったりになるまでのスケールを計算
                     const baseWidth = Math.min(window.innerWidth, 400);
                     const targetScale = window.innerWidth / baseWidth;
-
-                    // 1倍からターゲットスケールまで拡大
                     let scale = 1 + (targetScale - 1) * progress;
 
                     logoWrapper.style.transform = `scale(${scale})`;
                     
-                    // 白丸の半径を拡大して画面を覆う
                     const whiteCircle = document.querySelector('.bg-white-circle');
                     if (whiteCircle) {
                         const baseR = 399;
-                        const targetR = 2000; // 十分に画面を覆うサイズ
-                        // スクロールに合わせて指数関数的に広げる
+                        const targetR = 2000;
                         whiteCircle.setAttribute('r', baseR + (targetR - baseR) * Math.pow(progress, 2));
                     }
 
-                    // 白丸が左側（黒メニュー部分）にはみ出さないようにマスクをフェードイン
                     const blackMask = document.querySelector('.bg-black-mask');
                     if (blackMask) {
                         if (window.innerWidth > 768) {
-                            // PCでは左側の黒メニューを残すためにマスクをかける
                             blackMask.style.opacity = Math.max(0, Math.min(1, progress * 10));
                         } else {
-                            // スマホでは白丸が画面全体を覆い尽くし、黒い部分がだんだん無くなるようにする
                             blackMask.style.opacity = 0;
                         }
                     }
 
-                    // キャッチフレーズ等はスクロールで消す
                     if (catchphrase) catchphrase.style.opacity = Math.max(0, 1 - progress * 5);
                     if (scrollDown) scrollDown.style.opacity = Math.max(0, 1 - progress * 5);
                 });
@@ -1599,24 +2170,35 @@
             function toggleMenu() {
                 if (fullscreenMenu.classList.contains('open')) {
                     fullscreenMenu.classList.remove('open');
-                    document.body.style.overflow = ''; // スクロール再開
+                    document.body.style.overflow = '';
                 } else {
                     fullscreenMenu.classList.add('open');
-                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                    document.body.style.overflow = 'hidden';
                 }
             }
 
             if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
             if (menuCloseBtn) menuCloseBtn.addEventListener('click', toggleMenu);
             
-            // リンクをクリックしたらメニューを閉じる
             menuLinks.forEach(link => {
                 link.addEventListener('click', () => {
                     fullscreenMenu.classList.remove('open');
                     document.body.style.overflow = '';
                 });
             });
-            // ▲ ここまで ▲
+
+            // モーダルクローズ処理
+            const modal = document.getElementById('image-modal');
+            const modalClose = document.getElementById('image-modal-close');
+            if (modalClose) modalClose.addEventListener('click', closeImageModal);
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeImageModal();
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeImageModal();
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1636,7 +2218,7 @@
             ]).then(([perfData, memberData]) => {
                 
                 // 1. 公演情報の反映
-                if (perfData) {
+                if (perfData && perfData.table && perfData.table.rows) {
                     const rows = perfData.table.rows;
                     const headers = perfData.table.cols;
                     const getColIdx = (keyword) => headers.findIndex(c => c && c.label && c.label.includes(keyword));
@@ -1645,56 +2227,89 @@
                     const titleColIdx = getColIdx("作品名");
                     const staffColIdx = getColIdx("脚本");
                     const descColIdx = getColIdx("あらすじ");
-                    const dateColIdx = getColIdx("日時");
-                    const venueColIdx = getColIdx("場所");
-                    const noteColIdx = getColIdx("注釈");
-                    const imgColIdx = getColIdx("画像");
+                    const dateColIdx = getColIdx("日時") !== -1 ? getColIdx("日時") : getColIdx("日程");
+                    const venueColIdx = getColIdx("場所") !== -1 ? getColIdx("場所") : getColIdx("会場");
+                    const noteColIdx = getColIdx("注釈") !== -1 ? getColIdx("注釈") : getColIdx("備考");
+                    const imgColIdx = getColIdx("画像") !== -1 ? getColIdx("画像") : getColIdx("ビジュアル");
+                    const videoColIdx = getColIdx("動画") !== -1 ? getColIdx("動画") : getColIdx("PV");
+                    const ticketColIdx = getColIdx("チケット") !== -1 ? getColIdx("チケット") : getColIdx("予約");
                     const nowColIdx = getColIdx("Now");
 
                     siteData.memory.performances = [];
+                    let nowFound = false;
 
                     rows.forEach((row, i) => {
                         const cols = row.c;
+                        if (!cols) return;
                         if (noColIdx === -1 || !cols[noColIdx] || !cols[noColIdx].v) return;
 
-                        const noStr = cols[noColIdx].v;
-                        const title = (titleColIdx !== -1 && cols[titleColIdx] && cols[titleColIdx].v) ? cols[titleColIdx].v : "";
-                        const staff = (staffColIdx !== -1 && cols[staffColIdx] && cols[staffColIdx].v) ? "脚本・演出: " + cols[staffColIdx].v : "";
-                        const desc = (descColIdx !== -1 && cols[descColIdx] && cols[descColIdx].v) ? cols[descColIdx].v : "";
-                        const date = (dateColIdx !== -1 && cols[dateColIdx] && cols[dateColIdx].v) ? cols[dateColIdx].v : "";
-                        const venue = (venueColIdx !== -1 && cols[venueColIdx] && cols[venueColIdx].v) ? cols[venueColIdx].v : "";
-                        const note = (noteColIdx !== -1 && cols[noteColIdx] && cols[noteColIdx].v) ? cols[noteColIdx].v : "";
-                        const img = (imgColIdx !== -1 && cols[imgColIdx] && cols[imgColIdx].v) ? cols[imgColIdx].v : "gekidan haretoke_logo_icon (1).jpg";
-                        const isNow = (nowColIdx !== -1 && cols[nowColIdx] && cols[nowColIdx].v == 1);
+                        const noStr = cols[noColIdx].v ? String(cols[noColIdx].v).trim() : "";
+                        const title = (titleColIdx !== -1 && cols[titleColIdx] && cols[titleColIdx].v) ? String(cols[titleColIdx].v).trim() : "";
+                        const staff = (staffColIdx !== -1 && cols[staffColIdx] && cols[staffColIdx].v) ? String(cols[staffColIdx].v).trim() : "";
+                        const desc = (descColIdx !== -1 && cols[descColIdx] && cols[descColIdx].v) ? String(cols[descColIdx].v).trim() : "";
+                        const date = (dateColIdx !== -1 && cols[dateColIdx] && cols[dateColIdx].v) ? String(cols[dateColIdx].v).trim() : "";
+                        const venue = (venueColIdx !== -1 && cols[venueColIdx] && cols[venueColIdx].v) ? String(cols[venueColIdx].v).trim() : "";
+                        const note = (noteColIdx !== -1 && cols[noteColIdx] && cols[noteColIdx].v) ? String(cols[noteColIdx].v).trim() : "";
+                        const imgRaw = (imgColIdx !== -1 && cols[imgColIdx] && cols[imgColIdx].v) ? String(cols[imgColIdx].v).trim() : "";
+                        const videoRaw = (videoColIdx !== -1 && cols[videoColIdx] && cols[videoColIdx].v) ? String(cols[videoColIdx].v).trim() : "";
+                        const ticketRaw = (ticketColIdx !== -1 && cols[ticketColIdx] && cols[ticketColIdx].v) ? String(cols[ticketColIdx].v).trim() : "";
+                        const isNow = (nowColIdx !== -1 && cols[nowColIdx] && (cols[nowColIdx].v == 1 || cols[nowColIdx].v == "1"));
+
+                        const images = parseImageUrls(imgRaw);
 
                         if (isNow) {
-                            if (title) siteData.stage.subtitle = title;
-                            if (desc) siteData.stage.description = desc;
-                            siteData.stage.image = img;
-                            
-                            const newDetails = [];
-                            if (staff) newDetails.push(staff);
-                            if (date) newDetails.push("日程: " + date);
-                            if (venue) newDetails.push("会場: " + venue);
-                            if (note) newDetails.push(note);
-                            siteData.stage.details = newDetails;
-                        } else {
-                            const perf = {
-                                id: "perf_" + i,
-                                title: noStr + (title ? "「" + title + "」" : ""),
+                            nowFound = true;
+                            // 第6回公演などのフォールバック画像や動画の配慮
+                            let finalImages = images;
+                            let finalVideo = videoRaw;
+                            if (finalImages.length === 0 && noStr.includes("6")) {
+                                finalImages = [
+                                    "パラレルドリーム・ランデブー_logokv_0726.jpg",
+                                    "パラレルドリーム・ランデブー_introduction.webp",
+                                    "パラレルドリーム・ランデブー_cast.webp"
+                                ];
+                            }
+                            if (!finalVideo && noStr.includes("6")) {
+                                finalVideo = "パラレルドリーム・ランデブー_SNS_movie.mp4";
+                            }
+
+                            siteData.stage = {
+                                title: "STAGE",
+                                subtitle: noStr + (title ? (noStr ? "「" + title + "」" : title) : ""),
                                 description: desc,
                                 staff: staff,
                                 date: date,
                                 venue: venue,
-                                image: img
+                                note: note,
+                                images: finalImages,
+                                video: finalVideo,
+                                ticketUrl: ticketRaw || (noStr.includes("6") ? "ticket.html" : ""),
+                                ticketComment: ""
+                            };
+                        } else {
+                            const perf = {
+                                id: "perf_" + i,
+                                title: noStr + (title ? (noStr ? "「" + title + "」" : title) : ""),
+                                description: desc,
+                                staff: staff,
+                                date: date,
+                                venue: venue,
+                                note: note,
+                                images: images,
+                                image: images.length > 0 ? images[0] : "gekidan haretoke_logo_icon (1).jpg"
                             };
                             siteData.memory.performances.unshift(perf);
                         }
                     });
+
+                    // Now=1の行が一度も見つからなかった場合のみ null にする
+                    if (!nowFound && rows.length > 0) {
+                        siteData.stage = null;
+                    }
                 }
 
                 // 2. メンバー情報の反映
-                if (memberData) {
+                if (memberData && memberData.table && memberData.table.rows) {
                     const rows = memberData.table.rows;
                     const headers = memberData.table.cols;
                     const getColIdx = (keyword) => headers.findIndex(c => c && c.label && c.label.includes(keyword));
@@ -1706,33 +2321,25 @@
                     const nameColIdx = getColIdx("表示名");
                     const photoTypeColIdx = getColIdx("写真種類");
 
-                    siteData.members.leaders = []; // リーダー枠は廃止
-                    siteData.members.membersList = []; // 初期化
+                    siteData.members.leaders = [];
+                    siteData.members.membersList = [];
 
                     rows.forEach(row => {
                         const cols = row.c;
                         if (!cols) return;
                         
                         const permission = (permColIdx !== -1 && cols[permColIdx] && cols[permColIdx].v) ? cols[permColIdx].v : "";
-                        // 「載せたくない🙅」に完全一致する場合のみ除外
                         if (permission === "載せたくない🙅") return;
 
                         const name = (nameColIdx !== -1 && cols[nameColIdx] && cols[nameColIdx].v) ? cols[nameColIdx].v : "";
-                        if (!name) return; // 名前必須
+                        if (!name) return;
 
                         const role = (roleColIdx !== -1 && cols[roleColIdx] && cols[roleColIdx].v) ? cols[roleColIdx].v : "";
                         const exp = (expColIdx !== -1 && cols[expColIdx] && cols[expColIdx].v) ? cols[expColIdx].v : "";
                         let pic = (picColIdx !== -1 && cols[picColIdx] && cols[picColIdx].v) ? cols[picColIdx].v : "";
                         const photoType = (photoTypeColIdx !== -1 && cols[photoTypeColIdx] && cols[photoTypeColIdx].v) ? cols[photoTypeColIdx].v : "";
 
-                        // Google Drive URL変換 (Hotlinking対応のthumbnailエンドポイントを使用)
-                        if (pic && pic.includes("drive.google.com/open?id=")) {
-                            const id = pic.split("id=")[1].split("&")[0];
-                            pic = "https://drive.google.com/thumbnail?id=" + id + "&sz=w1000";
-                        } else if (pic && pic.includes("drive.google.com/file/d/")) {
-                            const id = pic.split("/d/")[1].split("/")[0];
-                            pic = "https://drive.google.com/thumbnail?id=" + id + "&sz=w1000";
-                        }
+                        pic = convertDriveUrl(pic);
 
                         siteData.members.membersList.push({
                             name: name,
@@ -1743,7 +2350,6 @@
                         });
                     });
 
-                    // あいうえお順（五十音順）にソート
                     siteData.members.membersList.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
                 }
 
